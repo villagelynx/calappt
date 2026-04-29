@@ -1,0 +1,333 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalAppt</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260429-2">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+           <div class="topbar-headline">
+             <img class="topbar-logo" src="./apple-touch-icon.png?v=20260428-1" alt="CalAppt" width="54" height="54" decoding="async">
+             <h1>CalAppt</h1>
+           </div>
+           <p class="lede topbar-tagline">Your appointment book, with clients built in.</p>
+         </div>
+        <div class="week-toolbar">
+          <button id="prevWeekBtn" class="ghost-button desktop-week-button" type="button">Previous Week</button>
+          <button id="todayDayBtn" class="primary-button" type="button">Today</button>
+          <button id="nextWeekBtn" class="ghost-button desktop-week-button" type="button">Next Week</button>
+          <button id="desktopMonthViewBtn" class="ghost-button desktop-week-button" type="button">Month</button>
+          <a class="ghost-button" href="./customers.html">Customers</a>
+          <a class="ghost-button" href="./payments.html">Payments</a>
+          <button id="agendaBtn" class="ghost-button" type="button">Agenda</button>
+        </div>
+        <button id="menuBtn" class="ghost-icon-button topbar-menu-button" type="button" aria-label="Menu">&#9776;</button>
+      </header>
+
+      <main class="workspace">
+        <section id="desktopCustomerPanel" class="panel desktop-customer-panel" aria-label="Customers">
+          <div class="desktop-customer-head">
+            <div class="desktop-customer-actions">
+              <button id="desktopAddCustomerBtn" class="primary-button desktop-add-customer-button" type="button">Create Customer Appointment</button>
+              <button id="desktopAddEventBtn" class="secondary-button desktop-add-event-button" type="button">Create Event</button>
+            </div>
+            <button id="desktopNewCustomerBtn" class="ghost-button desktop-new-customer-button" type="button">Add New Customer</button>
+            <h2 class="desktop-customer-title">Customers</h2>
+          </div>
+          <div id="desktopCustomerList" class="desktop-customer-list" role="list"></div>
+        </section>
+
+        <section class="panel calendar-panel">
+          <div id="mobileDayBar" class="mobile-day-bar" hidden>
+            <button id="mobilePrevDayBtn" class="ghost-button mobile-day-control" type="button">Previous Day</button>
+            <button id="mobileNextDayBtn" class="ghost-button mobile-day-control" type="button">Next Day</button>
+            <button id="mobileWeekViewBtn" class="mobile-view-pill mobile-day-control" type="button" aria-selected="false">Week</button>
+            <button id="mobileMonthViewBtn" class="mobile-view-pill mobile-month-pill mobile-day-control" type="button" aria-selected="false">Month</button>
+            <div class="mobile-day-summary">
+              <div class="mobile-day-toprow">
+                <div class="mobile-kicker-row">
+                  <span id="mobileViewKicker" class="week-kicker">Day View</span>
+                </div>
+              </div>
+              <div class="mobile-day-line">
+                <strong id="mobileDayLabel">Mon, Apr 13</strong>
+                <span id="mobileCurrentTime" class="mobile-current-time" hidden></span>
+              </div>
+              <span id="mobileDayHint" class="mobile-day-hint">Tap a time slot to schedule.</span>
+            </div>
+          </div>
+
+          <div class="calendar-month-row" aria-label="Current month">
+            <button id="monthPrevBtn" class="month-nav-button" type="button" aria-label="Previous month">&lt;</button>
+            <p id="monthLabel" class="calendar-month-label" aria-live="polite"></p>
+            <button id="monthNextBtn" class="month-nav-button" type="button" aria-label="Next month">&gt;</button>
+          </div>
+
+          <div class="calendar-scroll">
+            <div id="calendarGrid" class="calendar-grid"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="drawerOverlay" class="drawer-overlay" hidden></div>
+
+    <aside id="manageDrawer" class="drawer drawer-manage" aria-hidden="true">
+      <div class="drawer-head">
+        <div>
+          <p class="eyebrow">Customers &amp; Tasks</p>
+          <h2>Manage</h2>
+        </div>
+        <button id="closeManageDrawerBtn" class="ghost-icon-button" type="button" aria-label="Close manage drawer">&times;</button>
+      </div>
+
+      <div class="manage-body panel customer-panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow" id="leftPanelEyebrow">Customers</p>
+          </div>
+          <div class="panel-chip" id="customerCountChip">0</div>
+        </div>
+
+        <div class="panel-switch" role="tablist" aria-label="Left column mode">
+          <button id="showCustomersBtn" class="panel-switch-button is-active" type="button">Customers</button>
+          <button id="showTasksBtn" class="panel-switch-button" type="button">Events</button>
+        </div>
+
+        <div id="customerModeSection">
+          <form id="customerForm" class="customer-form">
+            <input id="customerEditId" type="hidden">
+            <label class="field">
+              <span>Customer Name</span>
+              <input id="customerName" type="text" placeholder="Add a customer" required>
+            </label>
+            <div class="drawer-grid">
+              <label class="field">
+                <span>Cell</span>
+                <input id="customerCell" type="tel" placeholder="Example: 604-555-0123" autocomplete="tel">
+              </label>
+              <label class="field">
+                <span>Email</span>
+                <input id="customerEmail" type="email" placeholder="Example: student@example.com" autocomplete="email">
+              </label>
+            </div>
+            <label class="field field-wide">
+              <span>Customer Notes</span>
+              <textarea id="customerNote" rows="3" placeholder="Goals, reminders, preferences"></textarea>
+            </label>
+            <div class="customer-form-actions">
+              <button id="customerDeleteBtn" class="ghost-button danger-button" type="button" hidden>Delete</button>
+              <div class="customer-form-actions-right">
+                <button id="customerCancelBtn" class="ghost-button" type="button" hidden>Cancel</button>
+                <button id="customerSubmitBtn" class="secondary-button" type="submit">Add Customer</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="customer-toolbar">
+            <label class="field">
+              <span>Customer List</span>
+              <select id="customerPicker"></select>
+            </label>
+          </div>
+
+          <div id="customerList" class="customer-list"></div>
+        </div>
+
+        <div id="taskModeSection" hidden>
+          <form id="taskForm" class="customer-form">
+            <input id="taskEditId" type="hidden">
+            <label class="field">
+              <span>Task</span>
+              <input id="taskName" type="text" placeholder="Add a task" required>
+            </label>
+            <div class="customer-form-actions">
+              <button id="taskDeleteBtn" class="ghost-button danger-button" type="button" hidden>Delete</button>
+              <div class="customer-form-actions-right">
+                <button id="taskCancelBtn" class="ghost-button" type="button" hidden>Cancel</button>
+                <button id="taskSubmitBtn" class="secondary-button" type="submit">Add Task</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="customer-toolbar">
+            <label class="field">
+              <span>Events</span>
+              <select id="taskPicker">
+                <option value="">New Task</option>
+              </select>
+            </label>
+            <div class="customer-toolbar-copy">
+              <span class="subtle-label">Events</span>
+              <p><strong>New Event</strong> stays at the top. Saved events show below so you can reopen, update, and tap a slot to schedule them.</p>
+            </div>
+          </div>
+
+          <div id="taskList" class="customer-list"></div>
+        </div>
+      </div>
+    </aside>
+
+    <aside id="menuDrawer" class="drawer drawer-menu" aria-hidden="true">
+      <div class="drawer-head">
+        <div>
+          <p class="eyebrow">Menu</p>
+          <h2>Menu</h2>
+        </div>
+        <button id="closeMenuDrawerBtn" class="ghost-icon-button" type="button" aria-label="Close menu">&times;</button>
+      </div>
+
+      <div class="menu-body">
+        <div class="menu-actions">
+           <div class="menu-week-nav" aria-label="Week navigation">
+             <button id="menuPrevWeekBtn" class="secondary-button" type="button">Previous Week</button>
+             <button id="menuNextWeekBtn" class="secondary-button" type="button">Next Week</button>
+           </div>
+           <a class="secondary-button" href="./how-it-works.html">How it works</a>
+           <a class="secondary-button" href="./payments.html">Payments</a>
+           <a class="secondary-button" href="./contacts-import.html">Import contacts</a>
+           <a class="secondary-button" href="./weather-settings.html">Weather settings</a>
+           <a class="secondary-button" href="./email-settings.html">Email settings</a>
+          <a class="secondary-button" href="./admin.html">Admin</a>
+          <button id="emailAgendaBtn" class="secondary-button" type="button">Email weekly agenda</button>
+          <button id="emailFeaturesBtn" class="secondary-button" type="button">Email feature list</button>
+          <button id="exportBackupBtn" class="secondary-button" type="button">Export Backup</button>
+          <button id="shareBackupBtn" class="secondary-button" type="button">Share Backup (AirDrop)</button>
+          <label class="toolbar-note-link toolbar-file-label menu-file-label" for="importBackupInput">Import backup (replace)</label>
+          <input id="importBackupInput" type="file" hidden>
+          <label class="toolbar-note-link toolbar-file-label menu-file-label" for="mergeBackupInput">Merge backup</label>
+          <input id="mergeBackupInput" type="file" hidden>
+          <button id="exportGoogleBtn" class="secondary-button" type="button">Export Google (.ics)</button>
+          <a class="toolbar-note-link menu-help-link" href="./import-export-help.html" target="_blank" rel="noopener noreferrer">
+            Import / export help
+          </a>
+          <a class="toolbar-note-link menu-help-link" href="./merge-help.html" target="_blank" rel="noopener noreferrer">
+            Merge help
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <aside id="appointmentDrawer" class="drawer" aria-hidden="true">
+      <div class="drawer-head">
+        <div>
+          <p class="eyebrow">Appointment</p>
+          <h2 id="drawerTitle">Schedule Session</h2>
+        </div>
+        <button id="closeDrawerBtn" class="ghost-icon-button" type="button" aria-label="Close scheduler">&times;</button>
+      </div>
+
+      <form id="appointmentForm" class="drawer-form">
+        <input id="appointmentId" type="hidden">
+        <input id="appointmentEntryType" type="hidden">
+        <input id="appointmentCustomerId" type="hidden">
+        <input id="appointmentEntryName" type="hidden">
+        <input id="appointmentEntryNote" type="hidden">
+        <input id="appointmentDateKey" type="hidden">
+
+        <div class="drawer-summary">
+          <div class="summary-block">
+            <span class="summary-label" id="appointmentSubjectLabel">Customer</span>
+            <strong id="appointmentCustomerName">-</strong>
+          </div>
+          <div class="summary-block">
+            <span class="summary-label">Day</span>
+            <strong id="appointmentDayLabel">-</strong>
+          </div>
+        </div>
+
+        <div id="drawerTypeToggle" class="mobile-view-toggle drawer-type-toggle" role="group" aria-label="Appointment type">
+          <button id="drawerTypeSessionBtn" class="mobile-view-pill is-active" type="button" aria-pressed="true">Session</button>
+          <button id="drawerTypeEventBtn" class="mobile-view-pill" type="button" aria-pressed="false">Event</button>
+        </div>
+
+        <label id="eventTitleField" class="field field-wide" hidden>
+          <span>Event Title</span>
+          <input id="eventTitleInput" type="text" placeholder="Example: Lunch break, Team meeting">
+        </label>
+
+        <div id="drawerSubjectControls" class="drawer-subject-controls" hidden>
+          <label class="field">
+            <span id="drawerSubjectPickerLabel">Customer</span>
+            <select id="drawerSubjectPicker"></select>
+          </label>
+
+          <label id="drawerNewCustomerField" class="field" hidden>
+            <span>New Customer Name</span>
+            <input id="drawerNewCustomerName" type="text" placeholder="Add new customer name">
+          </label>
+        </div>
+
+        <div class="drawer-grid">
+          <label class="field">
+            <span>Start Time</span>
+            <select id="startTime" required></select>
+          </label>
+          <label class="field">
+            <span>End Time</span>
+            <select id="endTime" required></select>
+          </label>
+        </div>
+
+        <label class="field field-wide">
+          <span>Court / Location</span>
+          <input id="court" type="text" placeholder="Example: Court 2 (UBC)">
+        </label>
+
+        <div class="drawer-grid">
+          <label class="field">
+            <span>Payment ($)</span>
+            <input
+              id="appointmentAmount"
+              type="number"
+              inputmode="decimal"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+            >
+          </label>
+          <div class="field">
+            <span>Paid</span>
+            <label class="payment-toggle">
+              <input id="appointmentPaid" class="payment-toggle-checkbox" type="checkbox">
+              <span class="payment-toggle-pill">Paid</span>
+            </label>
+          </div>
+        </div>
+
+        <label class="field field-wide">
+          <span>Note</span>
+          <textarea id="appointmentNote" rows="4" placeholder="Lesson focus, reminder, or details"></textarea>
+        </label>
+
+        <div id="appointmentContactActions" class="drawer-contact-actions" hidden>
+          <a id="appointmentTextBtn" class="secondary-button" href="#" rel="noopener noreferrer">Text confirmation</a>
+          <a id="appointmentEmailBtn" class="secondary-button" href="#" rel="noopener noreferrer">Email confirmation</a>
+        </div>
+
+        <div class="drawer-actions">
+          <button id="deleteAppointmentBtn" class="ghost-button danger-button" type="button" hidden>Delete</button>
+          <div class="drawer-actions-right">
+            <button id="cancelAppointmentBtn" class="ghost-button" type="button">Cancel</button>
+            <button class="primary-button" type="submit">Save Appointment</button>
+          </div>
+        </div>
+      </form>
+    </aside>
+
+    <script src="./app.js?v=20260429-1"></script>
+  </body>
+</html>
+
