@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalAppt &mdash; A client-first appointment calendar</title>
+    <meta name="description" content="CalAppt is a client-first appointment calendar for professionals. Schedule sessions fast, keep client notes and history, and send confirmations with one tap.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="CalAppt">
+    <meta property="og:description" content="A client-first appointment calendar for professionals.">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260429-3">
+
+    <style>
+      body.page-marketing .page-shell {
+        width: min(1120px, calc(100% - 28px));
+      }
+
+      .marketing-main {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .marketing-hero {
+        display: grid;
+        gap: 14px;
+      }
+
+      .hero-kpis {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .kpi-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(143, 212, 255, 0.14);
+        border: 1px solid rgba(22, 52, 94, 0.1);
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .kpi-card strong {
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        letter-spacing: -0.03em;
+        font-size: 1.15rem;
+      }
+
+      .kpi-card span {
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.35;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .feature-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(22, 52, 94, 0.1);
+        display: grid;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .feature-card h3 {
+        font-size: 1.05rem;
+        line-height: 1.25;
+      }
+
+      .feature-card p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+
+      .steps {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 10px;
+      }
+
+      .step {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 12px;
+        border-radius: 18px;
+        border: 1px solid rgba(22, 52, 94, 0.1);
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .step-badge {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: rgba(143, 212, 255, 0.22);
+        border: 1px solid rgba(22, 52, 94, 0.1);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        color: rgba(19, 50, 88, 0.92);
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+      }
+
+      .faq {
+        display: grid;
+        gap: 10px;
+      }
+
+      .faq details {
+        border-radius: 18px;
+        border: 1px solid rgba(22, 52, 94, 0.12);
+        background: rgba(255, 255, 255, 0.7);
+        padding: 12px 14px;
+      }
+
+      .faq summary {
+        cursor: pointer;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        list-style: none;
+      }
+
+      .faq summary::-webkit-details-marker { display: none; }
+
+      .faq summary::before {
+        content: "+";
+        display: inline-block;
+        width: 18px;
+        margin-right: 8px;
+        color: var(--accent-deep);
+      }
+
+      .faq details[open] summary::before { content: "–"; }
+
+      .faq .appointment-empty {
+        margin-top: 10px;
+      }
+
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .fineprint {
+        color: var(--soft);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 980px) {
+        .hero-kpis { grid-template-columns: 1fr; }
+        .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .split { grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 620px) {
+        .feature-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body class="page-marketing">
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+          <p class="eyebrow">A client-first appointment calendar</p>
+          <div class="topbar-headline">
+            <img class="topbar-logo" src="./apple-touch-icon.png?v=20260428-1" alt="CalAppt" width="54" height="54" decoding="async">
+            <h1>CalAppt</h1>
+          </div>
+          <p class="lede">Schedule sessions fast, keep client notes and history, and send confirmations with one tap.</p>
+        </div>
+        <div class="week-toolbar" aria-label="Primary actions">
+          <a class="primary-button" href="./index.html">Open the App</a>
+          <a class="ghost-button" href="./how-it-works.html">How it works</a>
+          <a class="ghost-button" href="./customers.html">Customers</a>
+        </div>
+      </header>
+
+      <main class="marketing-main">
+        <section class="panel marketing-hero" aria-label="Overview">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Built for pros</p>
+              <h2>Everything you need for client appointments</h2>
+            </div>
+          </div>
+
+          <p class="appointment-empty">Google Calendar is great for your life. CalAppt is your appointment book: customers, notes, tasks, and the follow-up message that keeps no-shows down.</p>
+
+          <div class="hero-kpis" role="list" aria-label="Highlights">
+            <div class="kpi-card" role="listitem">
+              <strong>Client profiles</strong>
+              <span>Store name, cell, email, and notes. Jump from the calendar to a customer’s history in seconds.</span>
+            </div>
+            <div class="kpi-card" role="listitem">
+              <strong>One-tap confirmations</strong>
+              <span>Open Messages/Mail with a ready-to-send draft. You stay in control and tap Send.</span>
+            </div>
+            <div class="kpi-card" role="listitem">
+              <strong>Backups you control</strong>
+              <span>Autosave history + export/import/merge backups. Export a Google Calendar .ics when you need it.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-label="Features">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Features</p>
+              <h2>Made for real scheduling</h2>
+            </div>
+            <a class="secondary-button" href="./index.html">Try it now</a>
+          </div>
+
+          <div class="feature-grid" role="list">
+            <article class="feature-card" role="listitem">
+              <h3>Day, Week, Agenda</h3>
+              <p>Switch views fast. Swipe day-to-day on iPhone, and jump back to Today anytime.</p>
+            </article>
+            <article class="feature-card" role="listitem">
+              <h3>Customers &amp; notes</h3>
+              <p>Keep coaching cues, preferences, and reminders where you schedule — not buried in a separate app.</p>
+            </article>
+            <article class="feature-card" role="listitem">
+              <h3>Lesson history</h3>
+              <p>Open a customer profile to see session history and stay consistent with goals and progress.</p>
+            </article>
+            <article class="feature-card" role="listitem">
+              <h3>Tasks that schedule</h3>
+              <p>Keep “Things To Do” at the top, save tasks for reuse, then tap a slot to place them on the calendar.</p>
+            </article>
+            <article class="feature-card" role="listitem">
+              <h3>Export + merge</h3>
+              <p>Export a backup file to move devices, merge two devices together, or export a Google Calendar .ics for the week.</p>
+            </article>
+            <article class="feature-card" role="listitem">
+              <h3>Designed for professionals</h3>
+              <p>Use Court/Location fields, sport icons/colors, and quick contact actions to keep your day moving.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" aria-label="How it works">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Workflow</p>
+              <h2>Your week, in 60 seconds</h2>
+            </div>
+            <a class="ghost-button" href="./contacts-import.html">Import contacts</a>
+          </div>
+
+          <div class="split">
+            <ol class="steps">
+              <li class="step">
+                <div class="step-badge" aria-hidden="true">1</div>
+                <div>
+                  <strong>Add customers</strong>
+                  <p class="appointment-empty">Add a client (or import from a vCard / Google Contacts CSV).</p>
+                </div>
+              </li>
+              <li class="step">
+                <div class="step-badge" aria-hidden="true">2</div>
+                <div>
+                  <strong>Tap a time slot</strong>
+                  <p class="appointment-empty">Pick a start/end time, add a location, and drop in session notes.</p>
+                </div>
+              </li>
+              <li class="step">
+                <div class="step-badge" aria-hidden="true">3</div>
+                <div>
+                  <strong>Send the confirmation</strong>
+                  <p class="appointment-empty">Text or email a ready-to-send message (you review it and tap Send).</p>
+                </div>
+              </li>
+            </ol>
+
+            <div>
+              <p class="eyebrow">Private by default</p>
+              <h3 style="margin: 6px 0 10px;">Runs locally in your browser</h3>
+              <p class="appointment-empty">CalAppt stores your data on <strong>this device</strong>. There’s no account to set up and nothing to “sign in” to. When you want to switch devices, export a backup file and import/merge it on the new device.</p>
+              <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <a class="secondary-button" href="./admin.html">Backup settings</a>
+                <a class="ghost-button" href="./import-export-help.html" target="_blank" rel="noopener noreferrer">Import/export help</a>
+              </div>
+              <p class="fineprint" style="margin-top: 12px;">Note: CalAppt opens your Messages/Mail app for texts/emails. It does not send messages automatically.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-label="FAQ">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">FAQ</p>
+              <h2>Quick answers</h2>
+            </div>
+          </div>
+
+          <div class="faq">
+            <details>
+              <summary>Does CalAppt sync across devices?</summary>
+              <p class="appointment-empty">Not automatically. CalAppt is saved in your browser on each device. Use Export Backup + Import/Merge to move your data between devices.</p>
+            </details>
+            <details>
+              <summary>Will it send texts and emails for me?</summary>
+              <p class="appointment-empty">CalAppt creates a draft and opens your Messages/Mail app. You review it and tap Send.</p>
+            </details>
+            <details>
+              <summary>Can I still use Google Calendar?</summary>
+              <p class="appointment-empty">Yes. Use the “Export Google (.ics)” option to bring your week into Google Calendar when you need it.</p>
+            </details>
+            <details>
+              <summary>Where is my data stored?</summary>
+              <p class="appointment-empty">On this device in your browser storage. Export a backup file if you want a copy you can keep.</p>
+            </details>
+          </div>
+        </section>
+
+        <section class="panel" aria-label="Final call to action">
+          <div class="footer">
+            <div>
+              <p class="eyebrow">Ready?</p>
+              <h2>Open CalAppt and schedule your next session.</h2>
+              <p class="appointment-empty">Fast scheduling, client notes, and follow-ups — without the clutter.</p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <a class="primary-button" href="./index.html">Open the App</a>
+              <a class="secondary-button" href="./how-it-works.html">See how it works</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

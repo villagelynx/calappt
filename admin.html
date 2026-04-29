@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin &middot; CalAppt</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260429-3">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+          <p class="eyebrow">CalAppt</p>
+          <h1>Admin</h1>
+          <p class="lede">Autosave backups, restore older versions, and clear app data.</p>
+        </div>
+        <div class="week-toolbar">
+          <a class="ghost-button" href="./index.html">Back to Calendar</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel">
+          <div class="panel-head calendar-head">
+            <div>
+              <p class="eyebrow">Autosave</p>
+              <h2>Backup Settings</h2>
+            </div>
+          </div>
+
+          <form id="adminSettingsForm" class="customer-form">
+            <label class="field">
+              <span>Autosave backups</span>
+              <select id="autosaveEnabledSelect">
+                <option value="true">On</option>
+                <option value="false">Off</option>
+              </select>
+            </label>
+            <div class="customer-form-actions">
+              <button id="createSnapshotBtn" class="secondary-button" type="button">Create snapshot now</button>
+              <div class="customer-form-actions-right">
+                <button class="primary-button" type="submit">Save</button>
+              </div>
+            </div>
+            <p id="adminStatus" class="appointment-empty" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head calendar-head">
+            <div>
+              <p class="eyebrow">Versions</p>
+              <h2>Autosave History</h2>
+            </div>
+          </div>
+
+          <div id="backupList" class="agenda-board"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head calendar-head">
+            <div>
+              <p class="eyebrow">Danger Zone</p>
+              <h2>Reset</h2>
+            </div>
+          </div>
+          <div class="drawer-contact-actions">
+            <button id="clearAutosavesBtn" class="ghost-button danger-button" type="button">Clear autosave history</button>
+            <button id="clearAllDataBtn" class="ghost-button danger-button" type="button">Clear ALL app data</button>
+          </div>
+          <p class="appointment-empty">Tip: Export Backup first if you want a file you can keep.</p>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        const STORAGE_KEYS = {
+          customers: "coach_appointment_calendar_customers",
+          sports: "coach_appointment_calendar_sports",
+          tasks: "coach_appointment_calendar_tasks",
+          appointments: "coach_appointment_calendar_appointments",
+          weatherCity: "coach_appointment_calendar_weather_city",
+          userEmail: "coach_appointment_calendar_user_email",
+          leftMode: "coach_appointment_calendar_left_mode",
+          selectedCustomerId: "coach_appointment_calendar_selected_customer_id",
+          mobileViewMode: "coach_appointment_calendar_mobile_view_mode",
+          autoBackups: "coach_appointment_calendar_auto_backups",
+          autoBackupEnabled: "coach_appointment_calendar_auto_backup_enabled"
+        };
+
+        const DEMO_KEYS = {
+          disabled: "coach_appointment_calendar_demo_disabled"
+        };
+
+        const formEl = document.getElementById("adminSettingsForm");
+        const enabledEl = document.getElementById("autosaveEnabledSelect");
+        const statusEl = document.getElementById("adminStatus");
+        const listEl = document.getElementById("backupList");
+        const snapshotBtn = document.getElementById("createSnapshotBtn");
+        const clearAutosavesBtn = document.getElementById("clearAutosavesBtn");
+        const clearAllBtn = document.getElementById("clearAllDataBtn");
+
+        const escapeHtml = (value) => {
+          const str = String(value ?? "");
+          return str.replace(/[&<>"']/g, (char) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#39;"
+          }[char]));
+        };
+
+        const readJson = (key, fallback) => {
+          try {
+            const raw = window.localStorage.getItem(key);
+            if (!raw) return fallback;
+            const parsed = JSON.parse(raw);
+            return parsed ?? fallback;
+          } catch {
+            return fallback;
+          }
+        };
+
+        const writeJson = (key, value) => {
+          try {
+            window.localStorage.setItem(key, JSON.stringify(value));
+          } catch {}
+        };
+
+        const setStatus = (message) => {
+          if (!statusEl) return;
+          statusEl.textContent = message;
+        };
+
+        const readAutosaveEnabled = () => {
+          try {
+            const saved = window.localStorage.getItem(STORAGE_KEYS.autoBackupEnabled);
+            if (saved === "false") return false;
+            if (saved === "true") return true;
+            return true;
+          } catch {
+            return true;
+          }
+        };
+
+        const writeAutosaveEnabled = (enabled) => {
+          try {
+            window.localStorage.setItem(STORAGE_KEYS.autoBackupEnabled, enabled ? "true" : "false");
+          } catch {}
+        };
+
+        const readAutoBackups = () => {
+          const list = readJson(STORAGE_KEYS.autoBackups, []);
+          return Array.isArray(list) ? list : [];
+        };
+
+        const writeAutoBackups = (list) => writeJson(STORAGE_KEYS.autoBackups, Array.isArray(list) ? list : []);
+
+        const parseDate = (value) => {
+          const date = new Date(value);
+          return Number.isFinite(date.getTime()) ? date : null;
+        };
+
+        const formatStamp = (isoString) => {
+          const date = parseDate(isoString);
+          if (!date) return String(isoString || "");
+          return date.toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+        };
+
+        const getStartOfWeek = (date) => {
+          const next = new Date(date);
+          next.setHours(0, 0, 0, 0);
+          const day = next.getDay();
+          const diff = day === 0 ? -6 : 1 - day;
+          next.setDate(next.getDate() + diff);
+          return next;
+        };
+
+        const formatDateKey = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        };
+
+        const buildBackupPayload = () => {
+          const customers = readJson(STORAGE_KEYS.customers, []);
+          const sports = readJson(STORAGE_KEYS.sports, []);
+          const tasks = readJson(STORAGE_KEYS.tasks, []);
+          const appointments = readJson(STORAGE_KEYS.appointments, []);
+          const leftModeRaw = (() => {
+            try { return window.localStorage.getItem(STORAGE_KEYS.leftMode) || ""; } catch { return ""; }
+          })();
+
+          const weatherCity = (() => {
+            try { return window.localStorage.getItem(STORAGE_KEYS.weatherCity) || ""; } catch { return ""; }
+          })();
+          const userEmail = (() => {
+            try { return window.localStorage.getItem(STORAGE_KEYS.userEmail) || ""; } catch { return ""; }
+          })();
+
+          return {
+            version: 2,
+            exportedAt: new Date().toISOString(),
+            visibleWeekStart: formatDateKey(getStartOfWeek(new Date())),
+            leftPanelMode: leftModeRaw === "tasks" ? "tasks" : "customers",
+            weatherCity,
+            userEmail,
+            customers: Array.isArray(customers) ? customers : [],
+            sports: Array.isArray(sports) ? sports : [],
+            tasks: Array.isArray(tasks) ? tasks : [],
+            appointments: Array.isArray(appointments) ? appointments : []
+          };
+        };
+
+        const downloadTextFile = (filename, content, type) => {
+          const blob = new Blob([content], { type });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          URL.revokeObjectURL(url);
+        };
+
+        const restorePayload = (payload) => {
+          if (!payload) return;
+          writeJson(STORAGE_KEYS.customers, Array.isArray(payload.customers) ? payload.customers : []);
+          writeJson(STORAGE_KEYS.sports, Array.isArray(payload.sports) ? payload.sports : []);
+          writeJson(STORAGE_KEYS.tasks, Array.isArray(payload.tasks) ? payload.tasks : []);
+          writeJson(STORAGE_KEYS.appointments, Array.isArray(payload.appointments) ? payload.appointments : []);
+          try { window.localStorage.setItem(STORAGE_KEYS.leftMode, payload.leftPanelMode === "tasks" ? "tasks" : "customers"); } catch {}
+          try { window.localStorage.setItem(STORAGE_KEYS.weatherCity, typeof payload.weatherCity === "string" ? payload.weatherCity : ""); } catch {}
+          try { window.localStorage.setItem(STORAGE_KEYS.userEmail, typeof payload.userEmail === "string" ? payload.userEmail : ""); } catch {}
+          try { window.localStorage.setItem(STORAGE_KEYS.selectedCustomerId, ""); } catch {}
+          setStatus("Restored. Returning to the calendar...");
+          window.setTimeout(() => {
+            window.location.href = "./index.html";
+          }, 350);
+        };
+
+        const summarizePayload = (payload) => {
+          const customersCount = Array.isArray(payload?.customers) ? payload.customers.length : 0;
+          const appointmentsCount = Array.isArray(payload?.appointments) ? payload.appointments.length : 0;
+          return `${customersCount} customers \u00B7 ${appointmentsCount} appointments`;
+        };
+
+        const render = () => {
+          if (enabledEl) enabledEl.value = readAutosaveEnabled() ? "true" : "false";
+          const backups = readAutoBackups();
+
+          if (!listEl) return;
+          if (!backups.length) {
+            listEl.innerHTML = `<div class="appointment-empty">No autosave backups yet. Make a change in the calendar to generate versions.</div>`;
+            return;
+          }
+
+          listEl.innerHTML = backups.map((entry) => {
+            const stamp = formatStamp(entry.createdAt || entry.payload?.exportedAt || "");
+            const summary = summarizePayload(entry.payload || {});
+            return `
+              <section class="agenda-day">
+                <header class="agenda-day-head">
+                  <strong>${escapeHtml(stamp)}</strong>
+                  <span class="agenda-day-count">${escapeHtml(summary)}</span>
+                </header>
+                <div class="drawer-contact-actions">
+                  <button class="secondary-button" type="button" data-action="restore" data-id="${escapeHtml(entry.id)}">Restore</button>
+                  <button class="secondary-button" type="button" data-action="download" data-id="${escapeHtml(entry.id)}">Download</button>
+                  <button class="ghost-button danger-button" type="button" data-action="delete" data-id="${escapeHtml(entry.id)}">Delete</button>
+                </div>
+              </section>
+            `;
+          }).join("");
+        };
+
+        listEl?.addEventListener("click", (event) => {
+          const button = event.target?.closest?.("button[data-action][data-id]");
+          if (!button) return;
+          const action = button.getAttribute("data-action");
+          const id = button.getAttribute("data-id");
+          const backups = readAutoBackups();
+          const entry = backups.find((item) => item && item.id === id);
+          if (!entry) return;
+
+          if (action === "restore") {
+            const ok = window.confirm("Restore this autosave version? This will replace your current data on this device.");
+            if (!ok) return;
+            restorePayload(entry.payload);
+            return;
+          }
+
+          if (action === "download") {
+            const payload = entry.payload || {};
+            const filename = `calappt-autosave-${String(entry.createdAt || "").replace(/[:]/g, "-") || "backup"}.json`;
+            downloadTextFile(filename, `${JSON.stringify(payload, null, 2)}\n`, "application/json;charset=utf-8");
+            return;
+          }
+
+          if (action === "delete") {
+            const ok = window.confirm("Delete this autosave version?");
+            if (!ok) return;
+            writeAutoBackups(backups.filter((item) => item && item.id !== id));
+            render();
+          }
+        });
+
+        formEl?.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const enabled = (enabledEl?.value || "true") === "true";
+          writeAutosaveEnabled(enabled);
+          setStatus(enabled ? "Autosave backups enabled." : "Autosave backups disabled.");
+        });
+
+        snapshotBtn?.addEventListener("click", () => {
+          const backups = readAutoBackups();
+          backups.unshift({
+            id: `manual-${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            payload: buildBackupPayload()
+          });
+          writeAutoBackups(backups.slice(0, 12));
+          setStatus("Snapshot saved.");
+          render();
+        });
+
+        clearAutosavesBtn?.addEventListener("click", () => {
+          const ok = window.confirm("Clear all autosave history?");
+          if (!ok) return;
+          writeAutoBackups([]);
+          setStatus("Autosave history cleared.");
+          render();
+        });
+
+        clearAllBtn?.addEventListener("click", () => {
+          const ok = window.confirm("Clear ALL app data on this device? This cannot be undone.");
+          if (!ok) return;
+          Object.values(STORAGE_KEYS).forEach((key) => {
+            try { window.localStorage.removeItem(key); } catch {}
+          });
+          try { window.localStorage.setItem(DEMO_KEYS.disabled, "true"); } catch {}
+          setStatus("All app data cleared.");
+          render();
+        });
+
+        setStatus("Saved settings are stored on this device.");
+        render();
+      })();
+    </script>
+  </body>
+</html>

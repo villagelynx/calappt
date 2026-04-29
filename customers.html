@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers &middot; CalAppt</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260429-3">
+  </head>
+  <body class="page-customers">
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+          <h1>Customers</h1>
+          <p class="lede">This list is saved in your browser on this device.</p>
+        </div>
+        <div class="week-toolbar">
+          <a class="ghost-button" href="./index.html">Back to Calendar</a>
+          <a class="ghost-button" href="./contacts-import.html">Import contacts</a>
+          <a class="ghost-button" href="./how-it-works.html">How it works</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel customer-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Customer List</p>
+              <h2>All Customers</h2>
+            </div>
+            <div id="customerCountChip" class="panel-chip">0</div>
+          </div>
+
+          <div class="customer-toolbar">
+            <div class="customer-toolbar-toprow">
+              <button id="addCustomerBtn" class="ghost-icon-button add-customer-icon-button" type="button" aria-label="Add new customer">+</button>
+            </div>
+            <label class="field search-field">
+              <span>Search</span>
+              <input id="customerSearch" type="search" placeholder="Search customers">
+            </label>
+            <div class="customer-bulk-toolbar" role="group" aria-label="Bulk actions">
+              <label class="customer-bulk-select">
+                <input id="customerSelectAll" type="checkbox">
+                <span>Select all shown</span>
+              </label>
+              <button id="deleteSelectedCustomersBtn" class="ghost-button danger-button" type="button" disabled>Delete</button>
+            </div>
+          </div>
+
+          <div id="customerList" class="customer-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="customerDrawerOverlay" class="drawer-overlay" hidden></div>
+
+    <aside id="customerCreateDrawer" class="drawer drawer-customer-create" aria-hidden="true">
+      <div class="drawer-head">
+        <div>
+          <p class="eyebrow">Customer</p>
+          <h2>Add Customer</h2>
+        </div>
+        <button id="closeCustomerCreateDrawerBtn" class="ghost-icon-button" type="button" aria-label="Close add customer">&times;</button>
+      </div>
+
+      <form id="customerCreateForm" class="customer-form">
+        <div class="drawer-grid">
+          <label class="field">
+            <span>Surname</span>
+            <input id="createCustomerSurname" type="text" placeholder="Surname" autocomplete="family-name" required>
+          </label>
+          <label class="field">
+            <span>First name</span>
+            <input id="createCustomerFirstName" type="text" placeholder="First name" autocomplete="given-name">
+          </label>
+        </div>
+
+        <div class="drawer-grid">
+          <label class="field">
+            <span>Cell</span>
+            <input id="createCustomerCell" type="tel" placeholder="Example: 604-555-0123" autocomplete="tel">
+          </label>
+          <label class="field">
+            <span>Email</span>
+            <input id="createCustomerEmail" type="email" placeholder="Example: student@example.com" autocomplete="email">
+          </label>
+        </div>
+
+        <label class="field field-wide">
+          <span>Sport</span>
+          <select id="createCustomerSportId">
+            <option value="">No sport selected</option>
+          </select>
+        </label>
+
+        <label class="field field-wide">
+          <span>Customer Notes</span>
+          <textarea id="createCustomerNote" rows="3" placeholder="Goals, reminders, preferences"></textarea>
+        </label>
+
+        <div class="customer-form-actions">
+          <button id="cancelCustomerCreateBtn" class="ghost-button" type="button">Cancel</button>
+          <div class="customer-form-actions-right">
+            <button class="primary-button" type="submit">Add Customer</button>
+          </div>
+        </div>
+      </form>
+    </aside>
+
+    <script>
+      (function () {
+        const STORAGE_KEYS = {
+          customers: "coach_appointment_calendar_customers",
+          sports: "coach_appointment_calendar_sports",
+          appointments: "coach_appointment_calendar_appointments",
+          selectedCustomerId: "coach_appointment_calendar_selected_customer_id"
+        };
+
+        const listEl = document.getElementById("customerList");
+        const countEl = document.getElementById("customerCountChip");
+        const searchEl = document.getElementById("customerSearch");
+        const selectAllEl = document.getElementById("customerSelectAll");
+        const deleteSelectedBtn = document.getElementById("deleteSelectedCustomersBtn");
+        const addCustomerBtn = document.getElementById("addCustomerBtn");
+        const drawerOverlay = document.getElementById("customerDrawerOverlay");
+        const createDrawer = document.getElementById("customerCreateDrawer");
+        const closeCreateDrawerBtn = document.getElementById("closeCustomerCreateDrawerBtn");
+        const cancelCreateBtn = document.getElementById("cancelCustomerCreateBtn");
+        const createFormEl = document.getElementById("customerCreateForm");
+        const createSurnameEl = document.getElementById("createCustomerSurname");
+        const createFirstNameEl = document.getElementById("createCustomerFirstName");
+        const createCellEl = document.getElementById("createCustomerCell");
+        const createEmailEl = document.getElementById("createCustomerEmail");
+        const createSportEl = document.getElementById("createCustomerSportId");
+        const createNoteEl = document.getElementById("createCustomerNote");
+
+        const selectedCustomerIds = new Set();
+        let lastFilteredCustomers = [];
+
+        const escapeHtml = (value) => {
+          const str = String(value ?? "");
+          return str.replace(/[&<>"']/g, (char) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#39;"
+          }[char]));
+        };
+
+        const readJson = (key, fallback) => {
+          try {
+            const raw = window.localStorage.getItem(key);
+            if (!raw) return fallback;
+            const parsed = JSON.parse(raw);
+            return parsed ?? fallback;
+          } catch {
+            return fallback;
+          }
+        };
+
+        const readCustomers = () => {
+          const value = readJson(STORAGE_KEYS.customers, []);
+          return Array.isArray(value) ? value : [];
+        };
+
+        const readSports = () => {
+          const value = readJson(STORAGE_KEYS.sports, []);
+          const list = Array.isArray(value) ? value : [];
+          return list.reduce((acc, sport) => {
+            if (sport && sport.id) acc[sport.id] = sport;
+            return acc;
+          }, {});
+        };
+
+        const writeJson = (key, value) => {
+          try {
+            window.localStorage.setItem(key, JSON.stringify(value));
+            return true;
+          } catch {
+            window.alert("Storage is full or unavailable on this device. Export a backup and clear old data if needed.");
+            return false;
+          }
+        };
+
+        const createId = (prefix) => {
+          const uuid = (window.crypto && typeof window.crypto.randomUUID === "function")
+            ? window.crypto.randomUUID()
+            : `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+          return `${prefix}_${uuid}`;
+        };
+
+        const setBodyScrollLock = (isLocked) => {
+          if (isLocked) {
+            document.body.style.overflow = "hidden";
+          } else {
+            document.body.style.overflow = "";
+          }
+        };
+
+        const stabilizeDrawerAfterSlide = (drawer) => {
+          if (!drawer) return;
+
+          const STABLE_TIMEOUT_MS = 260;
+          let settled = false;
+
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            drawer.removeEventListener("transitionend", handleTransitionEnd);
+            if (drawer.classList.contains("is-open")) {
+              drawer.classList.add("is-stable");
+            }
+          };
+
+          const handleTransitionEnd = (event) => {
+            if (event.target !== drawer) return;
+            if (event.propertyName && event.propertyName !== "transform") return;
+            finish();
+          };
+
+          drawer.addEventListener("transitionend", handleTransitionEnd);
+          window.setTimeout(finish, STABLE_TIMEOUT_MS);
+        };
+
+        const openCreateDrawer = () => {
+          if (!createDrawer || !drawerOverlay) return;
+          drawerOverlay.hidden = false;
+          createDrawer.classList.remove("is-stable");
+          createDrawer.classList.add("is-open");
+          createDrawer.setAttribute("aria-hidden", "false");
+          stabilizeDrawerAfterSlide(createDrawer);
+          setBodyScrollLock(true);
+
+          if (createFormEl) {
+            createFormEl.reset();
+          }
+          if (createSportEl) {
+            const sports = readJson(STORAGE_KEYS.sports, []);
+            const list = Array.isArray(sports) ? sports : [];
+            createSportEl.innerHTML = [
+              `<option value="">No sport selected</option>`,
+              ...list.map((sport) => sport && sport.id
+                ? `<option value="${escapeHtml(sport.id)}">${escapeHtml(sport.name || "Sport")}</option>`
+                : ""
+              ).filter(Boolean)
+            ].join("");
+          }
+
+          window.setTimeout(() => {
+            createSurnameEl?.focus?.();
+          }, 0);
+        };
+
+        const closeCreateDrawer = () => {
+          if (!createDrawer || !drawerOverlay) return;
+          createDrawer.classList.remove("is-stable");
+          createDrawer.classList.remove("is-open");
+          createDrawer.setAttribute("aria-hidden", "true");
+          drawerOverlay.hidden = true;
+          setBodyScrollLock(false);
+        };
+
+        const readAppointments = () => {
+          const value = readJson(STORAGE_KEYS.appointments, []);
+          return Array.isArray(value) ? value : [];
+        };
+
+        const sanitizePhoneForSms = (value) => String(value || "").replace(/[^\d+.-]/g, "");
+
+        const splitNameForSurnameSort = (value) => {
+          const name = String(value || "").trim();
+          const sentinel = "\uffff";
+          if (!name) {
+            return { surname: sentinel, given: sentinel, full: sentinel, surnameRaw: "" };
+          }
+
+          const commaIndex = name.indexOf(",");
+          if (commaIndex !== -1) {
+            const surnameRaw = name.slice(0, commaIndex).trim();
+            const givenRaw = name.slice(commaIndex + 1).trim();
+            return {
+              surname: surnameRaw || sentinel,
+              given: givenRaw || sentinel,
+              full: name,
+              surnameRaw
+            };
+          }
+
+          const parts = name.split(/\s+/).filter(Boolean);
+          if (parts.length <= 1) {
+            const surnameRaw = parts[0] || "";
+            return { surname: surnameRaw || sentinel, given: sentinel, full: name, surnameRaw };
+          }
+
+          const surnameRaw = parts[parts.length - 1] || "";
+          const givenRaw = parts.slice(0, -1).join(" ").trim();
+          return {
+            surname: surnameRaw || sentinel,
+            given: givenRaw || sentinel,
+            full: name,
+            surnameRaw
+          };
+        };
+
+        const compareNamesBySurname = (leftName, rightName) => {
+          const left = splitNameForSurnameSort(leftName);
+          const right = splitNameForSurnameSort(rightName);
+
+          const surnameCompare = String(left.surname).localeCompare(String(right.surname), undefined, { sensitivity: "base" });
+          if (surnameCompare) return surnameCompare;
+
+          const givenCompare = String(left.given).localeCompare(String(right.given), undefined, { sensitivity: "base" });
+          if (givenCompare) return givenCompare;
+
+          return String(left.full).localeCompare(String(right.full), undefined, { sensitivity: "base" });
+        };
+
+        const compareCustomersBySurname = (left, right) => {
+          const comparison = compareNamesBySurname(left?.name, right?.name);
+          if (comparison) return comparison;
+          return String(left?.id || "").localeCompare(String(right?.id || ""));
+        };
+
+        const formatNameSurnameFirst = (value) => {
+          const raw = String(value || "").trim();
+          if (!raw) return "";
+          const parsed = splitNameForSurnameSort(raw);
+          const sentinel = "\uffff";
+          if (!parsed || parsed.full === sentinel) return raw;
+          if (!parsed.given || parsed.given === sentinel) return raw;
+          if (String(parsed.surnameRaw || parsed.surname || "").trim().toLowerCase() === "customer") return raw;
+          return `${parsed.surnameRaw || parsed.surname}, ${parsed.given}`;
+        };
+
+        const formatCustomerLine = (customer, sportsById) => {
+          const sport = sportsById[customer.sportId];
+          const sportName = sport?.name ? ` \u00B7 ${sport.name}` : "";
+          const displayName = formatNameSurnameFirst(customer.name) || customer.name || "Unnamed";
+          return `${displayName}${sportName}`;
+        };
+
+        const renderCustomerCard = (customer, sportsById) => {
+          const sport = sportsById[customer.sportId];
+          const sportName = sport?.name || "";
+          const cell = (customer.cell || "").trim();
+          const email = (customer.email || "").trim();
+          const note = (customer.note || "").trim();
+          const isSelected = selectedCustomerIds.has(customer.id);
+          const samplePillMarkup = customer.isSample ? `<span class="sample-pill">Sample</span>` : "";
+          const displayName = formatNameSurnameFirst(customer.name) || customer.name || "Unnamed";
+
+          const smsNumber = cell ? sanitizePhoneForSms(cell) : "";
+          const metaLines = [
+            sportName ? `<div class="customer-sport-row"><span class="customer-sport-name">${escapeHtml(sportName)}</span></div>` : "",
+            `<a class="customer-contact customer-contact-link" href="./customer-profile.html?id=${encodeURIComponent(customer.id)}">Profile</a>`,
+            smsNumber ? `<a class="customer-contact customer-contact-link" href="sms:${escapeHtml(smsNumber)}">Text: ${escapeHtml(cell)}</a>` : "",
+            email ? `<a class="customer-contact customer-contact-link" href="mailto:${escapeHtml(email)}">Email: ${escapeHtml(email)}</a>` : ""
+          ].filter(Boolean).join("");
+
+          return `
+            <article class="customer-card">
+              <div class="customer-card-top">
+                <div class="customer-card-title-row">
+                  <label class="customer-select-toggle" aria-label="Select ${escapeHtml(displayName || "customer")}">
+                    <input
+                      class="customer-select-checkbox"
+                      type="checkbox"
+                      data-customer-select-id="${escapeHtml(customer.id)}"
+                      ${isSelected ? "checked" : ""}
+                    >
+                  </label>
+                  <strong class="customer-name">${escapeHtml(displayName)}</strong>
+                  ${samplePillMarkup}
+                </div>
+              </div>
+              ${metaLines ? `<div class="customer-contact-list">${metaLines}</div>` : ""}
+              ${note ? `<p class="customer-note">${escapeHtml(note)}</p>` : ""}
+            </article>
+          `;
+        };
+
+        const getCustomerAlphaKey = (customer) => {
+          const surname = splitNameForSurnameSort(customer?.name).surnameRaw;
+          const firstChar = String(surname || "").trim().charAt(0).toUpperCase();
+          return /^[A-Z]$/.test(firstChar) ? firstChar : "#";
+        };
+
+        const renderCustomerDirectory = (customers, sportsById) => {
+          const groups = customers.reduce((acc, customer) => {
+            const key = getCustomerAlphaKey(customer);
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(customer);
+            return acc;
+          }, {});
+
+          const keys = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+          if (keys.includes("#")) {
+            const withoutHash = keys.filter((key) => key !== "#");
+            withoutHash.push("#");
+            return withoutHash.map((key) => `
+              <section class="customer-alpha-group" data-alpha-letter="${escapeHtml(key)}">
+                <div class="customer-alpha-heading">${escapeHtml(key)}</div>
+                <div class="customer-alpha-items">
+                  ${groups[key].map((customer) => renderCustomerCard(customer, sportsById)).join("")}
+                </div>
+              </section>
+            `).join("");
+          }
+
+          return keys.map((key) => `
+            <section class="customer-alpha-group" data-alpha-letter="${escapeHtml(key)}">
+              <div class="customer-alpha-heading">${escapeHtml(key)}</div>
+              <div class="customer-alpha-items">
+                ${groups[key].map((customer) => renderCustomerCard(customer, sportsById)).join("")}
+              </div>
+            </section>
+          `).join("");
+        };
+
+        const updateBulkActionsUI = () => {
+          if (!selectAllEl || !deleteSelectedBtn) return;
+          const shownIds = lastFilteredCustomers.map((customer) => customer.id);
+          const selectedShownCount = shownIds.reduce((count, id) => count + (selectedCustomerIds.has(id) ? 1 : 0), 0);
+          const hasShown = shownIds.length > 0;
+          const allShownSelected = hasShown && selectedShownCount === shownIds.length;
+          const anyShownSelected = selectedShownCount > 0;
+
+          selectAllEl.checked = allShownSelected;
+          selectAllEl.indeterminate = anyShownSelected && !allShownSelected;
+
+          deleteSelectedBtn.disabled = selectedCustomerIds.size === 0;
+          deleteSelectedBtn.textContent = selectedCustomerIds.size ? `Delete (${selectedCustomerIds.size})` : "Delete";
+        };
+
+        const deleteSelectedCustomers = () => {
+          if (!selectedCustomerIds.size) return;
+
+          const customers = readCustomers();
+          const selectedIds = new Set(Array.from(selectedCustomerIds));
+          const names = customers
+            .filter((customer) => selectedIds.has(customer.id))
+            .map((customer) => customer.name || "Unnamed")
+            .slice(0, 8);
+          const extraCount = Math.max(0, selectedCustomerIds.size - names.length);
+          const previewLine = names.length ? `\n\n${names.join("\n")}${extraCount ? `\n… +${extraCount} more` : ""}` : "";
+          const ok = window.confirm(`Delete ${selectedCustomerIds.size} customer${selectedCustomerIds.size === 1 ? "" : "s"}?\n\nThis also removes their appointments.${previewLine}`);
+          if (!ok) return;
+
+          const nextCustomers = customers.filter((customer) => !selectedIds.has(customer.id));
+          const appointments = readAppointments();
+          const nextAppointments = appointments.filter((appointment) => !(
+            appointment
+            && appointment.entryType !== "task"
+            && selectedIds.has(appointment.entryId || appointment.customerId || "")
+          ));
+
+          const wroteCustomers = writeJson(STORAGE_KEYS.customers, nextCustomers);
+          const wroteAppointments = writeJson(STORAGE_KEYS.appointments, nextAppointments);
+          if (!wroteCustomers || !wroteAppointments) return;
+
+          try {
+            const selectedCustomerId = window.localStorage.getItem(STORAGE_KEYS.selectedCustomerId) || "";
+            if (selectedIds.has(selectedCustomerId)) {
+              window.localStorage.setItem(STORAGE_KEYS.selectedCustomerId, "");
+            }
+          } catch {}
+
+          selectedCustomerIds.clear();
+          render();
+        };
+
+        const render = () => {
+          if (!listEl || !countEl) return;
+          const sportsById = readSports();
+          const customers = readCustomers();
+          const query = (searchEl?.value || "").trim().toLowerCase();
+
+          const filtered = query
+            ? customers.filter((customer) => formatCustomerLine(customer, sportsById).toLowerCase().includes(query))
+            : customers.slice();
+
+          filtered.sort(compareCustomersBySurname);
+
+          lastFilteredCustomers = filtered.slice();
+          countEl.textContent = String(filtered.length);
+
+          if (!filtered.length) {
+            listEl.innerHTML = `<div class="appointment-empty">No customers found.</div>`;
+            updateBulkActionsUI();
+            return;
+          }
+
+          listEl.innerHTML = renderCustomerDirectory(filtered, sportsById);
+
+          Array.from(listEl.querySelectorAll("[data-customer-select-id]")).forEach((input) => {
+            input.addEventListener("change", (event) => {
+              const id = event.target?.getAttribute?.("data-customer-select-id") || "";
+              if (!id) return;
+              if (event.target.checked) {
+                selectedCustomerIds.add(id);
+              } else {
+                selectedCustomerIds.delete(id);
+              }
+              updateBulkActionsUI();
+            });
+          });
+
+          updateBulkActionsUI();
+        };
+
+        searchEl?.addEventListener("input", render);
+        selectAllEl?.addEventListener("change", () => {
+          if (!selectAllEl) return;
+          if (selectAllEl.checked) {
+            lastFilteredCustomers.forEach((customer) => selectedCustomerIds.add(customer.id));
+          } else {
+            lastFilteredCustomers.forEach((customer) => selectedCustomerIds.delete(customer.id));
+          }
+          render();
+        });
+        deleteSelectedBtn?.addEventListener("click", deleteSelectedCustomers);
+        addCustomerBtn?.addEventListener("click", openCreateDrawer);
+        closeCreateDrawerBtn?.addEventListener("click", closeCreateDrawer);
+        cancelCreateBtn?.addEventListener("click", closeCreateDrawer);
+        drawerOverlay?.addEventListener("click", closeCreateDrawer);
+        window.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && createDrawer?.classList.contains("is-open")) {
+            closeCreateDrawer();
+          }
+        });
+
+        createFormEl?.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const surname = String(createSurnameEl?.value || "").trim();
+          const firstName = String(createFirstNameEl?.value || "").trim();
+          const cell = String(createCellEl?.value || "").trim();
+          const email = String(createEmailEl?.value || "").trim();
+          const sportId = String(createSportEl?.value || "").trim();
+          const note = String(createNoteEl?.value || "").trim();
+
+          if (!surname) {
+            createSurnameEl?.focus?.();
+            return;
+          }
+
+          const name = firstName ? `${surname}, ${firstName}` : surname;
+          const customers = readCustomers();
+          const nextCustomer = {
+            id: createId("customer"),
+            name,
+            sportId,
+            cell,
+            email,
+            note
+          };
+
+          customers.unshift(nextCustomer);
+          const wrote = writeJson(STORAGE_KEYS.customers, customers);
+          if (!wrote) return;
+
+          try {
+            window.localStorage.setItem(STORAGE_KEYS.selectedCustomerId, nextCustomer.id);
+          } catch {}
+
+          closeCreateDrawer();
+          render();
+        });
+        render();
+      })();
+    </script>
+  </body>
+</html>

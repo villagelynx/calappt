@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works &middot; CalAppt</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260429-3">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+          <div class="topbar-headline">
+            <img class="topbar-logo" src="./apple-touch-icon.png?v=20260428-1" alt="CalAppt" width="54" height="54" decoding="async">
+            <h1>How It Works</h1>
+          </div>
+          <p class="lede">Quick instructions for scheduling, customers, and backups.</p>
+        </div>
+        <div class="week-toolbar">
+          <a class="ghost-button" href="./index.html">Back to Calendar</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Scheduling</p>
+              <h2>Basics</h2>
+            </div>
+          </div>
+          <ul class="appointment-empty">
+            <li>Tap a time slot to schedule.</li>
+            <li>Tap an appointment to edit or delete it.</li>
+            <li>Use <strong>Court / Location</strong> for reminders and exports.</li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Navigation</p>
+              <h2>Day, Week, Agenda</h2>
+            </div>
+          </div>
+          <ul class="appointment-empty">
+            <li><strong>Day</strong>: Swipe left/right (iPhone Safari) or use Previous Day / Next Day.</li>
+            <li><strong>Week</strong>: Tap Week. Use Previous Week / Next Week.</li>
+            <li><strong>Agenda</strong>: Tap Agenda to see the week in time order.</li>
+            <li><strong>Today</strong>: Jumps back to the current day/week.</li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Customers</p>
+              <h2>Profiles</h2>
+            </div>
+          </div>
+          <ul class="appointment-empty">
+            <li><strong>Customers</strong> drawer: add/edit customer name, cell, email, and notes.</li>
+            <li><strong>Customer List</strong> page: open <strong>Profile</strong> to see lesson history.</li>
+            <li><strong>Customer List</strong> page: use <strong>Text</strong> / <strong>Email</strong> links to open your device’s Messages/Mail app (you still tap Send). Add a cell/email first to see these.</li>
+            <li><strong>Import contacts</strong>: Open <strong>Menu → Import contacts</strong> to bring in a <code>.vcf</code> (vCard) or Google Contacts <code>.csv</code> file.</li>
+            <li>Inside an appointment, use <strong>Text confirmation</strong> to message the student (opens your Messages app).</li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Backups</p>
+              <h2>Admin</h2>
+            </div>
+          </div>
+          <ul class="appointment-empty">
+            <li><strong>Menu</strong>: Export / Import backups, export Google (.ics).</li>
+            <li><strong>Admin</strong>: autosave history (versions), restore older versions, clear autosaves.</li>
+            <li><strong>Autosave backups</strong>: After you make changes (add/edit/delete), CalAppt saves a version automatically on this device.</li>
+            <li><strong>Versions kept</strong>: The most recent 12 autosave versions are kept (older ones drop off).</li>
+            <li><strong>Restore</strong>: Open <strong>Menu → Admin</strong>, then tap <strong>Restore</strong> on a version.</li>
+            <li><strong>Export Backup</strong>: Use this when switching devices or before clearing data (it downloads a file you can keep).</li>
+            <li><strong>Merge Backup</strong>: Use this to bring customers + appointments onto another device without deleting what’s already there (imported backup wins on conflicts).</li>
+            <li><a class="customer-contact-link" href="./merge-help.html" target="_blank" rel="noopener noreferrer">Merge help (step-by-step)</a></li>
+            <li><strong>Turn off</strong>: You can disable autosave in <strong>Admin</strong>.</li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Weather</p>
+              <h2>Settings</h2>
+            </div>
+          </div>
+          <p class="appointment-empty">Set your city as <code>City, ST/Prov</code> (example: <code>Vancouver, BC</code>).</p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

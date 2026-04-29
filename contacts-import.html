@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Contacts &middot; CalAppt</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260429-3">
+  </head>
+  <body class="page-contacts-import">
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+          <h1>Import Contacts</h1>
+          <p class="lede">Import customers from a vCard (.vcf) or a Google Contacts CSV (.csv).</p>
+        </div>
+        <div class="week-toolbar">
+          <a class="ghost-button" href="./index.html">Back to Calendar</a>
+          <a class="ghost-button" href="./customers.html">Customer List</a>
+          <a class="secondary-button" href="./import-export-help.html" target="_blank" rel="noopener noreferrer">Help</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Step 1</p>
+              <h2>Choose Your File</h2>
+            </div>
+          </div>
+
+          <div class="customer-form">
+            <label class="field">
+              <span>Contact file (.vcf / .csv)</span>
+              <input id="contactsFileInput" type="file" accept=".vcf,.csv,.txt,text/plain,text/vcard,text/x-vcard,text/csv" multiple>
+            </label>
+
+            <div class="appointment-empty">
+              <strong>iPhone (Safari):</strong> You can import a single contact by opening it in Contacts → <strong>Share Contact</strong> → <strong>Save to Files</strong>, then choose that .vcf here. For many contacts, export a vCard from iCloud/Google, save it to Files, then import it here.
+            </div>
+
+            <div class="drawer-grid" role="group" aria-label="Import mode">
+              <label class="field">
+                <span>Import mode</span>
+                <select id="importModeSelect">
+                  <option value="add" selected>Add new only (recommended)</option>
+                  <option value="merge">Merge (fill missing cell/email)</option>
+                  <option value="replace">Replace all customers</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Status</span>
+                <div id="importStatus" class="appointment-empty">Choose a .vcf or .csv to preview.</div>
+              </label>
+            </div>
+
+            <div class="drawer-actions">
+              <a class="ghost-button" href="./index.html">Cancel</a>
+              <button id="applyImportBtn" class="primary-button" type="button" disabled>Import Contacts</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel customer-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Step 2</p>
+              <h2>Preview</h2>
+            </div>
+            <div id="previewCountChip" class="panel-chip">0</div>
+          </div>
+          <div id="previewList" class="customer-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        const STORAGE_KEYS = {
+          customers: "coach_appointment_calendar_customers"
+        };
+
+        const fileInput = document.getElementById("contactsFileInput");
+        const importModeSelect = document.getElementById("importModeSelect");
+        const statusEl = document.getElementById("importStatus");
+        const applyBtn = document.getElementById("applyImportBtn");
+        const previewListEl = document.getElementById("previewList");
+        const previewCountChip = document.getElementById("previewCountChip");
+
+        let importedContacts = [];
+        let parsedFilename = "";
+
+        const escapeHtml = (value) => String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+
+        const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
+        const normalizeName = (value) => String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+        const normalizePhoneDigits = (value) => String(value || "").replace(/\D+/g, "");
+
+        const createId = (prefix) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+        const safeLocalStorageSet = (key, value) => {
+          try {
+            window.localStorage.setItem(key, value);
+            return true;
+          } catch {
+            window.alert("Storage is full or unavailable on this device. Export a backup and clear old data if needed.");
+            return false;
+          }
+        };
+
+        const readCustomers = () => {
+          try {
+            const raw = window.localStorage.getItem(STORAGE_KEYS.customers);
+            const parsed = raw ? JSON.parse(raw) : [];
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        };
+
+        const writeCustomers = (customers) => safeLocalStorageSet(STORAGE_KEYS.customers, JSON.stringify(customers || []));
+
+        const pickBestTel = (tels) => {
+          if (!Array.isArray(tels) || !tels.length) return "";
+          const scored = tels.map((tel) => {
+            const label = String(tel.label || "").toUpperCase();
+            const isCell = label.includes("CELL") || label.includes("MOBILE") || label.includes("IPHONE");
+            return { value: String(tel.value || "").trim(), score: isCell ? 2 : 1 };
+          }).filter((item) => item.value);
+          scored.sort((a, b) => b.score - a.score);
+          return scored[0]?.value || "";
+        };
+
+        const unfoldVcardLines = (text) => {
+          const rawLines = String(text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+          const lines = [];
+          for (const line of rawLines) {
+            if (!line) continue;
+            if (line.startsWith(" ") || line.startsWith("\t")) {
+              if (lines.length) {
+                lines[lines.length - 1] += line.slice(1);
+              }
+              continue;
+            }
+            lines.push(line);
+          }
+          return lines;
+        };
+
+        const parseVcard = (text) => {
+          const lines = unfoldVcardLines(text);
+          const contacts = [];
+          let current = null;
+
+          const pushCurrent = () => {
+            if (!current) return;
+            const name = (current.fn || current.n || "").trim();
+            const cell = pickBestTel(current.tels);
+            const email = String(current.email || "").trim();
+            const note = String(current.note || "").trim();
+            if (!name) return;
+            contacts.push({ name, cell, email, note });
+          };
+
+          for (const rawLine of lines) {
+            const line = String(rawLine || "").trim();
+            if (!line) continue;
+
+            if (line.toUpperCase() === "BEGIN:VCARD") {
+              current = { fn: "", n: "", email: "", note: "", tels: [] };
+              continue;
+            }
+
+            if (line.toUpperCase() === "END:VCARD") {
+              pushCurrent();
+              current = null;
+              continue;
+            }
+
+            if (!current) continue;
+
+            const [left, ...rest] = line.split(":");
+            if (!left || !rest.length) continue;
+            const value = rest.join(":").trim();
+            const upperLeft = left.toUpperCase();
+
+            if (upperLeft === "FN") {
+              current.fn = value;
+              continue;
+            }
+
+            if (upperLeft === "N" && !current.fn) {
+              const parts = value.split(";");
+              const last = (parts[0] || "").trim();
+              const first = (parts[1] || "").trim();
+              current.n = [first, last].filter(Boolean).join(" ").trim();
+              continue;
+            }
+
+            if (upperLeft.startsWith("TEL")) {
+              current.tels.push({ label: left, value });
+              continue;
+            }
+
+            if (upperLeft.startsWith("EMAIL") && !current.email) {
+              current.email = value;
+              continue;
+            }
+
+            if (upperLeft.startsWith("NOTE") && !current.note) {
+              current.note = value;
+            }
+          }
+
+          return contacts;
+        };
+
+        const parseCsvLine = (line) => {
+          const cells = [];
+          let current = "";
+          let inQuotes = false;
+
+          for (let index = 0; index < line.length; index += 1) {
+            const ch = line[index];
+            if (ch === "\"") {
+              const next = line[index + 1];
+              if (inQuotes && next === "\"") {
+                current += "\"";
+                index += 1;
+                continue;
+              }
+              inQuotes = !inQuotes;
+              continue;
+            }
+            if (ch === "," && !inQuotes) {
+              cells.push(current);
+              current = "";
+              continue;
+            }
+            current += ch;
+          }
+          cells.push(current);
+          return cells.map((cell) => String(cell || "").trim());
+        };
+
+        const parseCsv = (text) => {
+          const raw = String(text || "").replace(/^\uFEFF/, "");
+          const lines = raw.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n").filter((line) => line.trim().length);
+          if (!lines.length) return [];
+
+          const headers = parseCsvLine(lines[0]).map((h) => h.toLowerCase());
+          const indexOf = (name) => headers.indexOf(name.toLowerCase());
+          const findIndex = (predicate) => headers.findIndex((header) => predicate(String(header || "")));
+
+          const nameIndex = indexOf("name");
+          const givenIndex = indexOf("given name");
+          const firstIndex = indexOf("first name");
+          const familyIndex = indexOf("family name");
+          const lastIndex = indexOf("last name");
+          const phoneIndex = findIndex((header) => /^phone \d+ - value$/.test(header));
+          const emailIndex = findIndex((header) => /^(e-mail|email) \d+ - value$/.test(header));
+          const noteIndex = indexOf("notes");
+
+          const contacts = [];
+          for (let row = 1; row < lines.length; row += 1) {
+            const cells = parseCsvLine(lines[row]);
+            const valueAt = (idx) => (idx >= 0 ? String(cells[idx] || "").trim() : "");
+            const name = valueAt(nameIndex)
+              || [valueAt(givenIndex) || valueAt(firstIndex), valueAt(familyIndex) || valueAt(lastIndex)].filter(Boolean).join(" ").trim();
+            if (!name) continue;
+            const cell = valueAt(mobileIndex) || valueAt(phoneIndex);
+            const email = valueAt(emailIndex);
+            const note = valueAt(noteIndex);
+            contacts.push({ name, cell, email, note });
+          }
+          return contacts;
+        };
+
+        const parseContacts = (filename, text) => {
+          const hint = String(filename || "").toLowerCase();
+          const body = String(text || "");
+          if (hint.endsWith(".vcf") || body.toUpperCase().includes("BEGIN:VCARD")) return parseVcard(body);
+          return parseCsv(body);
+        };
+
+        const getUniqueKey = (contact) => {
+          const email = normalizeEmail(contact.email);
+          if (email) return `e:${email}`;
+          const digits = normalizePhoneDigits(contact.cell);
+          if (digits.length >= 7) return `p:${digits}`;
+          return `n:${normalizeName(contact.name)}`;
+        };
+
+        const computePreview = () => {
+          const existing = readCustomers();
+          const existingEmailMap = new Map();
+          const existingPhoneMap = new Map();
+          const existingNameMap = new Map();
+
+          existing.forEach((customer) => {
+            const email = normalizeEmail(customer.email);
+            if (email && !existingEmailMap.has(email)) existingEmailMap.set(email, customer);
+            const digits = normalizePhoneDigits(customer.cell);
+            if (digits && !existingPhoneMap.has(digits)) existingPhoneMap.set(digits, customer);
+            const name = normalizeName(customer.name);
+            if (name) {
+              const list = existingNameMap.get(name) || [];
+              list.push(customer);
+              existingNameMap.set(name, list);
+            }
+          });
+
+          const seen = new Set();
+          let newCount = 0;
+          let matchCount = 0;
+          const previewItems = [];
+
+          importedContacts.forEach((contact) => {
+            const key = getUniqueKey(contact);
+            if (seen.has(key)) return;
+            seen.add(key);
+
+            const email = normalizeEmail(contact.email);
+            const digits = normalizePhoneDigits(contact.cell);
+            const nameKey = normalizeName(contact.name);
+
+            let match = null;
+            if (email && existingEmailMap.has(email)) {
+              match = existingEmailMap.get(email);
+            } else if (digits && existingPhoneMap.has(digits)) {
+              match = existingPhoneMap.get(digits);
+            } else if (nameKey && (existingNameMap.get(nameKey) || []).length === 1) {
+              match = existingNameMap.get(nameKey)[0];
+            }
+
+            if (match) {
+              matchCount += 1;
+              previewItems.push({ ...contact, status: "Match", matchName: match.name });
+            } else {
+              newCount += 1;
+              previewItems.push({ ...contact, status: "New" });
+            }
+          });
+
+          return { previewItems, newCount, matchCount, totalUnique: previewItems.length };
+        };
+
+        const renderPreview = () => {
+          const { previewItems, newCount, matchCount, totalUnique } = computePreview();
+          previewCountChip.textContent = String(totalUnique);
+
+          if (!totalUnique) {
+            previewListEl.innerHTML = `<div class="appointment-empty">No contacts parsed yet.</div>`;
+            return;
+          }
+
+          previewListEl.innerHTML = previewItems.slice(0, 80).map((item) => {
+            const detailBits = [];
+            if (item.cell) detailBits.push(item.cell);
+            if (item.email) detailBits.push(item.email);
+            const detail = detailBits.join(" \u00B7 ");
+            const note = item.note || "";
+
+            return `
+              <article class="customer-card">
+                <div class="customer-card-top">
+                  <strong class="customer-name">${escapeHtml(item.name)}</strong>
+                  <span class="customer-select-pill">${escapeHtml(item.status)}</span>
+                </div>
+                ${detail ? `<p class="customer-note">${escapeHtml(detail)}</p>` : `<p class="customer-note">No phone/email found</p>`}
+                ${note ? `<p class="customer-note">${escapeHtml(note)}</p>` : ""}
+              </article>
+            `;
+          }).join("");
+
+          const extra = totalUnique > 80 ? ` Showing first 80.` : "";
+          statusEl.textContent = `${parsedFilename}: ${totalUnique} contact${totalUnique === 1 ? "" : "s"} (${newCount} new, ${matchCount} match).${extra}`;
+        };
+
+        const applyImport = () => {
+          if (!importedContacts.length) return;
+          const mode = importModeSelect.value || "add";
+
+          if (mode === "replace") {
+            const ok = window.confirm("Replace ALL customers with the imported contacts? (Tip: Export Backup first.)");
+            if (!ok) return;
+          }
+
+          const existing = readCustomers();
+
+          const emailMap = new Map();
+          const phoneMap = new Map();
+          const nameMap = new Map();
+          existing.forEach((customer) => {
+            const email = normalizeEmail(customer.email);
+            if (email && !emailMap.has(email)) emailMap.set(email, customer);
+            const digits = normalizePhoneDigits(customer.cell);
+            if (digits && !phoneMap.has(digits)) phoneMap.set(digits, customer);
+            const nameKey = normalizeName(customer.name);
+            if (nameKey) {
+              const list = nameMap.get(nameKey) || [];
+              list.push(customer);
+              nameMap.set(nameKey, list);
+            }
+          });
+
+          const seen = new Set();
+          let added = 0;
+          let updated = 0;
+          let skipped = 0;
+
+          const nextCustomers = mode === "replace" ? [] : existing.slice();
+
+          importedContacts.forEach((contact) => {
+            const key = getUniqueKey(contact);
+            if (seen.has(key)) {
+              skipped += 1;
+              return;
+            }
+            seen.add(key);
+
+            const name = String(contact.name || "").trim();
+            if (!name) {
+              skipped += 1;
+              return;
+            }
+
+            const email = normalizeEmail(contact.email);
+            const digits = normalizePhoneDigits(contact.cell);
+            const nameKey = normalizeName(name);
+
+            let match = null;
+            if (mode !== "replace") {
+              if (email && emailMap.has(email)) {
+                match = emailMap.get(email);
+              } else if (digits && phoneMap.has(digits)) {
+                match = phoneMap.get(digits);
+              } else if (nameKey && (nameMap.get(nameKey) || []).length === 1) {
+                match = nameMap.get(nameKey)[0];
+              }
+            }
+
+            if (match) {
+              if (mode === "add") {
+                skipped += 1;
+                return;
+              }
+
+              let changed = false;
+              if (!String(match.cell || "").trim() && String(contact.cell || "").trim()) {
+                match.cell = String(contact.cell || "").trim();
+                changed = true;
+              }
+              if (!String(match.email || "").trim() && String(contact.email || "").trim()) {
+                match.email = String(contact.email || "").trim();
+                changed = true;
+              }
+              if (!String(match.note || "").trim() && String(contact.note || "").trim()) {
+                match.note = String(contact.note || "").trim();
+                changed = true;
+              }
+              if (changed) updated += 1;
+              return;
+            }
+
+            const newCustomer = {
+              id: createId("customer"),
+              name,
+              sportId: "",
+              cell: String(contact.cell || "").trim(),
+              email: String(contact.email || "").trim(),
+              note: String(contact.note || "").trim()
+            };
+            nextCustomers.push(newCustomer);
+            added += 1;
+
+            if (email) emailMap.set(email, newCustomer);
+            if (digits) phoneMap.set(digits, newCustomer);
+            if (nameKey) {
+              const list = nameMap.get(nameKey) || [];
+              list.push(newCustomer);
+              nameMap.set(nameKey, list);
+            }
+          });
+
+          if (!writeCustomers(nextCustomers)) return;
+
+          statusEl.textContent = `Imported: ${added} added, ${updated} updated, ${skipped} skipped.`;
+          window.alert(`Import complete.\n\nAdded: ${added}\nUpdated: ${updated}\nSkipped: ${skipped}`);
+        };
+
+        const handleFile = async (file) => {
+          if (!file) return;
+          parsedFilename = file.name || "contacts";
+          statusEl.textContent = "Reading file…";
+          applyBtn.disabled = true;
+          previewListEl.innerHTML = `<div class="appointment-empty">Reading…</div>`;
+          previewCountChip.textContent = "0";
+
+          const text = typeof file.text === "function"
+            ? await file.text()
+            : await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(String(reader.result || ""));
+              reader.onerror = () => reject(new Error("Could not read file"));
+              reader.readAsText(file);
+            });
+          importedContacts = parseContacts(parsedFilename, text)
+            .map((c) => ({
+              name: String(c.name || "").trim(),
+              cell: String(c.cell || "").trim(),
+              email: String(c.email || "").trim(),
+              note: String(c.note || "").trim()
+            }))
+            .filter((c) => c.name);
+
+          renderPreview();
+          applyBtn.disabled = importedContacts.length === 0;
+          if (!importedContacts.length) {
+            statusEl.textContent = `No contacts found in ${parsedFilename}.`;
+          }
+        };
+
+        fileInput.addEventListener("change", async (event) => {
+          const files = Array.from(event.target.files || []).filter(Boolean);
+          if (!files.length) return;
+
+          if (files.length === 1) {
+            handleFile(files[0]);
+            return;
+          }
+
+          parsedFilename = `${files.length} files`;
+          statusEl.textContent = "Reading files...";
+          applyBtn.disabled = true;
+          previewListEl.innerHTML = `<div class="appointment-empty">Reading...</div>`;
+          previewCountChip.textContent = "0";
+
+          try {
+            const all = [];
+            for (const file of files) {
+              const text = typeof file.text === "function"
+                ? await file.text()
+                : await new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onload = () => resolve(String(reader.result || ""));
+                  reader.onerror = () => reject(new Error("Could not read file"));
+                  reader.readAsText(file);
+                });
+              all.push(...parseContacts(file.name || parsedFilename, text));
+            }
+
+            importedContacts = all
+              .map((c) => ({
+                name: String(c.name || "").trim(),
+                cell: String(c.cell || "").trim(),
+                email: String(c.email || "").trim(),
+                note: String(c.note || "").trim()
+              }))
+              .filter((c) => c.name);
+
+            renderPreview();
+            applyBtn.disabled = importedContacts.length === 0;
+            if (!importedContacts.length) {
+              statusEl.textContent = `No contacts found in ${parsedFilename}.`;
+            } else {
+              statusEl.textContent = `Parsed ${importedContacts.length} contacts from ${parsedFilename}.`;
+            }
+          } catch {
+            importedContacts = [];
+            renderPreview();
+            applyBtn.disabled = true;
+            statusEl.textContent = "Could not read that file.";
+            window.alert("Could not read that file. Try saving it to Files and re-selecting it.");
+          }
+        });
+
+        importModeSelect.addEventListener("change", () => {
+          if (!importedContacts.length) return;
+          renderPreview();
+        });
+
+        applyBtn.addEventListener("click", applyImport);
+      })();
+    </script>
+  </body>
+</html>

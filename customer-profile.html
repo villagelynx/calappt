@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Profile &middot; CalAppt</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260429-3">
+  </head>
+  <body class="page-customer-profile">
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+          <h1 id="profileTitle">Customer Profile</h1>
+          <p class="lede" id="profileSubtitle">Edit contact info, notes, and view lesson history.</p>
+        </div>
+        <div class="week-toolbar">
+          <a class="ghost-button" href="./customers.html">Back to Customers</a>
+          <a class="secondary-button" href="./index.html">Back to Calendar</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Customer</p>
+              <h2>Details</h2>
+            </div>
+          </div>
+
+          <form id="profileForm" class="customer-form">
+            <label class="field">
+              <span>Name</span>
+              <input id="profileName" type="text" required>
+            </label>
+
+            <div class="drawer-grid">
+              <label class="field">
+                <span>Cell</span>
+                <input id="profileCell" type="tel" placeholder="Example: 604-555-0123" autocomplete="tel">
+              </label>
+              <label class="field">
+                <span>Email</span>
+                <input id="profileEmail" type="email" placeholder="Example: student@example.com" autocomplete="email">
+              </label>
+            </div>
+
+            <label class="field field-wide">
+              <span>Notes</span>
+              <textarea id="profileNote" rows="4" placeholder="Goals, reminders, preferences"></textarea>
+            </label>
+
+            <div class="drawer-contact-actions" id="profileQuickActions" hidden>
+              <a id="profileTextLink" class="secondary-button" href="#" rel="noopener noreferrer">Text</a>
+              <a id="profileEmailLink" class="secondary-button" href="#" rel="noopener noreferrer">Email</a>
+            </div>
+
+            <div class="customer-form-actions">
+              <button id="profileDeleteBtn" class="ghost-button danger-button" type="button">Delete Customer</button>
+              <div class="customer-form-actions-right">
+                <button class="primary-button" type="submit">Save Profile</button>
+              </div>
+            </div>
+            <p id="profileStatus" class="appointment-empty" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">History</p>
+              <h2>Lessons</h2>
+            </div>
+          </div>
+          <div id="lessonHistory" class="agenda-board"></div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        const STORAGE_KEYS = {
+          customers: "coach_appointment_calendar_customers",
+          appointments: "coach_appointment_calendar_appointments"
+        };
+
+        const titleEl = document.getElementById("profileTitle");
+        const subtitleEl = document.getElementById("profileSubtitle");
+        const statusEl = document.getElementById("profileStatus");
+        const historyEl = document.getElementById("lessonHistory");
+
+        const formEl = document.getElementById("profileForm");
+        const nameEl = document.getElementById("profileName");
+        const cellEl = document.getElementById("profileCell");
+        const emailEl = document.getElementById("profileEmail");
+        const noteEl = document.getElementById("profileNote");
+        const deleteBtn = document.getElementById("profileDeleteBtn");
+
+        const quickActions = document.getElementById("profileQuickActions");
+        const textLink = document.getElementById("profileTextLink");
+        const emailLink = document.getElementById("profileEmailLink");
+
+        const escapeHtml = (value) => {
+          const str = String(value ?? "");
+          return str.replace(/[&<>"']/g, (char) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#39;"
+          }[char]));
+        };
+
+        const sanitizePhoneForSms = (value) => String(value || "").trim().replace(/[^\d+.-]/g, "");
+        const isIOSDevice = () => /iPad|iPhone|iPod/.test(navigator.userAgent || "");
+
+        const buildSmsHref = (phoneNumber, body) => {
+          const number = sanitizePhoneForSms(phoneNumber);
+          if (!number) return "sms:";
+          const message = String(body || "").trim();
+          if (!message) return `sms:${number}`;
+          const separator = isIOSDevice() ? "&" : "?";
+          return `sms:${number}${separator}body=${encodeURIComponent(message)}`;
+        };
+
+        const buildMailtoHref = (email, subject, body) => {
+          const address = String(email || "").trim();
+          if (!address) return "mailto:";
+          const params = [];
+          if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+          if (body) params.push(`body=${encodeURIComponent(body)}`);
+          return `mailto:${address}${params.length ? `?${params.join("&")}` : ""}`;
+        };
+
+        const readJson = (key, fallback) => {
+          try {
+            const raw = window.localStorage.getItem(key);
+            if (!raw) return fallback;
+            const parsed = JSON.parse(raw);
+            return parsed ?? fallback;
+          } catch {
+            return fallback;
+          }
+        };
+
+        const writeJson = (key, value) => {
+          try {
+            window.localStorage.setItem(key, JSON.stringify(value));
+          } catch {}
+        };
+
+        const parseDateKey = (value) => {
+          if (!value) return null;
+          const [year, month, day] = value.split("-").map(Number);
+          if (!year || !month || !day) return null;
+          return new Date(year, month - 1, day);
+        };
+
+        const formatWeekday = (date) => date.toLocaleDateString(undefined, { weekday: "short" });
+        const formatMonthDay = (date) => date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+
+        const formatMinutes = (minutes) => {
+          if (!Number.isFinite(minutes)) return "";
+          const hours24 = Math.floor(minutes / 60);
+          const mins = String(minutes % 60).padStart(2, "0");
+          const suffix = hours24 >= 12 ? "PM" : "AM";
+          const hours12 = hours24 % 12 || 12;
+          return `${hours12}:${mins} ${suffix}`;
+        };
+
+        const setStatus = (message) => {
+          if (!statusEl) return;
+          statusEl.textContent = message;
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const customerId = params.get("id") || "";
+
+        const customers = Array.isArray(readJson(STORAGE_KEYS.customers, [])) ? readJson(STORAGE_KEYS.customers, []) : [];
+        const customer = customers.find((entry) => entry && entry.id === customerId);
+
+        if (!customer) {
+          if (titleEl) titleEl.textContent = "Customer not found";
+          if (subtitleEl) subtitleEl.textContent = "Return to the customer list and pick a customer.";
+          if (formEl) formEl.hidden = true;
+          if (historyEl) historyEl.innerHTML = `<div class="appointment-empty">No customer selected.</div>`;
+          return;
+        }
+
+        const loadAppointments = () => {
+          const list = readJson(STORAGE_KEYS.appointments, []);
+          return Array.isArray(list) ? list : [];
+        };
+
+        const renderQuickActions = () => {
+          if (!quickActions || !textLink || !emailLink) return;
+          const cell = String(cellEl?.value || "").trim();
+          const email = String(emailEl?.value || "").trim();
+          const hasCell = Boolean(sanitizePhoneForSms(cell));
+          const hasEmail = Boolean(email);
+
+          if (hasCell) {
+            textLink.hidden = false;
+            textLink.href = buildSmsHref(cell, `Hi ${nameEl?.value || customer.name},`);
+          } else {
+            textLink.hidden = true;
+            textLink.href = "#";
+          }
+
+          if (hasEmail) {
+            emailLink.hidden = false;
+            emailLink.href = buildMailtoHref(email, "CalAppt", "");
+          } else {
+            emailLink.hidden = true;
+            emailLink.href = "#";
+          }
+
+          quickActions.hidden = !(hasCell || hasEmail);
+        };
+
+        const renderHistory = () => {
+          if (!historyEl) return;
+          const appointments = loadAppointments()
+            .filter((entry) => entry && entry.entryType === "customer" && entry.entryId === customerId)
+            .slice()
+            .sort((a, b) => {
+              const dateCompare = String(a.dateKey || "").localeCompare(String(b.dateKey || ""));
+              if (dateCompare !== 0) return dateCompare;
+              return Number(a.startMinutes || 0) - Number(b.startMinutes || 0);
+            });
+
+          if (!appointments.length) {
+            historyEl.innerHTML = `<div class="appointment-empty">No lessons scheduled for this customer yet.</div>`;
+            return;
+          }
+
+          const grouped = appointments.reduce((acc, appt) => {
+            const key = appt.dateKey || "unknown";
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(appt);
+            return acc;
+          }, {});
+
+          const dayKeys = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+
+          historyEl.innerHTML = dayKeys.map((dateKey) => {
+            const day = parseDateKey(dateKey);
+            const headerLabel = day ? `${formatWeekday(day)}, ${formatMonthDay(day)}` : dateKey;
+            const items = grouped[dateKey] || [];
+            return `
+              <section class="agenda-day">
+                <header class="agenda-day-head">
+                  <strong>${escapeHtml(headerLabel)}</strong>
+                  <span class="agenda-day-count">${items.length} item${items.length === 1 ? "" : "s"}</span>
+                </header>
+                <div class="agenda-list">
+                  ${items.map((appt) => {
+                    const timeLabel = `${formatMinutes(Number(appt.startMinutes))} - ${formatMinutes(Number(appt.endMinutes))}`;
+                    const court = String(appt.court || "").trim();
+                    const note = String(appt.note || "").trim();
+                    const detail = [court ? `Court: ${court}` : "", note].filter(Boolean).join(" \u00B7 ");
+                    return `
+                      <article class="agenda-item">
+                        <div class="agenda-time">${escapeHtml(timeLabel)}</div>
+                        <div class="agenda-main">
+                          <div class="agenda-title-row">
+                            <span class="agenda-dot" style="background:#49dcb1"></span>
+                            <strong class="agenda-title">${escapeHtml(customer.name)}</strong>
+                          </div>
+                          ${detail ? `<div class="agenda-note">${escapeHtml(detail)}</div>` : ""}
+                        </div>
+                      </article>
+                    `;
+                  }).join("")}
+                </div>
+              </section>
+            `;
+          }).join("");
+        };
+
+        if (titleEl) titleEl.textContent = customer.name || "Customer Profile";
+        if (subtitleEl) {
+          subtitleEl.textContent = customer.isSample
+            ? "Sample customer. Delete it anytime and add your real clients."
+            : "Edit contact info, notes, and view lesson history.";
+        }
+        if (nameEl) nameEl.value = customer.name || "";
+        if (cellEl) cellEl.value = customer.cell || "";
+        if (emailEl) emailEl.value = customer.email || "";
+        if (noteEl) noteEl.value = customer.note || "";
+
+        renderQuickActions();
+        renderHistory();
+        setStatus("Saved data is stored in your browser on this device.");
+
+        cellEl?.addEventListener("input", renderQuickActions);
+        emailEl?.addEventListener("input", renderQuickActions);
+        nameEl?.addEventListener("input", renderQuickActions);
+
+        formEl?.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const nextName = String(nameEl?.value || "").trim();
+          if (!nextName) return;
+          const nextCell = String(cellEl?.value || "").trim();
+          const nextEmail = String(emailEl?.value || "").trim();
+          const nextNote = String(noteEl?.value || "").trim();
+
+          const nextCustomers = customers.map((entry) => entry.id === customerId
+            ? { ...entry, name: nextName, cell: nextCell, email: nextEmail, note: nextNote }
+            : entry
+          );
+
+          writeJson(STORAGE_KEYS.customers, nextCustomers);
+          if (titleEl) titleEl.textContent = nextName;
+          setStatus(`Saved: ${nextName}`);
+          renderHistory();
+          renderQuickActions();
+        });
+
+        deleteBtn?.addEventListener("click", () => {
+          const shouldDelete = window.confirm(`Delete ${customer.name} and remove their appointments from the calendar?`);
+          if (!shouldDelete) return;
+          const nextCustomers = customers.filter((entry) => entry.id !== customerId);
+          const nextAppointments = loadAppointments().filter((entry) => !(entry && entry.entryType === "customer" && entry.entryId === customerId));
+          writeJson(STORAGE_KEYS.customers, nextCustomers);
+          writeJson(STORAGE_KEYS.appointments, nextAppointments);
+          window.location.href = "./customers.html";
+        });
+      })();
+    </script>
+  </body>
+</html>
