@@ -12,15 +12,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260430-27">
+    <link rel="stylesheet" href="./styles.css?v=20260430-30">
   </head>
   <body>
     <div class="page-shell">
       <header class="topbar">
-        <div class="topbar-copy">
+         <div class="topbar-copy">
            <div class="topbar-headline">
              <img class="topbar-logo" src="./apple-touch-icon.png" alt="CalAppt" width="54" height="54" decoding="async">
              <h1>CalAppt</h1>
+           </div>
+           <div class="topbar-mobile-datetime" aria-live="polite">
+             <strong id="mobileDayLabel" class="topbar-mobile-date">-</strong>
+             <span id="mobileCurrentTime" class="topbar-mobile-time" hidden></span>
            </div>
            <p class="lede topbar-tagline">Scheduling for professionals, client-first &middot; <a class="topbar-tagline-link" href="./why-calappt.html">Why CalAppt?</a></p>
          </div>
@@ -29,14 +33,23 @@
             <button id="todayDayBtn" class="primary-button" type="button">Today</button>
             <button id="nextWeekBtn" class="ghost-button desktop-week-button" type="button">Next Week</button>
             <button id="desktopMonthViewBtn" class="ghost-button desktop-week-button" type="button">Month</button>
-            <button id="agendaBtn" class="ghost-button" type="button">Agenda</button>
-            <a class="ghost-button nav-green-button" href="./customers.html">Customers</a>
-            <a class="ghost-button nav-green-button" href="./payments.html">Payments</a>
+            <button id="mobileWeekViewBtn" class="ghost-button mobile-day-control mobile-top-toggle" type="button" aria-selected="false">Week</button>
+            <button id="mobileMonthViewBtn" class="ghost-button mobile-day-control mobile-top-toggle" type="button" aria-selected="false">Month</button>
+            <button id="agendaBtn" class="ghost-button mobile-top-hide" type="button">Agenda</button>
+            <a class="ghost-button nav-turquoise-button mobile-top-hide" href="./customers.html">Customers</a>
+            <a class="ghost-button nav-green-button mobile-top-hide" href="./payments.html">Payments</a>
           </div>
         <button id="menuBtn" class="ghost-icon-button topbar-menu-button" type="button" aria-label="Menu">&#9776;</button>
       </header>
 
       <main class="workspace">
+        <section class="panel mobile-quick-nav" aria-label="Quick links">
+          <div class="mobile-quick-nav-row">
+            <button id="mobileAgendaBtn" class="ghost-button" type="button">Agenda</button>
+            <a class="ghost-button nav-turquoise-button" href="./customers.html">Customers</a>
+            <a class="ghost-button nav-green-button" href="./payments.html">Payments</a>
+          </div>
+        </section>
         <section id="desktopCustomerPanel" class="panel desktop-customer-panel" aria-label="Customers">
           <div class="desktop-customer-head">
             <div class="desktop-customer-actions">
@@ -50,25 +63,6 @@
         </section>
 
         <section class="panel calendar-panel">
-          <div id="mobileDayBar" class="mobile-day-bar" hidden>
-            <button id="mobilePrevDayBtn" class="ghost-button mobile-day-control" type="button">Previous Day</button>
-            <button id="mobileNextDayBtn" class="ghost-button mobile-day-control" type="button">Next Day</button>
-            <button id="mobileWeekViewBtn" class="mobile-view-pill mobile-day-control" type="button" aria-selected="false">Week</button>
-            <button id="mobileMonthViewBtn" class="mobile-view-pill mobile-month-pill mobile-day-control" type="button" aria-selected="false">Month</button>
-            <div class="mobile-day-summary">
-              <div class="mobile-day-toprow">
-                <div class="mobile-kicker-row">
-                  <span id="mobileViewKicker" class="week-kicker">Day View</span>
-                </div>
-              </div>
-              <div class="mobile-day-line">
-                <strong id="mobileDayLabel">Mon, Apr 13</strong>
-                <span id="mobileCurrentTime" class="mobile-current-time" hidden></span>
-              </div>
-              <span id="mobileDayHint" class="mobile-day-hint">Tap a time slot to schedule.</span>
-            </div>
-          </div>
-
           <div class="calendar-month-row" aria-label="Current month">
             <button id="monthPrevBtn" class="month-nav-button" type="button" aria-label="Previous month">&lt;</button>
             <p id="monthLabel" class="calendar-month-label" aria-live="polite"></p>
@@ -338,7 +332,7 @@
       </form>
     </aside>
 
-    <script src="./app.js?v=20260430-8"></script>
+    <script src="./app.js?v=20260430-9"></script>
   </body>
 </html>
 

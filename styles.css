@@ -167,6 +167,44 @@ h1, h2, h3 {
   color: rgba(239, 248, 239, 0.72);
 }
 
+.topbar-mobile-datetime {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+  text-align: center;
+  min-width: 0;
+}
+
+.topbar-mobile-date {
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(239, 248, 239, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.topbar-mobile-time {
+  color: rgba(239, 248, 239, 0.86);
+  font-size: 0.92rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.mobile-quick-nav {
+  display: none;
+}
+
+#mobileWeekViewBtn,
+#mobileMonthViewBtn {
+  display: none;
+}
+
 .lede {
   max-width: 720px;
   margin-top: 10px;
@@ -234,6 +272,16 @@ h1, h2, h3 {
 }
 
 .topbar .ghost-button.nav-green-button:hover {
+  filter: brightness(1.02);
+}
+
+.topbar .ghost-button.nav-turquoise-button {
+  background: linear-gradient(135deg, rgba(111, 234, 227, 0.92), rgba(204, 255, 252, 0.92));
+  border-color: rgba(111, 234, 227, 0.55);
+  color: #133253;
+}
+
+.topbar .ghost-button.nav-turquoise-button:hover {
   filter: brightness(1.02);
 }
 
@@ -2863,7 +2911,7 @@ a.weather-placeholder:hover {
 @media (max-width: 780px) {
   .schedule-header,
   .schedule-body {
-    grid-template-columns: 72px repeat(var(--day-count, 7), minmax(102px, 1fr));
+    grid-template-columns: 80px repeat(var(--day-count, 7), minmax(102px, 1fr));
   }
   .page-shell {
     width: min(1420px, calc(100% - 16px));
@@ -2882,8 +2930,104 @@ a.weather-placeholder:hover {
     padding: 20px;
   }
 
+  .topbar-copy {
+    padding-left: 58px;
+    text-align: center;
+  }
+
+  .topbar-headline {
+    justify-content: center;
+  }
+
+  .topbar-mobile-datetime {
+    display: flex;
+  }
+
   .topbar h1 {
     white-space: normal;
+  }
+
+  #mobileWeekViewBtn,
+  #mobileMonthViewBtn {
+    display: inline-flex;
+  }
+
+  .mobile-top-hide {
+    display: none !important;
+  }
+
+  .topbar .mobile-day-control.is-selected {
+    background: linear-gradient(135deg, var(--accent), #bfe7ff);
+    border-color: rgba(47, 121, 184, 0.24);
+    color: #133253;
+  }
+
+  .mobile-quick-nav {
+    display: block;
+    padding: 14px;
+    background:
+      linear-gradient(135deg, rgba(143, 212, 255, 0.12), transparent 36%),
+      rgba(11, 27, 51, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #eff8ef;
+  }
+
+  .mobile-quick-nav-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .mobile-quick-nav .ghost-button {
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    color: #eff8ef;
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .mobile-quick-nav .ghost-button.is-active {
+    background: linear-gradient(135deg, var(--accent), #bfe7ff);
+    border-color: rgba(47, 121, 184, 0.24);
+    color: #133253;
+  }
+
+  .mobile-quick-nav #mobileAgendaBtn {
+    background: linear-gradient(135deg, rgba(201, 148, 255, 0.92), rgba(233, 210, 255, 0.92));
+    border-color: rgba(201, 148, 255, 0.55);
+    color: #1b1233;
+  }
+
+  .mobile-quick-nav #mobileAgendaBtn:hover {
+    filter: brightness(1.02);
+  }
+
+  .mobile-quick-nav #mobileAgendaBtn.is-active {
+    background: linear-gradient(135deg, rgba(170, 96, 255, 0.94), rgba(224, 195, 255, 0.94));
+    border-color: rgba(170, 96, 255, 0.55);
+    color: #1b1233;
+  }
+
+  .mobile-quick-nav .nav-green-button {
+    background: linear-gradient(135deg, rgba(169, 242, 189, 0.92), rgba(221, 255, 231, 0.92));
+    border-color: rgba(169, 242, 189, 0.5);
+    color: #133253;
+  }
+
+  .mobile-quick-nav .nav-green-button:hover {
+    filter: brightness(1.02);
+  }
+
+  .mobile-quick-nav .nav-turquoise-button {
+    background: linear-gradient(135deg, rgba(111, 234, 227, 0.92), rgba(204, 255, 252, 0.92));
+    border-color: rgba(111, 234, 227, 0.55);
+    color: #133253;
+  }
+
+  .mobile-quick-nav .nav-turquoise-button:hover {
+    filter: brightness(1.02);
   }
 
   .week-toolbar {
@@ -2979,6 +3123,32 @@ a.weather-placeholder:hover {
     min-width: 100%;
   }
 
+  .weather-city {
+    min-height: 24px;
+    padding: 0 12px;
+    font-size: 0.76rem;
+  }
+
+  .weather-icon {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+  }
+
+  .weather-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .weather-temp,
+  .weather-range,
+  .weather-placeholder {
+    min-height: 24px;
+    padding: 0 10px;
+    font-size: 1.02rem;
+    border-radius: 10px;
+  }
+
   .calendar-scroll {
     overflow: visible;
   }
@@ -3000,9 +3170,9 @@ a.weather-placeholder:hover {
   body.is-mobile-week-view .weather-temp,
   body.is-mobile-week-view .weather-range,
   body.is-mobile-week-view .weather-placeholder {
-    font-size: 0.92rem;
-    min-height: 22px;
-    padding: 0 8px;
+    font-size: 0.96rem;
+    min-height: 24px;
+    padding: 0 10px;
   }
 
   .schedule-corner {
@@ -3010,7 +3180,12 @@ a.weather-placeholder:hover {
   }
 
   .time-label {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
+  }
+
+  .time-label.is-hour {
+    font-size: 1.02rem;
+    font-weight: 800;
   }
 
   .appointment-time {
@@ -3019,9 +3194,35 @@ a.weather-placeholder:hover {
     padding: 0 6px;
   }
 
+  .calendar-grid.is-mobile-day-view .timeline-appointment {
+    padding: 4px 7px;
+  }
+
+  .calendar-grid.is-mobile-day-view .appointment-sport-icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    border-radius: 8px;
+  }
+
+  .calendar-grid.is-mobile-day-view .appointment-sport-icon svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .calendar-grid.is-mobile-day-view .appointment-title {
+    font-size: 0.82rem;
+    line-height: 1.15;
+  }
+
+  .calendar-grid.is-mobile-day-view .appointment-note {
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+
   .calendar-grid.is-mobile-day-view .schedule-header,
   .calendar-grid.is-mobile-day-view .schedule-body {
-    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-columns: 80px minmax(0, 1fr);
   }
 
   body.is-mobile-week-view .schedule-day.is-today {

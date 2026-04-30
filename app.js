@@ -72,6 +72,7 @@
     desktopMonthViewBtn: document.getElementById("desktopMonthViewBtn"),
     manageBtn: document.getElementById("manageBtn"),
     agendaBtn: document.getElementById("agendaBtn"),
+    mobileAgendaBtn: document.getElementById("mobileAgendaBtn"),
     menuBtn: document.getElementById("menuBtn"),
     menuPrevWeekBtn: document.getElementById("menuPrevWeekBtn"),
     menuNextWeekBtn: document.getElementById("menuNextWeekBtn"),
@@ -278,6 +279,7 @@
     });
     elements.manageBtn?.addEventListener("click", openManageDrawer);
     elements.agendaBtn?.addEventListener("click", handleAgendaButtonClick);
+    elements.mobileAgendaBtn?.addEventListener("click", handleAgendaButtonClick);
     elements.closeManageDrawerBtn?.addEventListener("click", closeManageDrawer);
     elements.menuBtn?.addEventListener("click", openMenuDrawer);
     elements.closeMenuDrawerBtn?.addEventListener("click", closeMenuDrawer);
@@ -1055,25 +1057,17 @@
   }
 
   function renderMobileDayBar() {
-    if (!elements.mobileDayBar || !elements.mobileDayLabel || !elements.mobileDayHint) return;
-
-    if (!isMobileLayout()) {
-      elements.mobileDayBar.hidden = true;
-      return;
-    }
+    if (!elements.mobileDayLabel) return;
 
     const selectedDay = getSelectedMobileDay();
-    const activeSelection = getActiveScheduleSelection();
-    const activeSubject = activeSelection
-      ? getScheduleSubject(activeSelection.type, activeSelection.id, activeSelection.name, activeSelection.note)
-      : null;
-
-    elements.mobileDayBar.hidden = false;
-
     const weekEnd = addDays(visibleWeekStart, 6);
     const isAgendaMode = mobileViewMode === MOBILE_VIEW_MODES.agenda;
     const isWeekMode = mobileViewMode === MOBILE_VIEW_MODES.week;
     const isMonthMode = mobileViewMode === MOBILE_VIEW_MODES.month;
+
+    elements.agendaBtn?.classList.toggle("is-active", isAgendaMode);
+    elements.mobileAgendaBtn?.classList.toggle("is-active", isAgendaMode);
+
     if (elements.mobileViewKicker) {
       elements.mobileViewKicker.textContent = isAgendaMode
         ? "Agenda"
@@ -1104,27 +1098,6 @@
     elements.mobileDayLabel.textContent = isWeekMode || isAgendaMode
       ? `${formatMonthDay(visibleWeekStart)} - ${formatMonthDay(weekEnd)}`
       : (isMonthMode ? formatMonthYear(visibleMonthStart) : `${formatWeekday(selectedDay)}, ${formatMonthDay(selectedDay)}`);
-    const defaultHint = "Swipe left/right to change days. Tap a time slot to add an event (or select a customer to schedule a session).";
-    if (isAgendaMode) {
-      elements.mobileDayHint.textContent = "All appointments this week (sorted by day and start time).";
-      return;
-    }
-
-    if (isMonthMode) {
-      elements.mobileDayHint.textContent = "Tap a day to open it. Use Previous/Next Month to navigate.";
-      return;
-    }
-
-    if (isWeekMode) {
-      elements.mobileDayHint.textContent = activeSubject
-        ? `Selected: ${activeSubject.name}. Scroll sideways to see more days, then tap a slot.`
-        : "Scroll sideways to see more days, then tap a slot to add an event (or select a customer to schedule a session).";
-      return;
-    }
-
-    elements.mobileDayHint.textContent = activeSubject
-      ? `Selected: ${activeSubject.name}. Tap any half-hour slot below. Swipe left/right to change days.`
-      : defaultHint;
   }
 
   function renderScheduleHeader(day) {
