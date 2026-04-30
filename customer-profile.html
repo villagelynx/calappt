@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Profile &middot; CalAppt</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="CalAppt">
     <meta name="application-name" content="CalAppt">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260429-3">
+    <link rel="stylesheet" href="./styles.css?v=20260430-27">
   </head>
   <body class="page-customer-profile">
     <div class="page-shell">
@@ -37,17 +37,23 @@
           </div>
 
           <form id="profileForm" class="customer-form">
-            <label class="field">
-              <span>Name</span>
-              <input id="profileName" type="text" required>
-            </label>
+            <div class="drawer-grid">
+              <label class="field is-green">
+                <span>First name</span>
+                <input id="profileFirstName" type="text" placeholder="First name" autocomplete="given-name">
+              </label>
+              <label class="field is-green">
+                <span>Surname</span>
+                <input id="profileSurname" type="text" placeholder="Surname" autocomplete="family-name" required>
+              </label>
+            </div>
 
             <div class="drawer-grid">
-              <label class="field">
+              <label class="field is-green">
                 <span>Cell</span>
                 <input id="profileCell" type="tel" placeholder="Example: 604-555-0123" autocomplete="tel">
               </label>
-              <label class="field">
+              <label class="field is-green">
                 <span>Email</span>
                 <input id="profileEmail" type="email" placeholder="Example: student@example.com" autocomplete="email">
               </label>
@@ -98,7 +104,8 @@
         const historyEl = document.getElementById("lessonHistory");
 
         const formEl = document.getElementById("profileForm");
-        const nameEl = document.getElementById("profileName");
+        const firstNameEl = document.getElementById("profileFirstName");
+        const surnameEl = document.getElementById("profileSurname");
         const cellEl = document.getElementById("profileCell");
         const emailEl = document.getElementById("profileEmail");
         const noteEl = document.getElementById("profileNote");
@@ -200,6 +207,41 @@
           return Array.isArray(list) ? list : [];
         };
 
+        const splitNameParts = (value) => {
+          const name = String(value || "").trim();
+          if (!name) return { surname: "", given: "" };
+
+          const commaIndex = name.indexOf(",");
+          if (commaIndex !== -1) {
+            return {
+              surname: name.slice(0, commaIndex).trim(),
+              given: name.slice(commaIndex + 1).trim()
+            };
+          }
+
+          const parts = name.split(/\s+/).filter(Boolean);
+          if (parts.length <= 1) {
+            return { surname: parts[0] || "", given: "" };
+          }
+
+          return {
+            surname: parts[parts.length - 1] || "",
+            given: parts.slice(0, -1).join(" ").trim()
+          };
+        };
+
+        const buildStoredName = (surname, given) => {
+          const safeSurname = String(surname || "").trim();
+          const safeGiven = String(given || "").trim();
+          if (!safeSurname) return "";
+          return safeGiven ? `${safeSurname}, ${safeGiven}` : safeSurname;
+        };
+
+        const getActiveName = () => {
+          const next = buildStoredName(surnameEl?.value, firstNameEl?.value);
+          return next || String(customer.name || "").trim();
+        };
+
         const renderQuickActions = () => {
           if (!quickActions || !textLink || !emailLink) return;
           const cell = String(cellEl?.value || "").trim();
@@ -209,7 +251,11 @@
 
           if (hasCell) {
             textLink.hidden = false;
-            textLink.href = buildSmsHref(cell, `Hi ${nameEl?.value || customer.name},`);
+            const greetingName = String(firstNameEl?.value || "").trim()
+              || String(surnameEl?.value || "").trim()
+              || String(customer.name || "").trim()
+              || "there";
+            textLink.href = buildSmsHref(cell, `Hi ${greetingName},`);
           } else {
             textLink.hidden = true;
             textLink.href = "#";
@@ -273,7 +319,7 @@
                         <div class="agenda-main">
                           <div class="agenda-title-row">
                             <span class="agenda-dot" style="background:#49dcb1"></span>
-                            <strong class="agenda-title">${escapeHtml(customer.name)}</strong>
+                            <strong class="agenda-title">${escapeHtml(getActiveName())}</strong>
                           </div>
                           ${detail ? `<div class="agenda-note">${escapeHtml(detail)}</div>` : ""}
                         </div>
@@ -292,7 +338,9 @@
             ? "Sample customer. Delete it anytime and add your real clients."
             : "Edit contact info, notes, and view lesson history.";
         }
-        if (nameEl) nameEl.value = customer.name || "";
+        const parsedName = splitNameParts(customer.name);
+        if (firstNameEl) firstNameEl.value = parsedName.given || "";
+        if (surnameEl) surnameEl.value = parsedName.surname || "";
         if (cellEl) cellEl.value = customer.cell || "";
         if (emailEl) emailEl.value = customer.email || "";
         if (noteEl) noteEl.value = customer.note || "";
@@ -303,12 +351,18 @@
 
         cellEl?.addEventListener("input", renderQuickActions);
         emailEl?.addEventListener("input", renderQuickActions);
-        nameEl?.addEventListener("input", renderQuickActions);
+        firstNameEl?.addEventListener("input", renderQuickActions);
+        surnameEl?.addEventListener("input", renderQuickActions);
 
         formEl?.addEventListener("submit", (event) => {
           event.preventDefault();
-          const nextName = String(nameEl?.value || "").trim();
-          if (!nextName) return;
+          const nextFirstName = String(firstNameEl?.value || "").trim();
+          const nextSurname = String(surnameEl?.value || "").trim();
+          if (!nextSurname) {
+            surnameEl?.focus?.();
+            return;
+          }
+          const nextName = buildStoredName(nextSurname, nextFirstName);
           const nextCell = String(cellEl?.value || "").trim();
           const nextEmail = String(emailEl?.value || "").trim();
           const nextNote = String(noteEl?.value || "").trim();
@@ -326,7 +380,7 @@
         });
 
         deleteBtn?.addEventListener("click", () => {
-          const shouldDelete = window.confirm(`Delete ${customer.name} and remove their appointments from the calendar?`);
+          const shouldDelete = window.confirm(`Delete ${getActiveName()} and remove their appointments from the calendar?`);
           if (!shouldDelete) return;
           const nextCustomers = customers.filter((entry) => entry.id !== customerId);
           const nextAppointments = loadAppointments().filter((entry) => !(entry && entry.entryType === "customer" && entry.entryId === customerId));

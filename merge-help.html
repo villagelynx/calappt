@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Backup Help</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #eaf2fb;
+        --panel: rgba(11, 27, 51, 0.96);
+        --line: rgba(143, 212, 255, 0.18);
+        --text: #eff8ef;
+        --muted: rgba(239, 248, 239, 0.78);
+        --accent: #8fd4ff;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(180deg, rgba(143, 212, 255, 0.14), transparent 18%),
+          linear-gradient(180deg, var(--bg), #edf5ff 48%, #dce9fb);
+        color: var(--text);
+        font-family: "DM Sans", "Segoe UI", sans-serif;
+      }
+
+      .page {
+        width: min(920px, calc(100% - 28px));
+        margin: 28px auto;
+        padding: 28px;
+        border-radius: 28px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        box-shadow: 0 24px 60px rgba(18, 38, 66, 0.14);
+      }
+
+      h1, h2 {
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        letter-spacing: -0.04em;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+        margin-top: 8px;
+      }
+
+      h2 {
+        font-size: 1.08rem;
+        margin-top: 26px;
+      }
+
+      p, li {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .step-list {
+        margin: 12px 0 0;
+        padding-left: 20px;
+      }
+
+      .note {
+        margin-top: 18px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(143, 212, 255, 0.16);
+        background: rgba(143, 212, 255, 0.08);
+        color: #dff4ff;
+      }
+
+      .grid {
+        display: grid;
+        gap: 22px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 18px;
+      }
+
+      .ghost-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(143, 212, 255, 0.18);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      .ghost-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      code {
+        font-family: Consolas, "Courier New", monospace;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        padding: 2px 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="topbar">
+        <a class="ghost-link" href="./index.html">Back to Calendar</a>
+      </div>
+      <p class="eyebrow">Help</p>
+      <h1>Merge Backup Instructions</h1>
+      <p><strong>Merge backup</strong> brings customers + appointments into the current device without deleting what’s already there.</p>
+
+      <div class="grid">
+        <section>
+          <h2>Desktop → Phone (Recommended)</h2>
+          <ol class="step-list">
+            <li>On your computer, open the calendar and click <code>Export Backup</code>.</li>
+            <li>On iPhone/iPad, you can also use <code>Share Backup (AirDrop)</code> to send the file to another device.</li>
+            <li>Move the downloaded <code>.json</code> file to your phone (email it to yourself, iCloud Drive/Google Drive, AirDrop, etc.).</li>
+            <li>On your phone, open the calendar page.</li>
+            <li>Open <code>Menu</code> → tap <code>Merge backup</code>.</li>
+            <li>Select the backup file.</li>
+            <li>You’ll see a summary of how many customers/appointments were added.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Conflicts (What wins?)</h2>
+          <ol class="step-list">
+            <li>Merging is done by internal <code>id</code> values, not by customer name.</li>
+            <li>If the same customer/appointment exists on both devices (same <code>id</code>), the imported backup wins.</li>
+            <li>If you created the “same” customer separately on two devices, they will usually have different <code>id</code>s, so both will be kept (you may see duplicates).</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>When to use Import (replace) instead</h2>
+          <ol class="step-list">
+            <li>Use <code>Import backup (replace)</code> when you want the other device to become an exact copy.</li>
+            <li><code>Import</code> replaces the current device’s customers/appointments with the file.</li>
+          </ol>
+        </section>
+      </div>
+
+      <div class="note">
+        Tip: Export a backup first on the device you’re merging into, just in case you want to roll back.
+      </div>
+    </main>
+  </body>
+</html>

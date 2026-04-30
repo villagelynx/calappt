@@ -1,0 +1,22 @@
+﻿
+==================================================
+Coach Appointment Calendar debug run
+Started: 2026-04-27 13:55:22
+Folder:  C:\Users\Robert\Documents\Codex Projects\CoachAppointmentCalendar
+Args:    8003
+==================================================
+
+Coach Appointment Calendar (local server)
+----------------------------------------
+Serving folder:
+  C:\Users\Robert\Documents\Codex Projects\CoachAppointmentCalendar
+
+On this computer:
+  http://127.0.0.1:8003/
+
+On your iPhone (same Wi-Fi), try one of these:
+  http://192.168.1.119:8003/
+
+If Windows Firewall prompts, allow "Private networks".
+Press Ctrl+C to stop.
+

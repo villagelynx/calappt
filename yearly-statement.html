@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yearly Statement &middot; CalAppt</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260430-27">
+  </head>
+  <body class="page-yearly-statement">
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+          <div class="topbar-headline">
+            <img class="topbar-logo" src="./apple-touch-icon.png" alt="CalAppt" width="54" height="54" decoding="async">
+            <h1>Yearly Statement</h1>
+          </div>
+          <p class="lede">See year-to-date earnings and a month-by-month breakdown.</p>
+        </div>
+        <div class="week-toolbar">
+          <a class="ghost-button" href="./index.html">Back to Calendar</a>
+          <a class="ghost-button" href="./payments.html">Payments</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel" aria-label="Year summary">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Billing</p>
+              <h2>Year Summary</h2>
+            </div>
+          </div>
+
+          <div class="calendar-month-row" aria-label="Select year">
+            <button id="yearPrevBtn" class="month-nav-button" type="button" aria-label="Previous year">&lt;</button>
+            <p id="yearLabel" class="calendar-month-label" aria-live="polite"></p>
+            <button id="yearNextBtn" class="month-nav-button" type="button" aria-label="Next year">&gt;</button>
+          </div>
+
+          <div class="payments-summary" role="list" aria-label="Year totals">
+            <div class="payments-kpi" role="listitem">
+              <span>Money Received</span>
+              <strong id="yearReceived">$0.00</strong>
+            </div>
+            <div class="payments-kpi" role="listitem">
+              <span>Receivables</span>
+              <strong id="yearReceivables">$0.00</strong>
+            </div>
+            <div class="payments-kpi" role="listitem">
+              <span>YTD Earnings</span>
+              <strong id="yearBilled">$0.00</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-label="Monthly breakdown">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Breakdown</p>
+              <h2>By Month</h2>
+            </div>
+          </div>
+          <div id="yearlyBreakdownList" class="yearly-breakdown-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      (() => {
+        const STORAGE_KEYS = {
+          appointments: "coach_appointment_calendar_appointments"
+        };
+
+        const elements = {
+          prevBtn: document.getElementById("yearPrevBtn"),
+          nextBtn: document.getElementById("yearNextBtn"),
+          yearLabel: document.getElementById("yearLabel"),
+          received: document.getElementById("yearReceived"),
+          receivables: document.getElementById("yearReceivables"),
+          billed: document.getElementById("yearBilled"),
+          list: document.getElementById("yearlyBreakdownList")
+        };
+
+        const clampYear = (value) => {
+          const year = Number(value);
+          if (!Number.isFinite(year)) return null;
+          return Math.min(2100, Math.max(1970, Math.round(year)));
+        };
+
+        const queryYear = (() => {
+          const params = new URLSearchParams(window.location.search);
+          return clampYear(params.get("year"));
+        })();
+
+        let visibleYear = queryYear ?? new Date().getFullYear();
+
+        function readAppointments() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEYS.appointments);
+            if (!raw) return [];
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function normalizeAmountCents(value) {
+          const number = Number(value);
+          if (!Number.isFinite(number)) return 0;
+          return Math.max(0, Math.round(number));
+        }
+
+        function formatMoney(cents) {
+          const amount = Number(cents);
+          if (!Number.isFinite(amount) || amount <= 0) return "$0.00";
+          return `$${(amount / 100).toFixed(2)}`;
+        }
+
+        function monthName(monthIndex) {
+          const date = new Date(2000, monthIndex, 1);
+          return date.toLocaleDateString(undefined, { month: "long" });
+        }
+
+        function formatDateKey(value) {
+          const year = value.getFullYear();
+          const month = `${value.getMonth() + 1}`.padStart(2, "0");
+          const day = `${value.getDate()}`.padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        }
+
+        function updateYear(delta) {
+          visibleYear = clampYear(visibleYear + delta) ?? visibleYear;
+          render();
+        }
+
+        function render() {
+          if (elements.yearLabel) elements.yearLabel.textContent = `${visibleYear}`;
+
+          const startKey = `${visibleYear}-01-01`;
+          const endKey = `${visibleYear}-12-31`;
+
+          const months = Array.from({ length: 12 }, () => ({
+            billed: 0,
+            received: 0,
+            receivables: 0,
+            count: 0
+          }));
+
+          const totals = readAppointments()
+            .filter((appointment) => appointment?.entryType === "customer")
+            .filter((appointment) => appointment?.dateKey >= startKey && appointment?.dateKey <= endKey)
+            .reduce((acc, appointment) => {
+              const cents = normalizeAmountCents(appointment?.amountCents);
+              if (!cents) return acc;
+
+              const monthIndex = Number(String(appointment.dateKey || "").slice(5, 7)) - 1;
+              if (monthIndex < 0 || monthIndex > 11) return acc;
+
+              months[monthIndex].count += 1;
+              months[monthIndex].billed += cents;
+              if (appointment?.isPaid) {
+                months[monthIndex].received += cents;
+              } else {
+                months[monthIndex].receivables += cents;
+              }
+
+              acc.billed += cents;
+              if (appointment?.isPaid) {
+                acc.received += cents;
+              } else {
+                acc.receivables += cents;
+              }
+              return acc;
+            }, { billed: 0, received: 0, receivables: 0 });
+
+          if (elements.received) elements.received.textContent = formatMoney(totals.received);
+          if (elements.receivables) elements.receivables.textContent = formatMoney(totals.receivables);
+          if (elements.billed) elements.billed.textContent = formatMoney(totals.billed);
+
+          if (!elements.list) return;
+
+          const yearSessionCount = months.reduce((acc, month) => acc + month.count, 0);
+          const yearSessionsLabel = yearSessionCount === 1 ? "1 session" : `${yearSessionCount} sessions`;
+
+          const monthlyRowsMarkup = months.map((month, index) => {
+            const label = monthName(index);
+            const sessionsLabel = month.count === 1 ? "1 session" : `${month.count} sessions`;
+            const rowLabel = `${label} ${sessionsLabel}`;
+            return `
+              <article class="yearly-month-item" aria-label="${rowLabel}">
+                <div class="yearly-month-main">
+                  <strong class="yearly-month-title">${label}</strong>
+                  <div class="yearly-month-meta">${sessionsLabel}</div>
+                </div>
+                <div class="yearly-month-totals">
+                  <div class="yearly-month-total">
+                    <span>Received</span>
+                    <strong>${formatMoney(month.received)}</strong>
+                  </div>
+                  <div class="yearly-month-total">
+                    <span>Receivables</span>
+                    <strong>${formatMoney(month.receivables)}</strong>
+                  </div>
+                  <div class="yearly-month-total">
+                    <span>Billed</span>
+                    <strong>${formatMoney(month.billed)}</strong>
+                  </div>
+                </div>
+              </article>
+            `;
+          }).join("");
+
+          const totalsRowMarkup = `
+            <article class="yearly-month-item yearly-totals-item" aria-label="Year totals">
+              <div class="yearly-month-main">
+                <strong class="yearly-month-title">Totals</strong>
+                <div class="yearly-month-meta">${yearSessionsLabel}</div>
+              </div>
+              <div class="yearly-month-totals">
+                <div class="yearly-month-total">
+                  <span>Received</span>
+                  <strong>${formatMoney(totals.received)}</strong>
+                </div>
+                <div class="yearly-month-total">
+                  <span>Receivables</span>
+                  <strong>${formatMoney(totals.receivables)}</strong>
+                </div>
+                <div class="yearly-month-total">
+                  <span>Billed</span>
+                  <strong>${formatMoney(totals.billed)}</strong>
+                </div>
+              </div>
+            </article>
+          `;
+
+          elements.list.innerHTML = `${monthlyRowsMarkup}${totalsRowMarkup}`;
+
+          const url = new URL(window.location.href);
+          url.searchParams.set("year", `${visibleYear}`);
+          try {
+            localStorage.setItem("coach_appointment_calendar_statement_year", `${visibleYear}`);
+          } catch {}
+          window.history.replaceState(null, "", url.toString());
+        }
+
+        elements.prevBtn?.addEventListener("click", () => updateYear(-1));
+        elements.nextBtn?.addEventListener("click", () => updateYear(1));
+
+        const now = new Date();
+        const fallbackStart = new Date(visibleYear, 0, 1);
+        if (!Number.isFinite(fallbackStart.getTime())) {
+          visibleYear = now.getFullYear();
+        }
+
+        render();
+      })();
+    </script>
+  </body>
+</html>

@@ -10,7 +10,9 @@
     autoBackupEnabled: "coach_appointment_calendar_auto_backup_enabled",
     leftMode: "coach_appointment_calendar_left_mode",
     selectedCustomerId: "coach_appointment_calendar_selected_customer_id",
-    mobileViewMode: "coach_appointment_calendar_mobile_view_mode"
+    mobileViewMode: "coach_appointment_calendar_mobile_view_mode",
+    statementMonth: "coach_appointment_calendar_statement_month",
+    statementYear: "coach_appointment_calendar_statement_year"
   };
 
   const DEMO_KEYS = {
@@ -80,6 +82,8 @@
     importBackupInput: document.getElementById("importBackupInput"),
     mergeBackupInput: document.getElementById("mergeBackupInput"),
     exportGoogleBtn: document.getElementById("exportGoogleBtn"),
+    exportMonthlyStatementBtn: document.getElementById("exportMonthlyStatementBtn"),
+    exportYearlyStatementBtn: document.getElementById("exportYearlyStatementBtn"),
     monthPrevBtn: document.getElementById("monthPrevBtn"),
     monthLabel: document.getElementById("monthLabel"),
     monthNextBtn: document.getElementById("monthNextBtn"),
@@ -91,7 +95,8 @@
     taskModeSection: document.getElementById("taskModeSection"),
     customerForm: document.getElementById("customerForm"),
     customerEditId: document.getElementById("customerEditId"),
-    customerName: document.getElementById("customerName"),
+    customerFirstName: document.getElementById("customerFirstName"),
+    customerSurname: document.getElementById("customerSurname"),
     customerCell: document.getElementById("customerCell"),
     customerEmail: document.getElementById("customerEmail"),
     customerNote: document.getElementById("customerNote"),
@@ -291,6 +296,8 @@
     elements.importBackupInput?.addEventListener("change", handleImportBackup);
     elements.mergeBackupInput?.addEventListener("change", handleMergeBackup);
     elements.exportGoogleBtn?.addEventListener("click", handleExportGoogleCalendar);
+    elements.exportMonthlyStatementBtn?.addEventListener("click", handleExportMonthlyStatementExcel);
+    elements.exportYearlyStatementBtn?.addEventListener("click", handleExportYearlyStatementExcel);
     elements.monthPrevBtn?.addEventListener("click", () => shiftMonth(-1));
     elements.monthNextBtn?.addEventListener("click", () => shiftMonth(1));
     elements.desktopAddCustomerBtn?.addEventListener("click", handleDesktopCreateCustomerAppointmentClick);
@@ -698,7 +705,7 @@
     renderDesktopCustomerList();
     openManageDrawer();
     window.setTimeout(() => {
-      elements.customerName?.focus?.();
+      elements.customerFirstName?.focus?.();
     }, 0);
   }
 
@@ -846,6 +853,7 @@
     if (!weekAppointments.length) {
       return `
         <div class="agenda-board">
+          <h2 class="agenda-board-title">Agenda</h2>
           <div class="appointment-empty">No appointments scheduled for this week yet.</div>
         </div>
       `;
@@ -862,6 +870,7 @@
 
     return `
       <div class="agenda-board">
+        <h2 class="agenda-board-title">Agenda</h2>
         ${dayKeys.map((dateKey) => {
           const day = parseDateKey(dateKey);
           const headerLabel = day ? `${formatWeekday(day)}, ${formatMonthDay(day)}` : dateKey;
@@ -1138,7 +1147,7 @@
 
   function renderWeatherMarkup(weather) {
     if (!weather) {
-      return `<span class="weather-placeholder">No weather</span>`;
+      return `<a class="weather-placeholder" href="./weather-settings.html" aria-label="Add weather (open weather settings)">Add weather</a>`;
     }
 
     const weatherVisual = getWeatherVisual(weather.weatherCode);
@@ -1445,9 +1454,11 @@
     const court = String(appointment.court || "").trim();
     const detail = [court ? `Court: ${court}` : "", note].filter(Boolean).join(" \u00B7 ");
     const customerColor = entryMeta.color;
-    const moneyBadge = renderAppointmentMoneyBadge(appointment);
-    const top = ((appointment.startMinutes - SCHEDULE_START_MINUTES) / SLOT_MINUTES) * SLOT_HEIGHT;
-    const height = Math.max((((appointment.endMinutes - appointment.startMinutes) / SLOT_MINUTES) * SLOT_HEIGHT) - 4, SLOT_HEIGHT - 6);
+    const baseTop = ((appointment.startMinutes - SCHEDULE_START_MINUTES) / SLOT_MINUTES) * SLOT_HEIGHT;
+    const baseHeight = ((appointment.endMinutes - appointment.startMinutes) / SLOT_MINUTES) * SLOT_HEIGHT;
+    const verticalInset = 2;
+    const top = baseTop + verticalInset;
+    const height = Math.max(baseHeight - (verticalInset * 2), SLOT_HEIGHT - 6);
     return `
       <article
         class="timeline-appointment"
@@ -1461,7 +1472,6 @@
             </span>
           ` : ""}
           <strong class="appointment-title">${escapeHtml(name)}</strong>
-          ${moneyBadge}
         </div>
         ${detail ? `<p class="appointment-note">${escapeHtml(detail)}</p>` : ""}
       </article>
@@ -1471,12 +1481,17 @@
   function handleCustomerSubmit(event) {
     event.preventDefault();
     const editId = valueOf(elements.customerEditId);
-    const name = valueOf(elements.customerName);
+    const firstName = valueOf(elements.customerFirstName);
+    const surname = valueOf(elements.customerSurname);
     const sportId = valueOf(elements.customerSportId);
     const cell = valueOf(elements.customerCell);
     const email = valueOf(elements.customerEmail);
     const note = valueOf(elements.customerNote);
-    if (!name) return;
+    if (!surname) {
+      elements.customerSurname?.focus?.();
+      return;
+    }
+    const name = firstName ? `${surname}, ${firstName}` : surname;
 
     if (editId) {
       customers = customers.map((customer) => customer.id === editId
@@ -1521,7 +1536,12 @@
     writeSelectedCustomerId(selectedCustomerId);
     elements.customerForm?.classList.add("is-editing");
     elements.customerEditId.value = customer.id;
-    elements.customerName.value = customer.name;
+    const parsedName = splitNameForSurnameSort(customer.name);
+    const sentinel = "\uffff";
+    const customerSurname = parsedName?.surname && parsedName.surname !== sentinel ? parsedName.surname : "";
+    const customerFirstName = parsedName?.given && parsedName.given !== sentinel ? parsedName.given : "";
+    if (elements.customerFirstName) elements.customerFirstName.value = customerFirstName;
+    if (elements.customerSurname) elements.customerSurname.value = customerSurname;
     if (elements.customerSportId) elements.customerSportId.value = customer.sportId || "";
     if (elements.customerCell) elements.customerCell.value = customer.cell || "";
     if (elements.customerEmail) elements.customerEmail.value = customer.email || "";
@@ -1531,8 +1551,8 @@
     if (elements.customerCancelBtn) elements.customerCancelBtn.hidden = false;
     if (elements.customerDeleteBtn) elements.customerDeleteBtn.hidden = false;
     elements.customerForm?.scrollIntoView?.({ block: "nearest", behavior: "smooth" });
-    elements.customerName.focus();
-    elements.customerName.select();
+    elements.customerFirstName?.focus?.();
+    elements.customerFirstName?.select?.();
   }
 
   function resetCustomerForm() {
@@ -2848,6 +2868,197 @@
 
     const filename = `calappt-${formatDateKey(visibleWeekStart)}.ics`;
     downloadTextFile(filename, `${icsLines.join("\r\n")}\r\n`, "text/calendar;charset=utf-8");
+  }
+
+  function formatMoneyStatement(amountCents) {
+    const cents = normalizeAmountCents(amountCents);
+    return `$${(cents / 100).toFixed(2)}`;
+  }
+
+  function toCsvField(value) {
+    const str = String(value ?? "");
+    if (/["\n\r,]/.test(str)) {
+      return `"${str.replaceAll('"', '""')}"`;
+    }
+    return str;
+  }
+
+  function toCsvLine(fields) {
+    return (Array.isArray(fields) ? fields : []).map(toCsvField).join(",");
+  }
+
+  function downloadCsvFile(filename, lines) {
+    const rows = Array.isArray(lines) ? lines : [];
+    const contents = `\ufeff${rows.join("\r\n")}\r\n`;
+    downloadTextFile(filename, contents, "text/csv;charset=utf-8");
+  }
+
+  function parseYearMonth(value) {
+    const raw = String(value || "").trim();
+    const match = raw.match(/^(\d{4})-(\d{2})$/);
+    if (!match) return null;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    if (!Number.isFinite(year) || !Number.isFinite(month)) return null;
+    if (month < 1 || month > 12) return null;
+    const date = new Date(year, month - 1, 1);
+    return Number.isFinite(date.getTime()) ? getStartOfMonth(date) : null;
+  }
+
+  function getStatementMonthStart() {
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEYS.statementMonth);
+      return parseYearMonth(saved) ?? getStartOfMonth(new Date());
+    } catch {
+      return getStartOfMonth(new Date());
+    }
+  }
+
+  function getStatementYear() {
+    try {
+      const saved = Number(window.localStorage.getItem(STORAGE_KEYS.statementYear));
+      if (Number.isFinite(saved) && saved >= 1970 && saved <= 2100) return Math.round(saved);
+    } catch {}
+    return new Date().getFullYear();
+  }
+
+  function handleExportMonthlyStatementExcel() {
+    closeMenuDrawer();
+
+    const monthStart = getStatementMonthStart();
+    const monthParam = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, "0")}`;
+    const monthLabel = formatMonthYear(monthStart);
+    const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+    const startKey = formatDateKey(monthStart);
+    const endKey = formatDateKey(monthEnd);
+
+    const exportCustomers = readCustomers();
+    const exportAppointments = readAppointments();
+    const customerById = new Map(exportCustomers.map((customer) => [customer?.id, customer]));
+    const monthAppointments = exportAppointments
+      .filter((appointment) => appointment?.entryType === "customer")
+      .filter((appointment) => appointment?.dateKey >= startKey && appointment?.dateKey <= endKey)
+      .slice()
+      .sort((a, b) => {
+        const dateCompare = String(a.dateKey || "").localeCompare(String(b.dateKey || ""));
+        if (dateCompare) return dateCompare;
+        return Number(a.startMinutes) - Number(b.startMinutes);
+      });
+
+    const totals = monthAppointments.reduce((acc, appointment) => {
+      const cents = normalizeAmountCents(appointment?.amountCents);
+      if (!cents) return acc;
+      acc.billed += cents;
+      if (appointment?.isPaid) acc.received += cents;
+      else acc.receivables += cents;
+      return acc;
+    }, { billed: 0, received: 0, receivables: 0 });
+
+    const lines = [];
+    lines.push(toCsvLine(["CalAppt Monthly Statement", monthLabel]));
+    lines.push(toCsvLine(["Month", monthParam]));
+    lines.push(toCsvLine(["Sessions", `${monthAppointments.length}`]));
+    lines.push(toCsvLine(["Money Received", formatMoneyStatement(totals.received)]));
+    lines.push(toCsvLine(["Receivables", formatMoneyStatement(totals.receivables)]));
+    lines.push(toCsvLine(["Monthly Total Earnings", formatMoneyStatement(totals.billed)]));
+    lines.push("");
+    lines.push(toCsvLine(["Date", "Weekday", "Start", "End", "Customer", "Court/Location", "Amount", "Paid", "Note"]));
+
+    monthAppointments.forEach((appointment) => {
+      const customer = customerById.get(appointment.entryId);
+      const rawName = customer?.name || appointment.entryName || "Unknown Customer";
+      const name = formatNameSurnameFirst(rawName) || rawName;
+      const day = parseDateKey(appointment.dateKey);
+      const weekday = day ? formatWeekday(day) : "";
+      const startTime = Number.isFinite(appointment.startMinutes) ? formatMinutes(appointment.startMinutes) : "";
+      const endTime = Number.isFinite(appointment.endMinutes) ? formatMinutes(appointment.endMinutes) : "";
+      const court = String(appointment.court || "").trim();
+      const amountCents = normalizeAmountCents(appointment.amountCents);
+      lines.push(toCsvLine([
+        appointment.dateKey || "",
+        weekday,
+        startTime,
+        endTime,
+        name,
+        court,
+        formatMoneyStatement(amountCents),
+        appointment.isPaid ? "Yes" : "No",
+        String(appointment.note || "").trim()
+      ]));
+    });
+
+    const filename = `calappt-monthly-statement-${monthParam}.csv`;
+    downloadCsvFile(filename, lines);
+  }
+
+  function handleExportYearlyStatementExcel() {
+    closeMenuDrawer();
+
+    const year = getStatementYear();
+    const startKey = `${year}-01-01`;
+    const endKey = `${year}-12-31`;
+
+    const months = Array.from({ length: 12 }, () => ({
+      billed: 0,
+      received: 0,
+      receivables: 0,
+      count: 0
+    }));
+
+    const exportAppointments = readAppointments();
+    const totals = exportAppointments
+      .filter((appointment) => appointment?.entryType === "customer")
+      .filter((appointment) => appointment?.dateKey >= startKey && appointment?.dateKey <= endKey)
+      .reduce((acc, appointment) => {
+        const cents = normalizeAmountCents(appointment?.amountCents);
+        if (!cents) return acc;
+        const monthIndex = Number(String(appointment.dateKey || "").slice(5, 7)) - 1;
+        if (monthIndex < 0 || monthIndex > 11) return acc;
+
+        months[monthIndex].count += 1;
+        months[monthIndex].billed += cents;
+        if (appointment?.isPaid) months[monthIndex].received += cents;
+        else months[monthIndex].receivables += cents;
+
+        acc.billed += cents;
+        if (appointment?.isPaid) acc.received += cents;
+        else acc.receivables += cents;
+        return acc;
+      }, { billed: 0, received: 0, receivables: 0 });
+
+    const yearSessionCount = months.reduce((acc, month) => acc + month.count, 0);
+
+    const lines = [];
+    lines.push(toCsvLine(["CalAppt Year-End Statement", `${year}`]));
+    lines.push(toCsvLine(["Year", `${year}`]));
+    lines.push(toCsvLine(["Sessions", `${yearSessionCount}`]));
+    lines.push(toCsvLine(["Money Received", formatMoneyStatement(totals.received)]));
+    lines.push(toCsvLine(["Receivables", formatMoneyStatement(totals.receivables)]));
+    lines.push(toCsvLine(["YTD Earnings", formatMoneyStatement(totals.billed)]));
+    lines.push("");
+    lines.push(toCsvLine(["Month", "Sessions", "Money Received", "Receivables", "Billed"]));
+
+    months.forEach((month, index) => {
+      const label = new Date(year, index, 1).toLocaleDateString(undefined, { month: "long" });
+      lines.push(toCsvLine([
+        label,
+        `${month.count}`,
+        formatMoneyStatement(month.received),
+        formatMoneyStatement(month.receivables),
+        formatMoneyStatement(month.billed)
+      ]));
+    });
+
+    lines.push(toCsvLine([
+      "Totals",
+      `${yearSessionCount}`,
+      formatMoneyStatement(totals.received),
+      formatMoneyStatement(totals.receivables),
+      formatMoneyStatement(totals.billed)
+    ]));
+
+    const filename = `calappt-year-end-statement-${year}.csv`;
+    downloadCsvFile(filename, lines);
   }
 
   function handleEmailWeeklyAgenda() {

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports &amp; Icons Manager</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="CalAppt">
+    <meta name="application-name" content="CalAppt">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #eaf2fb;
+        --panel: rgba(11, 27, 51, 0.96);
+        --panel-soft: rgba(255, 255, 255, 0.06);
+        --line: rgba(143, 212, 255, 0.16);
+        --text: #eff8ef;
+        --muted: rgba(239, 248, 239, 0.74);
+        --accent: #8fd4ff;
+        --shadow: 0 24px 60px rgba(18, 38, 66, 0.14);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(180deg, rgba(143, 212, 255, 0.14), transparent 18%),
+          linear-gradient(180deg, var(--bg), #edf5ff 48%, #dce9fb);
+        color: var(--text);
+        font-family: "DM Sans", "Segoe UI", sans-serif;
+      }
+
+      .page {
+        width: min(980px, calc(100% - 28px));
+        margin: 28px auto;
+        padding: 28px;
+        border-radius: 28px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      h1, h2 {
+        margin: 0;
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        letter-spacing: -0.04em;
+      }
+
+      h1 {
+        font-size: clamp(1.9rem, 3vw, 2.7rem);
+        margin-top: 8px;
+      }
+
+      h2 {
+        font-size: 1rem;
+      }
+
+      p { margin: 0; }
+
+      .eyebrow,
+      .field span,
+      .subtle-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .lede,
+      .sub-copy {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .top-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .ghost-button,
+      .secondary-button,
+      .primary-button,
+      .ghost-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        color: var(--text);
+        font: inherit;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        background: transparent;
+      }
+
+      .secondary-button {
+        background: rgba(143, 212, 255, 0.14);
+      }
+
+      .primary-button {
+        background: linear-gradient(135deg, var(--accent), #bfe7ff);
+        color: #133253;
+        border-color: rgba(47, 121, 184, 0.18);
+      }
+
+      .danger-button {
+        color: #ff9f9f;
+        border-color: rgba(255, 159, 159, 0.18);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(320px, 360px) minmax(0, 1fr);
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      .card {
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+        border-radius: 22px;
+        background: var(--panel-soft);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .field input,
+      .field select {
+        width: 100%;
+        min-height: 40px;
+        padding: 0 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        font: inherit;
+      }
+
+      .field select option {
+        background: #17304d;
+        color: #eff8ef;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 88px;
+        gap: 10px;
+      }
+
+      .field-color input[type="color"] {
+        padding: 4px;
+      }
+
+      .upload-row {
+        display: grid;
+        gap: 8px;
+      }
+
+      .upload-note {
+        font-size: 0.76rem;
+        color: var(--muted);
+      }
+
+      .preview-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 58px;
+        padding: 12px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .preview-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        border-radius: 12px;
+        background: rgba(143, 212, 255, 0.14);
+      }
+
+      .preview-icon svg,
+      .preview-icon img {
+        width: 20px;
+        height: 20px;
+        display: block;
+        object-fit: contain;
+      }
+
+      .preview-copy {
+        display: grid;
+        gap: 3px;
+        min-width: 0;
+      }
+
+      .preview-copy strong {
+        font-size: 0.92rem;
+      }
+
+      .preview-copy span {
+        font-size: 0.76rem;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .form-actions-right {
+        display: flex;
+        gap: 10px;
+        margin-left: auto;
+        flex-wrap: wrap;
+      }
+
+      .list-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .count-chip,
+      .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      .sport-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .sport-item {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .sport-item-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+      }
+
+      .sport-item-icon svg,
+      .sport-item-icon img {
+        width: 20px;
+        height: 20px;
+        display: block;
+        object-fit: contain;
+      }
+
+      .sport-item-copy {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .sport-item-copy strong {
+        font-size: 0.92rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sport-item-copy .meta-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .sport-item-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .mini-button {
+        min-height: 30px;
+        padding: 0 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.74rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .mini-button.danger {
+        color: #ff9f9f;
+      }
+
+      .empty {
+        padding: 18px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      @media (max-width: 860px) {
+        .page {
+          width: min(100% - 16px, 980px);
+          padding: 20px;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .row {
+          grid-template-columns: 1fr;
+        }
+
+        .form-actions,
+        .form-actions-right,
+        .sport-item-actions {
+          margin-left: 0;
+          justify-content: stretch;
+        }
+
+        .form-actions-right > *,
+        .sport-item-actions > * {
+          flex: 1 1 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="topbar">
+        <div>
+          <p class="eyebrow">Library</p>
+          <h1>Sports &amp; Icons</h1>
+          <p class="lede">Create reusable sports once, assign them to customers, and the matching icon will appear automatically on calendar events.</p>
+        </div>
+        <div class="top-actions">
+          <a class="ghost-link" href="./index.html">Back To Calendar</a>
+        </div>
+      </div>
+
+      <div class="layout">
+        <section class="card">
+          <div>
+            <p class="subtle-label">Edit Sport</p>
+            <p class="sub-copy">Use a built-in icon or upload your own small SVG or PNG. Custom uploads override the built-in icon.</p>
+          </div>
+
+          <form id="sportForm">
+            <input id="sportEditId" type="hidden">
+
+            <label class="field">
+              <span>Sport Name</span>
+              <input id="sportName" type="text" placeholder="Add a sport like Tennis" required>
+            </label>
+
+            <div class="row">
+              <label class="field">
+                <span>Built-In Icon</span>
+                <select id="sportIconKey"></select>
+              </label>
+
+              <label class="field field-color">
+                <span>Color</span>
+                <input id="sportColor" type="color" value="#49dcb1">
+              </label>
+            </div>
+
+            <div class="upload-row">
+              <label class="field">
+                <span>Custom Icon</span>
+                <input id="sportCustomIcon" type="file" accept=".svg,image/svg+xml,image/png,image/webp,image/jpeg">
+              </label>
+              <p class="upload-note">Use a small square icon when possible. Custom uploads are stored locally in your browser backup.</p>
+              <button id="clearCustomIconBtn" class="ghost-button" type="button">Clear Custom Icon</button>
+            </div>
+
+            <div id="iconPreview" class="preview-box">
+              <span id="previewIcon" class="preview-icon"></span>
+              <div class="preview-copy">
+                <strong id="previewTitle">Tennis</strong>
+                <span id="previewMeta">Built-in icon preview</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button id="sportDeleteBtn" class="ghost-button danger-button" type="button" hidden>Delete</button>
+              <div class="form-actions-right">
+                <button id="sportCancelBtn" class="ghost-button" type="button" hidden>Cancel</button>
+                <button id="sportSubmitBtn" class="primary-button" type="submit">Add Sport</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="card">
+          <div class="list-head">
+            <div>
+              <p class="subtle-label">Saved Sports</p>
+              <p class="sub-copy">These are the sports your customers can use in the main calendar app.</p>
+            </div>
+            <div id="sportCountChip" class="count-chip">0</div>
+          </div>
+
+          <div id="sportList" class="sport-list"></div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      (() => {
+        const STORAGE_KEY = "coach_appointment_calendar_sports";
+        const DEFAULT_SPORTS = [
+          { id: "s1", name: "Tennis", iconKey: "tennis", color: "#49dcb1", customIconData: "", customIconName: "" },
+          { id: "s2", name: "Pickleball", iconKey: "pickleball", color: "#8fd4ff", customIconData: "", customIconName: "" },
+          { id: "s3", name: "Soccer", iconKey: "soccer", color: "#ffb84d", customIconData: "", customIconName: "" },
+          { id: "s4", name: "Basketball", iconKey: "basketball", color: "#f4845f", customIconData: "", customIconName: "" }
+        ];
+        const SPORT_ICON_CHOICES = [
+          { value: "tennis", label: "Tennis" },
+          { value: "pickleball", label: "Pickleball" },
+          { value: "soccer", label: "Soccer" },
+          { value: "basketball", label: "Basketball" },
+          { value: "baseball", label: "Baseball" },
+          { value: "hockey", label: "Hockey" },
+          { value: "swim", label: "Swimming" },
+          { value: "fitness", label: "Fitness" }
+        ];
+
+        const elements = {
+          sportForm: document.getElementById("sportForm"),
+          sportEditId: document.getElementById("sportEditId"),
+          sportName: document.getElementById("sportName"),
+          sportIconKey: document.getElementById("sportIconKey"),
+          sportColor: document.getElementById("sportColor"),
+          sportCustomIcon: document.getElementById("sportCustomIcon"),
+          clearCustomIconBtn: document.getElementById("clearCustomIconBtn"),
+          sportSubmitBtn: document.getElementById("sportSubmitBtn"),
+          sportCancelBtn: document.getElementById("sportCancelBtn"),
+          sportDeleteBtn: document.getElementById("sportDeleteBtn"),
+          sportCountChip: document.getElementById("sportCountChip"),
+          sportList: document.getElementById("sportList"),
+          previewIcon: document.getElementById("previewIcon"),
+          previewTitle: document.getElementById("previewTitle"),
+          previewMeta: document.getElementById("previewMeta")
+        };
+
+        let sports = readSports();
+        let customIconData = "";
+        let customIconName = "";
+
+        init();
+
+        function init() {
+          populateIconSelect();
+          elements.sportForm?.addEventListener("submit", handleSubmit);
+          elements.sportCancelBtn?.addEventListener("click", resetForm);
+          elements.sportDeleteBtn?.addEventListener("click", handleDelete);
+          elements.clearCustomIconBtn?.addEventListener("click", clearCustomIcon);
+          elements.sportIconKey?.addEventListener("change", renderPreview);
+          elements.sportColor?.addEventListener("input", renderPreview);
+          elements.sportName?.addEventListener("input", renderPreview);
+          elements.sportCustomIcon?.addEventListener("change", handleCustomIconChange);
+          render();
+        }
+
+        function render() {
+          elements.sportCountChip.textContent = String(sports.length);
+
+          if (!sports.length) {
+            elements.sportList.innerHTML = `<div class="empty">No sports yet. Add one on the left, then go back to the calendar and assign it to a customer.</div>`;
+          } else {
+            elements.sportList.innerHTML = sports.map((sport) => `
+              <article class="sport-item" data-sport-id="${escapeHtml(sport.id)}">
+                <span class="sport-item-icon" style="color:${escapeHtml(sport.color)};background:${escapeHtml(hexToRgba(sport.color, 0.14))};">
+                  ${renderSportVisualMarkup(sport)}
+                </span>
+                <div class="sport-item-copy">
+                  <strong>${escapeHtml(sport.name)}</strong>
+                  <div class="meta-row">
+                    <span class="meta-pill">${escapeHtml(sport.customIconData ? "Custom Icon" : getSportIconLabel(sport.iconKey))}</span>
+                    <span class="meta-pill">${escapeHtml(sport.color)}</span>
+                  </div>
+                </div>
+                <div class="sport-item-actions">
+                  <button class="mini-button" type="button" data-action="edit" data-sport-id="${escapeHtml(sport.id)}">Edit</button>
+                </div>
+              </article>
+            `).join("");
+
+            Array.from(elements.sportList.querySelectorAll("[data-action='edit']")).forEach((button) => {
+              button.addEventListener("click", () => openEditor(button.getAttribute("data-sport-id")));
+            });
+          }
+
+          renderPreview();
+        }
+
+        function populateIconSelect() {
+          elements.sportIconKey.innerHTML = SPORT_ICON_CHOICES.map((option) => `
+            <option value="${option.value}">${escapeHtml(option.label)}</option>
+          `).join("");
+        }
+
+        async function handleCustomIconChange(event) {
+          const file = event.target.files?.[0];
+          if (!file) return;
+
+          if (file.size > 250 * 1024) {
+            window.alert("Please keep custom icons under 250 KB so local backups stay lightweight.");
+            event.target.value = "";
+            return;
+          }
+
+          customIconData = await readFileAsDataUrl(file);
+          customIconName = file.name;
+          renderPreview();
+        }
+
+        function clearCustomIcon() {
+          customIconData = "";
+          customIconName = "";
+          if (elements.sportCustomIcon) {
+            elements.sportCustomIcon.value = "";
+          }
+          renderPreview();
+        }
+
+        function handleSubmit(event) {
+          event.preventDefault();
+          const editId = valueOf(elements.sportEditId);
+          const name = valueOf(elements.sportName);
+          const iconKey = valueOf(elements.sportIconKey) || SPORT_ICON_CHOICES[0].value;
+          const color = elements.sportColor.value || "#49dcb1";
+          if (!name) return;
+
+          const nextSport = normalizeSport({
+            id: editId || createId("sport"),
+            name,
+            iconKey,
+            color,
+            customIconData,
+            customIconName
+          });
+
+          if (editId) {
+            sports = sports.map((sport) => sport.id === editId ? nextSport : sport);
+          } else {
+            sports.unshift(nextSport);
+          }
+
+          writeSports();
+          resetForm();
+          render();
+        }
+
+        function openEditor(sportId) {
+          const sport = sports.find((entry) => entry.id === sportId);
+          if (!sport) return;
+
+          elements.sportEditId.value = sport.id;
+          elements.sportName.value = sport.name;
+          elements.sportIconKey.value = sport.iconKey;
+          elements.sportColor.value = sport.color;
+          customIconData = sport.customIconData || "";
+          customIconName = sport.customIconName || "";
+          elements.sportSubmitBtn.textContent = "Save Sport";
+          elements.sportCancelBtn.hidden = false;
+          elements.sportDeleteBtn.hidden = false;
+          if (elements.sportCustomIcon) {
+            elements.sportCustomIcon.value = "";
+          }
+          renderPreview();
+          elements.sportName.focus();
+          elements.sportName.select();
+        }
+
+        function handleDelete() {
+          const sportId = valueOf(elements.sportEditId);
+          if (!sportId) return;
+          const sport = sports.find((entry) => entry.id === sportId);
+          if (!sport) return;
+
+          const shouldDelete = window.confirm(`Delete ${sport.name}? Customers using it will simply lose the icon assignment.`);
+          if (!shouldDelete) return;
+
+          sports = sports.filter((entry) => entry.id !== sportId);
+          writeSports();
+          resetForm();
+          render();
+        }
+
+        function resetForm() {
+          elements.sportForm.reset();
+          elements.sportEditId.value = "";
+          elements.sportIconKey.value = SPORT_ICON_CHOICES[0].value;
+          elements.sportColor.value = "#49dcb1";
+          elements.sportSubmitBtn.textContent = "Add Sport";
+          elements.sportCancelBtn.hidden = true;
+          elements.sportDeleteBtn.hidden = true;
+          customIconData = "";
+          customIconName = "";
+          renderPreview();
+        }
+
+        function renderPreview() {
+          const name = valueOf(elements.sportName) || "Preview";
+          const iconKey = valueOf(elements.sportIconKey) || SPORT_ICON_CHOICES[0].value;
+          const color = elements.sportColor.value || "#49dcb1";
+          const previewSport = normalizeSport({
+            id: "preview",
+            name,
+            iconKey,
+            color,
+            customIconData,
+            customIconName
+          });
+
+          elements.previewIcon.style.color = previewSport.color;
+          elements.previewIcon.style.background = hexToRgba(previewSport.color, 0.14);
+          elements.previewIcon.innerHTML = renderSportVisualMarkup(previewSport);
+          elements.previewTitle.textContent = previewSport.name;
+          elements.previewMeta.textContent = previewSport.customIconData
+            ? `Custom icon: ${previewSport.customIconName || "uploaded image"}`
+            : `Built-in icon: ${getSportIconLabel(previewSport.iconKey)}`;
+        }
+
+        function readSports() {
+          try {
+            const raw = window.localStorage.getItem(STORAGE_KEY);
+            const parsed = raw ? JSON.parse(raw) : null;
+            return Array.isArray(parsed) && parsed.length ? parsed.map(normalizeSport) : DEFAULT_SPORTS.slice();
+          } catch {
+            return DEFAULT_SPORTS.slice();
+          }
+        }
+
+        function writeSports() {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sports));
+        }
+
+        function normalizeSport(sport) {
+          return {
+            id: sport.id || createId("sport"),
+            name: sport.name || "Unnamed Sport",
+            iconKey: getValidSportIconKey(sport.iconKey),
+            color: normalizeHexColor(sport.color, "#49dcb1"),
+            customIconData: normalizeCustomIconData(sport.customIconData),
+            customIconName: String(sport.customIconName || "").trim()
+          };
+        }
+
+        function renderSportVisualMarkup(sport) {
+          if (sport.customIconData) {
+            return `<img src="${escapeHtml(sport.customIconData)}" alt="">`;
+          }
+          return renderSportIconSvg(sport.iconKey);
+        }
+
+        function renderSportIconSvg(iconKey) {
+          const normalized = getValidSportIconKey(iconKey);
+          const icons = {
+            tennis: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.25"></circle><path d="M7.4 8.2c2.2 1.1 3.9 3.1 4.8 5.5"></path><path d="M16.6 8.2c-2.2 1.1-3.9 3.1-4.8 5.5"></path></svg>`,
+            pickleball: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 6.5h4.8a2 2 0 0 1 2 2v5.1a2 2 0 0 1-2 2H8.5a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2Z"></path><path d="M15.3 14.7l2.8 2.8"></path><circle cx="10" cy="9.5" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="12.8" cy="9.5" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="10" cy="12.3" r="0.8" fill="currentColor" stroke="none"></circle></svg>`,
+            soccer: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.4"></circle><path d="m12 8.1 2.4 1.7-.9 2.8h-3l-.9-2.8L12 8.1Z"></path><path d="m9.5 15 2.5-1.8 2.5 1.8"></path><path d="M7.5 10.4 9.4 9"></path><path d="M16.5 10.4 14.6 9"></path></svg>`,
+            basketball: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.5"></circle><path d="M12 4.5c1.8 2.4 2.8 4.9 2.8 7.5S13.8 17.1 12 19.5"></path><path d="M12 4.5c-1.8 2.4-2.8 4.9-2.8 7.5s1 5.1 2.8 7.5"></path><path d="M4.8 9.4c2.2.8 4.6 1.1 7.2 1.1s5-.3 7.2-1.1"></path><path d="M4.8 14.6c2.2-.8 4.6-1.1 7.2-1.1s5 .3 7.2 1.1"></path></svg>`,
+            baseball: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.4"></circle><path d="M8.6 7.6c1.5 1.5 2.4 3.4 2.4 5.4s-.9 3.9-2.4 5.4"></path><path d="M15.4 7.6c-1.5 1.5-2.4 3.4-2.4 5.4s.9 3.9 2.4 5.4"></path><path d="m8 9.1 1.1.9"></path><path d="m7.4 11 1.3.8"></path><path d="m16 9.1-1.1.9"></path><path d="m16.6 11-1.3.8"></path></svg>`,
+            hockey: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6.5 8 15.8"></path><path d="M14.2 6.5 12.7 15.8"></path><path d="M7.2 16h8.6c.9 0 1.6.7 1.6 1.6v.4H6.1v-.4c0-.9.7-1.6 1.1-1.6Z"></path><path d="m16.7 7.5 1.7 2.1"></path></svg>`,
+            swim: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.2" cy="8.2" r="2"></circle><path d="m10.5 10.2 2.6 1.3 1.4 2.4"></path><path d="M4.5 16c1 .7 2 .7 3 0s2-.7 3 0 2 .7 3 0 2-.7 3 0 2 .7 3 0"></path><path d="M5.4 12.6 8 11l2.2 1.1"></path></svg>`,
+            fitness: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5h2.2v3H4.5z"></path><path d="M17.3 10.5h2.2v3h-2.2z"></path><path d="M6.7 11.2h2.2v1.6H6.7z"></path><path d="M15.1 11.2h2.2v1.6h-2.2z"></path><path d="M8.9 12h6.2"></path><path d="m10 9.2 1 2.8"></path><path d="m14 9.2-1 2.8"></path></svg>`
+          };
+          return icons[normalized] || icons.tennis;
+        }
+
+        function getSportIconLabel(iconKey) {
+          return SPORT_ICON_CHOICES.find((choice) => choice.value === iconKey)?.label || "Sport";
+        }
+
+        function getValidSportIconKey(iconKey) {
+          return SPORT_ICON_CHOICES.some((choice) => choice.value === iconKey)
+            ? iconKey
+            : SPORT_ICON_CHOICES[0].value;
+        }
+
+        function normalizeHexColor(value, fallback) {
+          const candidate = String(value || "").trim();
+          return /^#[0-9a-fA-F]{6}$/.test(candidate) ? candidate : fallback;
+        }
+
+        function normalizeCustomIconData(value) {
+          const candidate = String(value || "").trim();
+          return candidate.startsWith("data:image/") ? candidate : "";
+        }
+
+        function readFileAsDataUrl(file) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result || ""));
+            reader.onerror = () => reject(new Error("Icon upload failed"));
+            reader.readAsDataURL(file);
+          });
+        }
+
+        function createId(prefix) {
+          return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        }
+
+        function valueOf(element) {
+          return element?.value?.trim?.() || "";
+        }
+
+        function escapeHtml(value) {
+          return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+        }
+
+        function hexToRgba(hex, alpha) {
+          const normalized = hex.replace("#", "");
+          const expanded = normalized.length === 3
+            ? normalized.split("").map((char) => char + char).join("")
+            : normalized;
+          const red = Number.parseInt(expanded.slice(0, 2), 16);
+          const green = Number.parseInt(expanded.slice(2, 4), 16);
+          const blue = Number.parseInt(expanded.slice(4, 6), 16);
+          return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+        }
+      })();
+    </script>
+  </body>
+</html>

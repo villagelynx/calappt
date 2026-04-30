@@ -4,35 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CalAppt</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20260428-1">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=20260427-2">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png?v=20260427-2">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="CalAppt">
     <meta name="application-name" content="CalAppt">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260429-3">
+    <link rel="stylesheet" href="./styles.css?v=20260430-27">
   </head>
   <body>
     <div class="page-shell">
       <header class="topbar">
         <div class="topbar-copy">
            <div class="topbar-headline">
-             <img class="topbar-logo" src="./apple-touch-icon.png?v=20260428-1" alt="CalAppt" width="54" height="54" decoding="async">
+             <img class="topbar-logo" src="./apple-touch-icon.png" alt="CalAppt" width="54" height="54" decoding="async">
              <h1>CalAppt</h1>
            </div>
-           <p class="lede topbar-tagline">Your appointment book, with clients built in.</p>
+           <p class="lede topbar-tagline">Scheduling for professionals, client-first &middot; <a class="topbar-tagline-link" href="./why-calappt.html">Why CalAppt?</a></p>
          </div>
-        <div class="week-toolbar">
-          <button id="prevWeekBtn" class="ghost-button desktop-week-button" type="button">Previous Week</button>
-          <button id="todayDayBtn" class="primary-button" type="button">Today</button>
-          <button id="nextWeekBtn" class="ghost-button desktop-week-button" type="button">Next Week</button>
-          <button id="desktopMonthViewBtn" class="ghost-button desktop-week-button" type="button">Month</button>
-          <a class="ghost-button" href="./customers.html">Customers</a>
-          <a class="ghost-button" href="./payments.html">Payments</a>
-          <button id="agendaBtn" class="ghost-button" type="button">Agenda</button>
-        </div>
+          <div class="week-toolbar">
+            <button id="prevWeekBtn" class="ghost-button desktop-week-button" type="button">Previous Week</button>
+            <button id="todayDayBtn" class="primary-button" type="button">Today</button>
+            <button id="nextWeekBtn" class="ghost-button desktop-week-button" type="button">Next Week</button>
+            <button id="desktopMonthViewBtn" class="ghost-button desktop-week-button" type="button">Month</button>
+            <button id="agendaBtn" class="ghost-button" type="button">Agenda</button>
+            <a class="ghost-button nav-green-button" href="./customers.html">Customers</a>
+            <a class="ghost-button nav-green-button" href="./payments.html">Payments</a>
+          </div>
         <button id="menuBtn" class="ghost-icon-button topbar-menu-button" type="button" aria-label="Menu">&#9776;</button>
       </header>
 
@@ -44,7 +44,7 @@
               <button id="desktopAddEventBtn" class="secondary-button desktop-add-event-button" type="button">Create Event</button>
             </div>
             <button id="desktopNewCustomerBtn" class="ghost-button desktop-new-customer-button" type="button">Add New Customer</button>
-            <h2 class="desktop-customer-title">Customers</h2>
+            <h2 class="desktop-customer-title">Customers <span class="desktop-customer-hint">(drag and drop)</span></h2>
           </div>
           <div id="desktopCustomerList" class="desktop-customer-list" role="list"></div>
         </section>
@@ -109,16 +109,22 @@
         <div id="customerModeSection">
           <form id="customerForm" class="customer-form">
             <input id="customerEditId" type="hidden">
-            <label class="field">
-              <span>Customer Name</span>
-              <input id="customerName" type="text" placeholder="Add a customer" required>
-            </label>
             <div class="drawer-grid">
-              <label class="field">
+              <label class="field is-green">
+                <span>First name</span>
+                <input id="customerFirstName" type="text" placeholder="First name" autocomplete="given-name">
+              </label>
+              <label class="field is-green">
+                <span>Surname</span>
+                <input id="customerSurname" type="text" placeholder="Surname" autocomplete="family-name" required>
+              </label>
+            </div>
+            <div class="drawer-grid">
+              <label class="field is-green">
                 <span>Cell</span>
                 <input id="customerCell" type="tel" placeholder="Example: 604-555-0123" autocomplete="tel">
               </label>
-              <label class="field">
+              <label class="field is-green">
                 <span>Email</span>
                 <input id="customerEmail" type="email" placeholder="Example: student@example.com" autocomplete="email">
               </label>
@@ -190,14 +196,19 @@
       </div>
 
       <div class="menu-body">
-        <div class="menu-actions">
+          <div class="menu-actions">
            <div class="menu-week-nav" aria-label="Week navigation">
              <button id="menuPrevWeekBtn" class="secondary-button" type="button">Previous Week</button>
              <button id="menuNextWeekBtn" class="secondary-button" type="button">Next Week</button>
            </div>
-           <a class="secondary-button" href="./how-it-works.html">How it works</a>
-           <a class="secondary-button" href="./payments.html">Payments</a>
-           <a class="secondary-button" href="./contacts-import.html">Import contacts</a>
+            <a class="secondary-button" href="./how-it-works.html">How it works</a>
+            <a class="secondary-button" href="./why-calappt.html">Why CalAppt</a>
+            <a class="secondary-button" href="./payments.html">Payments</a>
+            <a class="secondary-button" href="./monthly-statement.html">Monthly statement</a>
+            <button id="exportMonthlyStatementBtn" class="secondary-button" type="button">Export monthly statement (Excel .csv)</button>
+            <a class="secondary-button" href="./yearly-statement.html">Yearly statement</a>
+            <button id="exportYearlyStatementBtn" class="secondary-button" type="button">Export year-end statement (Excel .csv)</button>
+            <a class="secondary-button" href="./contacts-import.html">Import contacts</a>
            <a class="secondary-button" href="./weather-settings.html">Weather settings</a>
            <a class="secondary-button" href="./email-settings.html">Email settings</a>
           <a class="secondary-button" href="./admin.html">Admin</a>
@@ -327,7 +338,7 @@
       </form>
     </aside>
 
-    <script src="./app.js?v=20260429-1"></script>
+    <script src="./app.js?v=20260430-8"></script>
   </body>
 </html>
 
