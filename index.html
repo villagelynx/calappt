@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260430-31">
+    <link rel="stylesheet" href="./styles.css?v=20260430-35">
   </head>
   <body>
     <div class="page-shell">
@@ -68,6 +68,12 @@
             <button id="monthPrevBtn" class="month-nav-button" type="button" aria-label="Previous month">&lt;</button>
             <p id="monthLabel" class="calendar-month-label" aria-live="polite"></p>
             <button id="monthNextBtn" class="month-nav-button" type="button" aria-label="Next month">&gt;</button>
+          </div>
+
+          <div class="mobile-week-nav" aria-label="Week navigation">
+            <button id="mobilePrevWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Previous Week</button>
+            <p id="mobileWeekTitle" class="mobile-week-title" aria-live="polite"></p>
+            <button id="mobileNextWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Next Week</button>
           </div>
 
           <div class="calendar-scroll">
@@ -333,7 +339,7 @@
       </form>
     </aside>
 
-    <script src="./app.js?v=20260430-9"></script>
+    <script src="./app.js?v=20260430-10"></script>
   </body>
 </html>
 

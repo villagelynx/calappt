@@ -73,6 +73,9 @@
     manageBtn: document.getElementById("manageBtn"),
     agendaBtn: document.getElementById("agendaBtn"),
     mobileAgendaBtn: document.getElementById("mobileAgendaBtn"),
+    mobilePrevWeekBtn: document.getElementById("mobilePrevWeekBtn"),
+    mobileWeekTitle: document.getElementById("mobileWeekTitle"),
+    mobileNextWeekBtn: document.getElementById("mobileNextWeekBtn"),
     menuBtn: document.getElementById("menuBtn"),
     menuPrevWeekBtn: document.getElementById("menuPrevWeekBtn"),
     menuNextWeekBtn: document.getElementById("menuNextWeekBtn"),
@@ -245,6 +248,8 @@
 
     elements.prevWeekBtn?.addEventListener("click", handleDesktopPrevNav);
     elements.nextWeekBtn?.addEventListener("click", handleDesktopNextNav);
+    elements.mobilePrevWeekBtn?.addEventListener("click", () => shiftWeek(-7));
+    elements.mobileNextWeekBtn?.addEventListener("click", () => shiftWeek(7));
     elements.todayBtn?.addEventListener("click", () => {
       visibleWeekStart = getStartOfWeek(new Date());
       mobileDayOffset = getInitialMobileDayOffset(visibleWeekStart);
@@ -382,6 +387,9 @@
       if (elements.weekLabel) {
         elements.weekLabel.textContent = "";
       }
+      if (elements.mobileWeekTitle) {
+        elements.mobileWeekTitle.textContent = "";
+      }
       return;
     }
 
@@ -391,6 +399,16 @@
     }
     if (elements.weekLabel) {
       elements.weekLabel.textContent = `${formatMonthDay(visibleWeekStart)} - ${formatMonthDay(end)}`;
+    }
+    if (elements.mobileWeekTitle) {
+      if (isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.week) {
+        const startYear = visibleWeekStart.getFullYear();
+        const endYear = end.getFullYear();
+        const yearLabel = startYear === endYear ? `, ${startYear}` : `, ${startYear} - ${endYear}`;
+        elements.mobileWeekTitle.textContent = `${formatMonthDay(visibleWeekStart)} \u2013 ${formatMonthDay(end)}${yearLabel}`;
+      } else {
+        elements.mobileWeekTitle.textContent = "";
+      }
     }
   }
 

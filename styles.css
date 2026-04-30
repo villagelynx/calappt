@@ -200,6 +200,22 @@ h1, h2, h3 {
   display: none;
 }
 
+.mobile-week-nav {
+  display: none;
+}
+
+.mobile-week-title {
+  margin: 0;
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(18, 38, 66, 0.92);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #mobileWeekViewBtn,
 #mobileMonthViewBtn {
   display: none;
@@ -2982,7 +2998,7 @@ a.weather-placeholder:hover {
     min-height: 36px;
     padding: 0 12px;
     border-radius: 10px;
-    font-size: 0.82rem;
+    font-size: 0.86rem;
     color: #eff8ef;
     border-color: rgba(255, 255, 255, 0.16);
     background: rgba(255, 255, 255, 0.04);
@@ -3079,6 +3095,48 @@ a.weather-placeholder:hover {
   .calendar-panel .calendar-month-row { display: none; }
   body.is-month-view .calendar-panel .calendar-month-row { display: flex; }
 
+  .mobile-week-nav {
+    display: none;
+  }
+
+  body.is-mobile-week-view .mobile-week-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: rgba(143, 212, 255, 0.12);
+    border: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.is-mobile-week-view .mobile-week-nav-button {
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  body.is-mobile-week-view .mobile-week-title {
+    font-size: 0.92rem;
+    color: rgba(18, 38, 66, 0.92);
+    flex: 1;
+    min-width: 0;
+  }
+
+  body.is-mobile-week-view .schedule-weather {
+    display: none;
+  }
+
+  body.is-mobile-week-view .schedule-day-head {
+    grid-template-areas: "name meta";
+    min-height: 52px;
+    padding: 6px 8px;
+    gap: 4px 8px;
+  }
+
   body.page-customers .customer-name {
     font-size: 1.1rem;
   }
@@ -3088,7 +3146,7 @@ a.weather-placeholder:hover {
   }
 
   body.page-customers .customer-contact {
-    font-size: 0.92rem;
+    font-size: 0.98rem;
   }
 
   body.page-customers .customer-note {
@@ -3121,6 +3179,11 @@ a.weather-placeholder:hover {
 
   .weather-field {
     min-width: 100%;
+  }
+
+  .schedule-weather .weather-row {
+    flex-wrap: nowrap;
+    gap: 4px;
   }
 
   .weather-city {
@@ -3170,9 +3233,21 @@ a.weather-placeholder:hover {
   body.is-mobile-week-view .weather-temp,
   body.is-mobile-week-view .weather-range,
   body.is-mobile-week-view .weather-placeholder {
-    font-size: 0.96rem;
-    min-height: 24px;
-    padding: 0 10px;
+    font-size: 0.84rem;
+    min-height: 20px;
+    padding: 0 6px;
+    border-radius: 8px;
+  }
+
+  body.is-mobile-week-view .weather-icon {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+  }
+
+  body.is-mobile-week-view .weather-icon svg {
+    width: 20px;
+    height: 20px;
   }
 
   .schedule-corner {
@@ -3218,6 +3293,31 @@ a.weather-placeholder:hover {
   .calendar-grid.is-mobile-day-view .appointment-note {
     font-size: 0.78rem;
     line-height: 1.25;
+  }
+
+  .agenda-item {
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
+
+  .agenda-time {
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .agenda-title {
+    font-size: 1rem;
+  }
+
+  .agenda-note {
+    font-size: 0.88rem;
+  }
+
+  .agenda-day-head strong {
+    font-size: 1.02rem;
+  }
+
+  .agenda-day-count {
+    font-size: 0.78rem;
   }
 
   .calendar-grid.is-mobile-day-view .schedule-header,
