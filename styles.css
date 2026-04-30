@@ -301,7 +301,7 @@ h1, h2, h3 {
   min-height: 36px;
   padding: 0 12px;
   border-radius: 9px;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
 }
 
 .workspace {
@@ -2979,10 +2979,10 @@ a.weather-placeholder:hover {
   }
 
   .mobile-quick-nav .ghost-button {
-    min-height: 34px;
+    min-height: 36px;
     padding: 0 12px;
     border-radius: 10px;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     color: #eff8ef;
     border-color: rgba(255, 255, 255, 0.16);
     background: rgba(255, 255, 255, 0.04);
