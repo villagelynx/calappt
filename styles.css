@@ -44,6 +44,32 @@ body::before {
   opacity: 0.45;
 }
 
+body.page-home {
+  background: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+}
+
+body.page-home h1,
+body.page-home h2,
+body.page-home h3 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+body.page-home::before {
+  opacity: 0;
+}
+
+@media (min-width: 781px) {
+  body.page-customers {
+    background: #fff;
+  }
+
+  body.page-customers::before {
+    opacity: 0;
+  }
+}
+
 .page-shell {
   position: relative;
   width: min(1420px, calc(100% - 28px));
@@ -121,6 +147,314 @@ h1, h2, h3 {
   object-fit: cover;
 }
 
+body.page-home .home-desktop-topline {
+  display: none;
+}
+
+@media (min-width: 781px) {
+  body.page-home .page-shell {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body.page-home .home-layout {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  body.page-home .home-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+
+  body.page-home .home-topbar {
+    display: block;
+    grid-template-columns: 1fr;
+    padding: 12px 18px;
+    background: transparent;
+    color: rgba(18, 38, 66, 0.92);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  body.page-home .home-desktop-topline {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+  }
+
+  body.page-home .home-mobile-only {
+    display: none;
+  }
+
+  body.page-home .home-topline-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    justify-self: start;
+  }
+
+  body.page-home .home-sidebar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+    color: rgba(18, 38, 66, 0.92);
+    padding: 4px 8px;
+  }
+
+  body.page-home .home-sidebar-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #fff;
+    object-fit: cover;
+    flex: 0 0 28px;
+  }
+
+  body.page-home .home-sidebar-brand:visited {
+    color: rgba(18, 38, 66, 0.92);
+  }
+
+  body.page-home .home-sidebar-brand:hover {
+    color: rgba(18, 38, 66, 0.92);
+  }
+
+  body.page-home .home-sidebar-brand:focus-visible {
+    outline: 2px solid rgba(0, 122, 255, 0.5);
+    outline-offset: 4px;
+    border-radius: 10px;
+  }
+
+  body.page-home .home-sidebar-brand,
+  body.page-home .home-sidebar-brand .home-brand-name {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  body.page-home .home-view-toggle {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    gap: 8px;
+    border: 0;
+  }
+
+  body.page-home .home-view-button {
+    min-height: 30px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(18, 38, 66, 0.82);
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  body.page-home .home-view-button.is-active {
+    background: rgba(0, 122, 255, 0.12);
+    color: #0a63ff;
+    box-shadow: none;
+  }
+
+  body.page-home .home-topline-center {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    justify-self: center;
+  }
+
+  body.page-home .home-nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 0;
+    background: transparent;
+    color: rgba(18, 38, 66, 0.72);
+    font: inherit;
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  body.page-home .home-nav-button:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  body.page-home .home-nav-button svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  body.page-home .home-range-label {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: rgba(18, 38, 66, 0.92);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px;
+  }
+
+  body.page-home .home-weather {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: rgba(18, 38, 66, 0.86);
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+    justify-self: end;
+  }
+
+  body.page-home .home-city-label {
+    color: rgba(18, 38, 66, 0.76);
+    font-weight: 700;
+  }
+
+  body.page-home .home-weather-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    color: rgba(18, 38, 66, 0.92);
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  body.page-home .home-weather-badge svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  body.page-home .schedule-corner,
+  body.page-home .time-label,
+  body.page-home .day-name,
+  body.page-home .day-meta {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  body.page-home .home-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 10px;
+    border-right: 1px solid rgba(15, 23, 42, 0.08);
+    background: rgba(15, 23, 42, 0.03);
+  }
+
+  body.page-home .home-sidebar-nav {
+    display: grid;
+    gap: 6px;
+  }
+
+  body.page-home .home-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: rgba(18, 38, 66, 0.82);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  body.page-home .home-sidebar-link:hover {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  body.page-home .home-sidebar-link.is-active,
+  body.page-home .home-sidebar-link[aria-current="page"] {
+    background: rgba(0, 122, 255, 0.1);
+    border-color: rgba(0, 122, 255, 0.12);
+    color: rgba(18, 38, 66, 0.92);
+  }
+
+  body.page-home .home-sidebar-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(18, 38, 66, 0.62);
+    flex: 0 0 20px;
+  }
+
+  body.page-home .home-sidebar-link.is-active .home-sidebar-icon,
+  body.page-home .home-sidebar-link[aria-current="page"] .home-sidebar-icon {
+    color: #007aff;
+  }
+
+  body.page-home .home-sidebar-icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+
+  body.page-home .home-workspace {
+    grid-template-columns: 1fr;
+    margin-top: 0;
+    gap: 0;
+  }
+
+  body.page-home .calendar-panel {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    backdrop-filter: none;
+  }
+}
+
+@media (max-width: 780px) {
+  body.page-home .home-sidebar {
+    display: none;
+  }
+}
+
 .topbar-tagline {
   display: none;
   margin-left: 0;
@@ -196,12 +530,63 @@ h1, h2, h3 {
   white-space: nowrap;
 }
 
+body.page-customers .customers-mobile-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+body.page-customers .customer-nav-back {
+  display: none;
+}
+
+body.page-customers .customer-nav-add {
+  display: none;
+}
+
 .mobile-quick-nav {
   display: none;
 }
 
 .mobile-week-nav {
   display: none;
+}
+
+.mobile-tabbar {
+  display: none;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+}
+
+.mobile-tabbar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: rgba(60, 60, 67, 0.6);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.1;
+  min-width: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-tabbar-item svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.mobile-tabbar-item[aria-current="page"] {
+  color: #007aff;
+}
+
+.mobile-tabbar-item:active {
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .mobile-week-title {
@@ -977,6 +1362,17 @@ body.page-why .why-actions {
   margin-top: 12px;
 }
 
+.more-links {
+  display: grid;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.more-links .ghost-button {
+  width: 100%;
+  justify-content: flex-start;
+}
+
 body.page-customers .customer-alpha-group {
   display: grid;
   gap: 10px;
@@ -1112,6 +1508,73 @@ body.page-customers .customer-alpha-items {
   height: 18px;
   accent-color: var(--accent);
   cursor: pointer;
+}
+
+.customer-avatar {
+  --avatar-color: var(--accent-deep);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  flex: 0 0 34px;
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 42%),
+    var(--avatar-color);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  user-select: none;
+}
+
+.customer-avatar svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.customer-row-subline {
+  display: none;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  color: rgba(238, 248, 238, 0.74);
+}
+
+.customer-quick-actions {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.customer-quick-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(238, 248, 238, 0.88);
+  text-decoration: none;
+}
+
+.customer-quick-action svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.customer-row-chevron {
+  color: rgba(238, 248, 238, 0.58);
+  font-size: 1.6rem;
+  line-height: 1;
+  padding-left: 4px;
 }
 
 .customer-card-actions {
@@ -2440,6 +2903,109 @@ a.weather-placeholder:hover {
     rgba(255, 249, 225, 0.86);
 }
 
+@media (min-width: 781px) {
+  body.page-home .schedule-header,
+  body.page-home .schedule-body {
+    gap: 0;
+  }
+
+  body.page-home .schedule-header {
+    margin-bottom: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .schedule-day-head {
+    position: relative;
+    grid-template-columns: auto auto;
+    grid-template-areas:
+      "name meta"
+      "weather weather";
+    justify-content: center;
+    justify-items: center;
+    align-content: start;
+    text-align: center;
+    gap: 4px 6px;
+    padding: 10px 10px 8px;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .schedule-day-head .day-name,
+  body.page-home .schedule-day-head .day-meta {
+    justify-self: center;
+    text-align: center;
+  }
+
+  body.page-home .schedule-day-head.is-today::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #0a63ff;
+  }
+
+  body.page-home .schedule-day-head.is-today .day-name,
+  body.page-home .schedule-day-head.is-today .day-meta {
+    color: #0a63ff;
+  }
+
+  body.page-home .schedule-day-head:last-child {
+    border-right: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .schedule-day-head.is-today {
+    background: transparent;
+    border-width: 0;
+    border-left: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .schedule-day-head.is-today:last-child {
+    border-right: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .schedule-day {
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .schedule-day:last-child {
+    border-right: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .schedule-day.is-today {
+    box-shadow: none;
+    background:
+      linear-gradient(180deg, rgba(255, 212, 0, 0.12), transparent 28%),
+      rgba(255, 249, 225, 0.74);
+  }
+
+  body.page-home .time-slot.is-hour {
+    border-top: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .weather-icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    text-shadow: none;
+  }
+
+  body.page-home .weather-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .schedule-slot-column {
   display: grid;
   grid-template-rows: repeat(var(--slot-count), var(--slot-height));
@@ -2486,7 +3052,7 @@ a.weather-placeholder:hover {
   display: grid;
   gap: 2px;
   padding: 5px 7px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid;
   box-shadow: 0 12px 24px rgba(18, 38, 66, 0.12);
   overflow: hidden;
@@ -2575,7 +3141,7 @@ a.weather-placeholder:hover {
 @media (min-width: 781px) {
   .timeline-appointment {
     padding: 4px 6px;
-    border-radius: 11px;
+    border-radius: 9px;
   }
 
   .appointment-title-row {
@@ -2925,6 +3491,30 @@ a.weather-placeholder:hover {
 }
 
 @media (max-width: 780px) {
+  body.has-mobile-tabbar .page-shell {
+    padding-bottom: calc(78px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    gap: 2px;
+    padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.94);
+    border-top: 1px solid rgba(60, 60, 67, 0.18);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobile-tabbar-item {
+    flex: 1 1 0;
+  }
+
   .schedule-header,
   .schedule-body {
     grid-template-columns: 80px repeat(var(--day-count, 7), minmax(102px, 1fr));
@@ -3137,20 +3727,248 @@ a.weather-placeholder:hover {
     gap: 4px 8px;
   }
 
+  body.page-customers {
+    background: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body.page-customers h1,
+  body.page-customers h2,
+  body.page-customers h3 {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  body.page-customers::before {
+    opacity: 0;
+  }
+
+  body.page-customers .page-shell {
+    width: 100%;
+    padding: 0;
+    padding-bottom: calc(78px + env(safe-area-inset-bottom));
+  }
+
+  body.page-customers .topbar {
+    border-radius: 0;
+    border: 0;
+    border-bottom: 1px solid rgba(22, 52, 94, 0.12);
+    box-shadow: none;
+    padding: 14px 14px 12px;
+    gap: 0;
+    background: #fff;
+    color: rgba(18, 38, 66, 0.92);
+  }
+
+  body.page-customers .topbar-copy {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+  }
+
+  body.page-customers .customers-mobile-nav {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    align-items: center;
+    gap: 6px;
+  }
+
+  body.page-customers .customer-nav-back,
+  body.page-customers .customer-nav-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    min-height: 0;
+    padding: 0;
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    color: #007aff;
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  body.page-customers .customer-nav-add {
+    font-size: 1.7rem;
+  }
+
+  body.page-customers .customer-nav-back:focus-visible,
+  body.page-customers .customer-nav-add:focus-visible {
+    outline: 2px solid rgba(0, 122, 255, 0.45);
+    outline-offset: 3px;
+  }
+
+  body.page-customers .customers-mobile-nav h1 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: rgba(18, 38, 66, 0.92);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body.page-customers .week-toolbar {
+    display: none;
+  }
+
+  body.page-customers .lede {
+    display: none;
+  }
+
+  body.page-customers .workspace {
+    margin-top: 0;
+    gap: 0;
+  }
+
+  body.page-customers .customer-panel {
+    padding: 0;
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  body.page-customers .panel-head {
+    display: none;
+  }
+
+  body.page-customers .customer-toolbar {
+    margin: 0;
+    padding: 12px 14px 10px;
+    background: #fff;
+  }
+
+  body.page-customers .customer-toolbar-toprow,
+  body.page-customers .customer-bulk-toolbar {
+    display: none;
+  }
+
+  body.page-customers .search-field {
+    gap: 0;
+  }
+
+  body.page-customers .search-field span {
+    display: none;
+  }
+
+  body.page-customers .search-field input {
+    min-height: 38px;
+    border-radius: 12px;
+    padding: 0 12px 0 34px;
+    background: rgba(0, 0, 0, 0.06);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z' fill='none' stroke='%2356708f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 12px center;
+    background-size: 16px 16px;
+    border: 0;
+    color: rgba(18, 38, 66, 0.92);
+  }
+
+  body.page-customers .search-field input:focus-visible {
+    outline: 2px solid rgba(47, 121, 184, 0.38);
+    outline-offset: 2px;
+  }
+
+  body.page-customers .search-field input::placeholder {
+    color: rgba(86, 112, 143, 0.82);
+  }
+
+  body.page-customers .customer-list {
+    gap: 0;
+    background: #fff;
+    border-top: 1px solid rgba(22, 52, 94, 0.12);
+    border-bottom: 1px solid rgba(22, 52, 94, 0.12);
+  }
+
+  body.page-customers .customer-alpha-group,
+  body.page-customers .customer-alpha-items {
+    gap: 0;
+  }
+
+  body.page-customers .customer-alpha-heading {
+    display: none;
+  }
+
+  body.page-customers .customer-card {
+    gap: 2px;
+    border-radius: 0;
+    border: 0;
+    border-bottom: 1px solid rgba(22, 52, 94, 0.12);
+    background: #fff;
+    padding: 10px 14px;
+    cursor: pointer;
+  }
+
+  body.page-customers .customer-card-top {
+    align-items: center;
+  }
+
+  body.page-customers .customer-select-toggle {
+    display: none;
+  }
+
+  body.page-customers .sample-pill {
+    display: none;
+  }
+
+  body.page-customers .customer-avatar {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    font-size: 0.72rem;
+    border: 0;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  }
+
+  body.page-customers .customer-avatar svg {
+    width: 16px;
+    height: 16px;
+  }
+
   body.page-customers .customer-name {
-    font-size: 1.1rem;
-  }
-
-  body.page-customers .customer-sport-name {
-    font-size: 0.86rem;
-  }
-
-  body.page-customers .customer-contact {
+    color: rgba(18, 38, 66, 0.92);
     font-size: 0.98rem;
   }
 
+  body.page-customers .customer-row-subline {
+    display: block;
+    margin-top: 1px;
+    margin-left: 38px;
+    font-size: 0.78rem;
+    color: rgba(86, 112, 143, 0.86);
+  }
+
+  body.page-customers .customer-contact-list,
   body.page-customers .customer-note {
-    font-size: 0.94rem;
+    display: none;
+  }
+
+  body.page-customers .customer-quick-actions {
+    display: none;
+  }
+
+  body.page-customers .customer-quick-action {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: rgba(143, 212, 255, 0.14);
+    border: 1px solid rgba(47, 121, 184, 0.18);
+    color: var(--accent-deep);
+  }
+
+  body.page-customers .customer-quick-action:hover {
+    background: rgba(143, 212, 255, 0.22);
+  }
+
+  body.page-customers .customer-row-chevron {
+    color: rgba(18, 38, 66, 0.4);
+    font-size: 1.7rem;
   }
 
   body.page-customer-profile .field span {

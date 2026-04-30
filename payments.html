@@ -12,9 +12,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260430-35">
+    <link rel="stylesheet" href="./styles.css">
   </head>
-  <body class="page-payments">
+  <body class="page-payments has-mobile-tabbar">
     <div class="page-shell">
       <header class="topbar">
         <div class="topbar-copy">
@@ -80,6 +80,41 @@
         </section>
       </main>
     </div>
+
+    <nav class="mobile-tabbar" aria-label="Primary">
+      <a class="mobile-tabbar-item" href="./index.html" aria-label="Calendar">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="4" y="5" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 3v4M16 3v4M4 9h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Calendar</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./customers.html" aria-label="Customers">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="17" cy="11" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M3 21a6 6 0 0 1 12 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M13 21a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Customers</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./payments.html" aria-current="page" aria-label="Payments">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M3 10h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 15h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Payments</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./more.html" aria-label="More">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="6" cy="12" r="1.6" fill="currentColor"/>
+          <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+          <circle cx="18" cy="12" r="1.6" fill="currentColor"/>
+        </svg>
+        <span>More</span>
+      </a>
+    </nav>
 
     <script>
       (() => {

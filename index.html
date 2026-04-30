@@ -12,75 +12,151 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260430-35">
+    <link rel="stylesheet" href="./styles.css">
   </head>
-  <body>
+  <body class="page-home has-mobile-tabbar">
     <div class="page-shell">
-      <header class="topbar">
-         <div class="topbar-copy">
-           <div class="topbar-headline">
-             <img class="topbar-logo" src="./apple-touch-icon.png" alt="CalAppt" width="54" height="54" decoding="async">
-             <h1>CalAppt</h1>
-           </div>
-           <div class="topbar-mobile-datetime" aria-live="polite">
-             <strong id="mobileDayLabel" class="topbar-mobile-date">-</strong>
-             <span id="mobileCurrentTime" class="topbar-mobile-time" hidden></span>
-           </div>
-           <p class="lede topbar-tagline">Scheduling for professionals, client-first &middot; <a class="topbar-tagline-link" href="./why-calappt.html">Why CalAppt?</a></p>
-         </div>
-          <div class="week-toolbar">
-            <button id="prevWeekBtn" class="ghost-button desktop-week-button" type="button">Previous Week</button>
-            <button id="todayDayBtn" class="primary-button" type="button">Today</button>
-            <button id="nextWeekBtn" class="ghost-button desktop-week-button" type="button">Next Week</button>
-            <button id="desktopMonthViewBtn" class="ghost-button desktop-week-button" type="button">Month</button>
-            <button id="mobileWeekViewBtn" class="ghost-button mobile-day-control mobile-top-toggle" type="button" aria-selected="false">Week</button>
-            <button id="mobileMonthViewBtn" class="ghost-button mobile-day-control mobile-top-toggle" type="button" aria-selected="false">Month</button>
-            <button id="agendaBtn" class="ghost-button mobile-top-hide" type="button">Agenda</button>
-            <a class="ghost-button nav-turquoise-button mobile-top-hide" href="./customers.html">Customers</a>
-            <a class="ghost-button nav-green-button mobile-top-hide" href="./payments.html">Payments</a>
-            <a class="ghost-button mobile-top-hide" href="./why-calappt.html">Why CalAppt?</a>
-          </div>
-        <button id="menuBtn" class="ghost-icon-button topbar-menu-button" type="button" aria-label="Menu">&#9776;</button>
-      </header>
+      <div class="home-layout">
+        <aside class="home-sidebar" aria-label="Menu">
+          <a class="home-sidebar-brand" href="./index.html" aria-label="CalAppt.com">
+            <img class="home-sidebar-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="28" height="28" decoding="async">
+            <span class="home-brand-name">CalAppt.com</span>
+          </a>
 
-      <main class="workspace">
-        <section class="panel mobile-quick-nav" aria-label="Quick links">
-          <div class="mobile-quick-nav-row">
-            <button id="mobileAgendaBtn" class="ghost-button" type="button">Agenda</button>
-            <a class="ghost-button nav-turquoise-button" href="./customers.html">Customers</a>
-            <a class="ghost-button nav-green-button" href="./payments.html">Payments</a>
-          </div>
-        </section>
-        <section id="desktopCustomerPanel" class="panel desktop-customer-panel" aria-label="Customers">
-          <div class="desktop-customer-head">
-            <div class="desktop-customer-actions">
-              <button id="desktopAddCustomerBtn" class="primary-button desktop-add-customer-button" type="button">Create Customer Appointment</button>
-              <button id="desktopAddEventBtn" class="secondary-button desktop-add-event-button" type="button">Create Event</button>
+          <nav class="home-sidebar-nav" aria-label="Primary navigation">
+            <a class="home-sidebar-link is-active" href="./index.html" aria-current="page">
+              <span class="home-sidebar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <rect x="4" y="5" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                  <path d="M8 3v4M16 3v4M4 9h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <span>Calendar</span>
+            </a>
+            <a class="home-sidebar-link" href="./customers.html">
+              <span class="home-sidebar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 12.2a4.4 4.4 0 1 0 0-8.8 4.4 4.4 0 0 0 0 8.8Z" fill="currentColor"></path>
+                  <path d="M4 21v-0.5c0-4.2 3.6-7.2 8-7.2s8 3 8 7.2V21" fill="currentColor"></path>
+                </svg>
+              </span>
+              <span>Customers</span>
+            </a>
+            <a class="home-sidebar-link" href="./payments.html">
+              <span class="home-sidebar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                  <path d="M3 10h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <span>Payments</span>
+            </a>
+            <a class="home-sidebar-link" href="./backups.html">
+              <span class="home-sidebar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M7.3 18.5h9.2c2.6 0 4.5-1.9 4.5-4.3 0-2.2-1.6-4-3.8-4.3-0.7-3-3.4-5.2-6.6-5.2-3.4 0-6.2 2.5-6.7 5.8C2.2 11.3 1 12.9 1 14.8c0 2.1 1.7 3.7 3.9 3.7h2.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M12 11.5v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                  <path d="M9.5 16l2.5 2.5L14.5 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </span>
+              <span>Backups</span>
+            </a>
+            <a class="home-sidebar-link" href="./weather-settings.html">
+              <span class="home-sidebar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </span>
+              <span>Settings</span>
+            </a>
+            <a class="home-sidebar-link" href="./how-it-works.html">
+              <span class="home-sidebar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"></circle>
+                  <path d="M12 16v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                  <path d="M12 8h.01" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <span>Help</span>
+            </a>
+          </nav>
+        </aside>
+
+        <div class="home-main">
+          <header class="topbar home-topbar">
+            <div class="home-desktop-topline" aria-label="Calendar toolbar">
+              <div class="home-topline-left">
+                <div class="home-view-toggle" role="tablist" aria-label="View mode">
+                  <button id="desktopDayViewBtn" class="home-view-button" type="button" aria-selected="false">Day</button>
+                  <button id="desktopWeekViewBtn" class="home-view-button" type="button" aria-selected="false">Week</button>
+                  <button id="desktopMonthViewBtn" class="home-view-button" type="button" aria-selected="false">Month</button>
+                  <button id="agendaBtn" class="home-view-button" type="button" aria-selected="false">Agenda</button>
+                </div>
+              </div>
+
+              <div class="home-topline-center" aria-label="Date navigation">
+                <button id="prevWeekBtn" class="home-nav-button" type="button" aria-label="Previous">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M14.5 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+                <div id="weekLabel" class="home-range-label" aria-live="polite"></div>
+                <button id="nextWeekBtn" class="home-nav-button" type="button" aria-label="Next">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <a class="home-weather" href="./weather-settings.html" aria-label="Weather settings">
+                <span id="desktopCityLabel" class="home-city-label"></span>
+                <span id="desktopWeatherBadge" class="home-weather-badge" hidden></span>
+              </a>
             </div>
-            <button id="desktopNewCustomerBtn" class="ghost-button desktop-new-customer-button" type="button">Add New Customer</button>
-            <h2 class="desktop-customer-title">Customers <span class="desktop-customer-hint">(drag and drop)</span></h2>
-          </div>
-          <div id="desktopCustomerList" class="desktop-customer-list" role="list"></div>
-        </section>
 
-        <section class="panel calendar-panel">
-          <div class="calendar-month-row" aria-label="Current month">
-            <button id="monthPrevBtn" class="month-nav-button" type="button" aria-label="Previous month">&lt;</button>
-            <p id="monthLabel" class="calendar-month-label" aria-live="polite"></p>
-            <button id="monthNextBtn" class="month-nav-button" type="button" aria-label="Next month">&gt;</button>
-          </div>
+            <div class="topbar-copy home-mobile-only">
+              <div class="topbar-headline">
+                <img class="topbar-logo" src="./apple-touch-icon.png" alt="CalAppt" width="54" height="54" decoding="async">
+                <h1>CalAppt</h1>
+              </div>
+              <div class="topbar-mobile-datetime" aria-live="polite">
+                <strong id="mobileDayLabel" class="topbar-mobile-date">-</strong>
+                <span id="mobileCurrentTime" class="topbar-mobile-time" hidden></span>
+              </div>
+              <p class="lede topbar-tagline">Scheduling for professionals, client-first</p>
+            </div>
+            <div class="week-toolbar home-mobile-only">
+              <button id="todayDayBtn" class="primary-button" type="button">Today</button>
+              <button id="mobileWeekViewBtn" class="ghost-button mobile-day-control mobile-top-toggle" type="button" aria-selected="false">Week</button>
+              <button id="mobileMonthViewBtn" class="ghost-button mobile-day-control mobile-top-toggle" type="button" aria-selected="false">Month</button>
+            </div>
+            <button id="menuBtn" class="ghost-icon-button topbar-menu-button home-mobile-only" type="button" aria-label="Menu">&#9776;</button>
+          </header>
 
-          <div class="mobile-week-nav" aria-label="Week navigation">
-            <button id="mobilePrevWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Previous Week</button>
-            <p id="mobileWeekTitle" class="mobile-week-title" aria-live="polite"></p>
-            <button id="mobileNextWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Next Week</button>
-          </div>
+          <main class="workspace home-workspace">
+            <section class="panel mobile-quick-nav" aria-label="Quick links">
+              <div class="mobile-quick-nav-row">
+                <button id="mobileAgendaBtn" class="ghost-button" type="button">Agenda</button>
+                <a class="ghost-button nav-turquoise-button" href="./customers.html">Customers</a>
+                <a class="ghost-button nav-green-button" href="./payments.html">Payments</a>
+              </div>
+            </section>
 
-          <div class="calendar-scroll">
-            <div id="calendarGrid" class="calendar-grid"></div>
-          </div>
-        </section>
-      </main>
+            <section class="panel calendar-panel">
+              <div class="mobile-week-nav" aria-label="Week navigation">
+                <button id="mobilePrevWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Previous Week</button>
+                <p id="mobileWeekTitle" class="mobile-week-title" aria-live="polite"></p>
+                <button id="mobileNextWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Next Week</button>
+              </div>
+
+              <div class="calendar-scroll">
+                <div id="calendarGrid" class="calendar-grid"></div>
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
     </div>
 
     <div id="drawerOverlay" class="drawer-overlay" hidden></div>
@@ -339,7 +415,42 @@
       </form>
     </aside>
 
-    <script src="./app.js?v=20260430-10"></script>
+    <nav class="mobile-tabbar" aria-label="Primary">
+      <a class="mobile-tabbar-item" href="./index.html" aria-current="page" aria-label="Calendar">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="4" y="5" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 3v4M16 3v4M4 9h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Calendar</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./customers.html" aria-label="Customers">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="17" cy="11" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M3 21a6 6 0 0 1 12 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M13 21a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Customers</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./payments.html" aria-label="Payments">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M3 10h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 15h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Payments</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./more.html" aria-label="More">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="6" cy="12" r="1.6" fill="currentColor"/>
+          <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+          <circle cx="18" cy="12" r="1.6" fill="currentColor"/>
+        </svg>
+        <span>More</span>
+      </a>
+    </nav>
+
+    <script src="./app.js"></script>
   </body>
 </html>
 

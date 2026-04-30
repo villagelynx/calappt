@@ -12,13 +12,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260430-35">
+    <link rel="stylesheet" href="./styles.css">
   </head>
-  <body class="page-customers">
+  <body class="page-customers has-mobile-tabbar">
     <div class="page-shell">
       <header class="topbar">
         <div class="topbar-copy">
-          <h1>Customers</h1>
+          <div class="customers-mobile-nav">
+            <a class="customer-nav-back" href="./index.html" aria-label="Back to Calendar">&#x2039;</a>
+            <h1>Customers</h1>
+            <button id="mobileAddCustomerBtn" class="ghost-icon-button customer-nav-add" type="button" aria-label="Add new customer">+</button>
+          </div>
           <p class="lede">This list is saved in your browser on this device.</p>
         </div>
         <div class="week-toolbar">
@@ -44,7 +48,7 @@
             </div>
             <label class="field search-field is-green">
               <span>Search</span>
-              <input id="customerSearch" type="search" placeholder="Search customers">
+              <input id="customerSearch" type="search" placeholder="Search">
             </label>
             <div class="customer-bulk-toolbar" role="group" aria-label="Bulk actions">
               <label class="customer-bulk-select">
@@ -115,6 +119,41 @@
       </form>
     </aside>
 
+    <nav class="mobile-tabbar" aria-label="Primary">
+      <a class="mobile-tabbar-item" href="./index.html" aria-label="Calendar">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="4" y="5" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 3v4M16 3v4M4 9h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Calendar</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./customers.html" aria-current="page" aria-label="Customers">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="17" cy="11" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M3 21a6 6 0 0 1 12 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M13 21a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Customers</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./payments.html" aria-label="Payments">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M3 10h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 15h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Payments</span>
+      </a>
+      <a class="mobile-tabbar-item" href="./more.html" aria-label="More">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="6" cy="12" r="1.6" fill="currentColor"/>
+          <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+          <circle cx="18" cy="12" r="1.6" fill="currentColor"/>
+        </svg>
+        <span>More</span>
+      </a>
+    </nav>
+
     <script>
       (function () {
         const STORAGE_KEYS = {
@@ -123,6 +162,8 @@
           appointments: "coach_appointment_calendar_appointments",
           selectedCustomerId: "coach_appointment_calendar_selected_customer_id"
         };
+        const MOBILE_BREAKPOINT = 780;
+        const isMobileLayout = () => window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
 
         const listEl = document.getElementById("customerList");
         const countEl = document.getElementById("customerCountChip");
@@ -130,6 +171,7 @@
         const selectAllEl = document.getElementById("customerSelectAll");
         const deleteSelectedBtn = document.getElementById("deleteSelectedCustomersBtn");
         const addCustomerBtn = document.getElementById("addCustomerBtn");
+        const mobileAddCustomerBtn = document.getElementById("mobileAddCustomerBtn");
         const drawerOverlay = document.getElementById("customerDrawerOverlay");
         const createDrawer = document.getElementById("customerCreateDrawer");
         const closeCreateDrawerBtn = document.getElementById("closeCustomerCreateDrawerBtn");
@@ -144,6 +186,22 @@
 
         const selectedCustomerIds = new Set();
         let lastFilteredCustomers = [];
+
+        const handleCustomerCardClick = (event) => {
+          if (!isMobileLayout()) return;
+          const card = event.currentTarget;
+          const customerId = card?.getAttribute?.("data-customer-profile-id") || "";
+          if (!customerId) return;
+
+          const target = event.target;
+          if (target && typeof target.closest === "function") {
+            if (target.closest("a") || target.closest("button") || target.closest("input") || target.closest("label")) {
+              return;
+            }
+          }
+
+          window.location.href = `./customer-profile.html?id=${encodeURIComponent(customerId)}`;
+        };
 
         const escapeHtml = (value) => {
           const str = String(value ?? "");
@@ -357,6 +415,15 @@
           const isSelected = selectedCustomerIds.has(customer.id);
           const samplePillMarkup = customer.isSample ? `<span class="sample-pill">Sample</span>` : "";
           const displayName = formatNameSurnameFirst(customer.name) || customer.name || "Unnamed";
+          const avatarColor = sport?.color || "#8fd4ff";
+          const parsedName = splitNameForSurnameSort(customer?.name);
+          const surnameRaw = String(parsedName?.surnameRaw || "").trim();
+          const givenRaw = String(parsedName?.given || "").trim();
+          const sentinel = "\uffff";
+          const firstInitial = (surnameRaw && surnameRaw !== sentinel ? surnameRaw.charAt(0) : (givenRaw && givenRaw !== sentinel ? givenRaw.charAt(0) : "C")).toUpperCase();
+          const secondInitial = (givenRaw && givenRaw !== sentinel ? givenRaw.charAt(0) : "").toUpperCase();
+          const initials = `${firstInitial}${secondInitial}`.trim();
+          const subline = cell || "";
 
           const smsNumber = cell ? sanitizePhoneForSms(cell) : "";
           const metaLines = [
@@ -365,9 +432,27 @@
             smsNumber ? `<a class="customer-contact customer-contact-link" href="sms:${escapeHtml(smsNumber)}">Text: ${escapeHtml(cell)}</a>` : "",
             email ? `<a class="customer-contact customer-contact-link" href="mailto:${escapeHtml(email)}">Email: ${escapeHtml(email)}</a>` : ""
           ].filter(Boolean).join("");
+          const quickActionsMarkup = [
+            smsNumber ? `
+              <a class="customer-quick-action" href="sms:${escapeHtml(smsNumber)}" aria-label="Text ${escapeHtml(displayName)}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M7 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H12l-5 4v-4H7a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            ` : "",
+            email ? `
+              <a class="customer-quick-action" href="mailto:${escapeHtml(email)}" aria-label="Email ${escapeHtml(displayName)}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M4 7h16v12H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                  <path d="M4 8l8 6 8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            ` : "",
+            `<span class="customer-row-chevron" aria-hidden="true">&#x203A;</span>`
+          ].filter(Boolean).join("");
 
           return `
-            <article class="customer-card">
+            <article class="customer-card" data-customer-profile-id="${escapeHtml(customer.id)}">
               <div class="customer-card-top">
                 <div class="customer-card-title-row">
                   <label class="customer-select-toggle" aria-label="Select ${escapeHtml(displayName || "customer")}">
@@ -378,10 +463,17 @@
                       ${isSelected ? "checked" : ""}
                     >
                   </label>
+                  <span class="customer-avatar" style="--avatar-color:${escapeHtml(avatarColor)}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm0 2c-3.31 0-8 1.67-8 5v1h16v-1c0-3.33-4.69-5-8-5Z" fill="currentColor"/>
+                    </svg>
+                  </span>
                   <strong class="customer-name">${escapeHtml(displayName)}</strong>
                   ${samplePillMarkup}
                 </div>
+                ${quickActionsMarkup ? `<div class="customer-quick-actions">${quickActionsMarkup}</div>` : ""}
               </div>
+              ${subline ? `<div class="customer-row-subline">${escapeHtml(subline)}</div>` : ""}
               ${metaLines ? `<div class="customer-contact-list">${metaLines}</div>` : ""}
               ${note ? `<p class="customer-note">${escapeHtml(note)}</p>` : ""}
             </article>
@@ -514,6 +606,10 @@
             });
           });
 
+          Array.from(listEl.querySelectorAll("[data-customer-profile-id]")).forEach((card) => {
+            card.addEventListener("click", handleCustomerCardClick);
+          });
+
           updateBulkActionsUI();
         };
 
@@ -529,6 +625,7 @@
         });
         deleteSelectedBtn?.addEventListener("click", deleteSelectedCustomers);
         addCustomerBtn?.addEventListener("click", openCreateDrawer);
+        mobileAddCustomerBtn?.addEventListener("click", openCreateDrawer);
         closeCreateDrawerBtn?.addEventListener("click", closeCreateDrawer);
         cancelCreateBtn?.addEventListener("click", closeCreateDrawer);
         drawerOverlay?.addEventListener("click", closeCreateDrawer);

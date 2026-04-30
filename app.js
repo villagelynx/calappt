@@ -69,8 +69,11 @@
     nextWeekBtn: document.getElementById("nextWeekBtn"),
     todayBtn: document.getElementById("todayBtn"),
     todayDayBtn: document.getElementById("todayDayBtn"),
+    desktopDayViewBtn: document.getElementById("desktopDayViewBtn"),
+    desktopWeekViewBtn: document.getElementById("desktopWeekViewBtn"),
     desktopMonthViewBtn: document.getElementById("desktopMonthViewBtn"),
     manageBtn: document.getElementById("manageBtn"),
+    sidebarBackupsBtn: document.getElementById("sidebarBackupsBtn"),
     agendaBtn: document.getElementById("agendaBtn"),
     mobileAgendaBtn: document.getElementById("mobileAgendaBtn"),
     mobilePrevWeekBtn: document.getElementById("mobilePrevWeekBtn"),
@@ -92,6 +95,8 @@
     monthLabel: document.getElementById("monthLabel"),
     monthNextBtn: document.getElementById("monthNextBtn"),
     weekLabel: document.getElementById("weekLabel"),
+    desktopCityLabel: document.getElementById("desktopCityLabel"),
+    desktopWeatherBadge: document.getElementById("desktopWeatherBadge"),
     leftPanelEyebrow: document.getElementById("leftPanelEyebrow"),
     showCustomersBtn: document.getElementById("showCustomersBtn"),
     showTasksBtn: document.getElementById("showTasksBtn"),
@@ -257,6 +262,8 @@
       refreshWeather();
     });
     elements.todayDayBtn?.addEventListener("click", jumpToToday);
+    elements.desktopDayViewBtn?.addEventListener("click", () => setMobileViewMode(MOBILE_VIEW_MODES.day));
+    elements.desktopWeekViewBtn?.addEventListener("click", () => setMobileViewMode(MOBILE_VIEW_MODES.week));
     elements.desktopMonthViewBtn?.addEventListener("click", handleDesktopMonthViewToggle);
     elements.mobilePrevDayBtn?.addEventListener("click", (event) => {
       flashMobileDayBarControl(event.currentTarget);
@@ -283,6 +290,7 @@
       setMobileViewMode(MOBILE_VIEW_MODES.month);
     });
     elements.manageBtn?.addEventListener("click", openManageDrawer);
+    elements.sidebarBackupsBtn?.addEventListener("click", openMenuDrawer);
     elements.agendaBtn?.addEventListener("click", handleAgendaButtonClick);
     elements.mobileAgendaBtn?.addEventListener("click", handleAgendaButtonClick);
     elements.closeManageDrawerBtn?.addEventListener("click", closeManageDrawer);
@@ -368,6 +376,7 @@
     elements.agendaBtn?.classList.toggle("is-active", mobileViewMode === MOBILE_VIEW_MODES.agenda);
     renderDesktopTopbarNav();
     renderWeekLabel();
+    renderDesktopToolbarWeather();
     renderSports();
     renderCustomers();
     renderDesktopCustomerList();
@@ -380,12 +389,27 @@
   }
 
   function renderWeekLabel() {
+    const selectedDay = getSelectedMobileDay();
+
     if (mobileViewMode === MOBILE_VIEW_MODES.month) {
       if (elements.monthLabel) {
         elements.monthLabel.textContent = formatMonthYear(visibleMonthStart);
       }
       if (elements.weekLabel) {
-        elements.weekLabel.textContent = "";
+        elements.weekLabel.textContent = formatMonthYear(visibleMonthStart);
+      }
+      if (elements.mobileWeekTitle) {
+        elements.mobileWeekTitle.textContent = "";
+      }
+      return;
+    }
+
+    if (mobileViewMode === MOBILE_VIEW_MODES.day) {
+      if (elements.weekLabel) {
+        elements.weekLabel.textContent = selectedDay.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+      }
+      if (elements.monthLabel) {
+        elements.monthLabel.textContent = formatMonthYear(getStartOfMonth(selectedDay));
       }
       if (elements.mobileWeekTitle) {
         elements.mobileWeekTitle.textContent = "";
@@ -398,7 +422,19 @@
       elements.monthLabel.textContent = formatVisibleMonthRange(visibleWeekStart, end);
     }
     if (elements.weekLabel) {
-      elements.weekLabel.textContent = `${formatMonthDay(visibleWeekStart)} - ${formatMonthDay(end)}`;
+      const startYear = visibleWeekStart.getFullYear();
+      const endYear = end.getFullYear();
+      const sameYear = startYear === endYear;
+      const sameMonth = sameYear && visibleWeekStart.getMonth() === end.getMonth();
+
+      if (sameMonth) {
+        const monthLabel = visibleWeekStart.toLocaleDateString(undefined, { month: "short" });
+        elements.weekLabel.textContent = `${monthLabel} ${visibleWeekStart.getDate()} \u2013 ${end.getDate()}, ${startYear}`;
+      } else if (sameYear) {
+        elements.weekLabel.textContent = `${formatMonthDay(visibleWeekStart)} \u2013 ${formatMonthDay(end)}, ${startYear}`;
+      } else {
+        elements.weekLabel.textContent = `${formatMonthDay(visibleWeekStart)}, ${startYear} \u2013 ${formatMonthDay(end)}, ${endYear}`;
+      }
     }
     if (elements.mobileWeekTitle) {
       if (isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.week) {
@@ -413,15 +449,67 @@
   }
 
   function renderDesktopTopbarNav() {
+    const isDayMode = mobileViewMode === MOBILE_VIEW_MODES.day;
+    const isWeekMode = mobileViewMode === MOBILE_VIEW_MODES.week;
     const isMonthMode = mobileViewMode === MOBILE_VIEW_MODES.month;
+    const isAgendaMode = mobileViewMode === MOBILE_VIEW_MODES.agenda;
+
+    elements.desktopDayViewBtn?.classList.toggle("is-active", isDayMode);
+    elements.desktopWeekViewBtn?.classList.toggle("is-active", isWeekMode);
     elements.desktopMonthViewBtn?.classList.toggle("is-active", isMonthMode);
+    elements.agendaBtn?.classList.toggle("is-active", isAgendaMode);
+
+    if (elements.desktopDayViewBtn) elements.desktopDayViewBtn.setAttribute("aria-selected", String(isDayMode));
+    if (elements.desktopWeekViewBtn) elements.desktopWeekViewBtn.setAttribute("aria-selected", String(isWeekMode));
+    if (elements.desktopMonthViewBtn) elements.desktopMonthViewBtn.setAttribute("aria-selected", String(isMonthMode));
+    if (elements.agendaBtn) elements.agendaBtn.setAttribute("aria-selected", String(isAgendaMode));
+
+    const prevLabel = isMonthMode ? "Previous Month" : (isDayMode ? "Previous Day" : "Previous Week");
+    const nextLabel = isMonthMode ? "Next Month" : (isDayMode ? "Next Day" : "Next Week");
 
     if (elements.prevWeekBtn) {
-      elements.prevWeekBtn.textContent = isMonthMode ? "Previous Month" : "Previous Week";
+      elements.prevWeekBtn.setAttribute("aria-label", prevLabel);
+      elements.prevWeekBtn.title = prevLabel;
     }
     if (elements.nextWeekBtn) {
-      elements.nextWeekBtn.textContent = isMonthMode ? "Next Month" : "Next Week";
+      elements.nextWeekBtn.setAttribute("aria-label", nextLabel);
+      elements.nextWeekBtn.title = nextLabel;
     }
+  }
+
+  function renderDesktopToolbarWeather() {
+    const cityLabel = formatCityRegionLabel(weatherState.city);
+    if (elements.desktopCityLabel) {
+      elements.desktopCityLabel.textContent = cityLabel || "Add weather";
+    }
+
+    if (!elements.desktopWeatherBadge) return;
+
+    let badgeDay = getSelectedMobileDay();
+    if (mobileViewMode !== MOBILE_VIEW_MODES.day) {
+      const todayKey = formatDateKey(new Date());
+      const startKey = formatDateKey(visibleWeekStart);
+      const endKey = formatDateKey(addDays(visibleWeekStart, 6));
+      badgeDay = todayKey >= startKey && todayKey <= endKey ? new Date() : visibleWeekStart;
+    }
+
+    const weather = weatherState.dailyByDate[formatDateKey(badgeDay)];
+    if (!weather) {
+      if (!cityLabel) {
+        elements.desktopWeatherBadge.hidden = true;
+        elements.desktopWeatherBadge.innerHTML = "";
+        return;
+      }
+
+      elements.desktopWeatherBadge.hidden = false;
+      elements.desktopWeatherBadge.innerHTML = `${getWeatherIconMarkup("neutral")}<span>--</span>`;
+      return;
+    }
+
+    const visual = getWeatherVisual(weather.weatherCode);
+    const tempLabel = Number.isFinite(weather.maxTemp) ? `${Math.round(weather.maxTemp)}\u00B0` : "--";
+    elements.desktopWeatherBadge.hidden = false;
+    elements.desktopWeatherBadge.innerHTML = `${visual.icon}<span>${escapeHtml(tempLabel)}</span>`;
   }
 
   function renderLeftPanel() {
@@ -775,7 +863,7 @@
     elements.calendarGrid.style.setProperty("--slot-count", String(SCHEDULE_SLOTS.length));
     elements.calendarGrid.style.setProperty("--slot-height", `${SLOT_HEIGHT}px`);
     elements.calendarGrid.style.setProperty("--day-count", String(days.length));
-    elements.calendarGrid.classList.toggle("is-mobile-day-view", isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day);
+    elements.calendarGrid.classList.toggle("is-mobile-day-view", mobileViewMode === MOBILE_VIEW_MODES.day);
     elements.calendarGrid.innerHTML = `
       <div class="schedule-board">
         <div class="schedule-header">
@@ -1122,6 +1210,8 @@
     const weather = weatherState.dailyByDate[formatDateKey(day)];
     const showCity = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day;
     const cityLabel = showCity ? formatCityRegionLabel(weatherState.city) : "";
+    const isWeekMode = mobileViewMode === MOBILE_VIEW_MODES.week;
+    const dayMetaLabel = isWeekMode ? String(day.getDate()) : formatMonthDay(day);
     return `
       <div class="schedule-day-head ${isToday(day) ? "is-today" : ""}">
         <div class="schedule-weather ${weather ? "has-weather" : ""}">
@@ -1130,8 +1220,8 @@
             ${renderWeatherMarkup(weather)}
           </div>
         </div>
-        <span class="day-name">${escapeHtml(formatWeekday(day))},</span>
-        <strong class="day-meta">${escapeHtml(formatMonthDay(day))}</strong>
+        <span class="day-name">${escapeHtml(formatWeekday(day))}</span>
+        <strong class="day-meta">${escapeHtml(dayMetaLabel)}</strong>
       </div>
     `;
   }
@@ -3240,12 +3330,20 @@
       shiftMonth(-1);
       return;
     }
+    if (mobileViewMode === MOBILE_VIEW_MODES.day) {
+      shiftMobileDay(-1);
+      return;
+    }
     shiftWeek(-7);
   }
 
   function handleDesktopNextNav() {
     if (mobileViewMode === MOBILE_VIEW_MODES.month) {
       shiftMonth(1);
+      return;
+    }
+    if (mobileViewMode === MOBILE_VIEW_MODES.day) {
+      shiftMobileDay(1);
       return;
     }
     shiftWeek(7);
@@ -3256,11 +3354,7 @@
     closeMenuDrawer({ silent: true });
     closeDrawer();
 
-    if (mobileViewMode === MOBILE_VIEW_MODES.month) {
-      setMobileViewMode(MOBILE_VIEW_MODES.week);
-      return;
-    }
-
+    if (mobileViewMode === MOBILE_VIEW_MODES.month) return;
     setMobileViewMode(MOBILE_VIEW_MODES.month);
   }
 
@@ -3324,10 +3418,7 @@
     closeMenuDrawer({ silent: true });
     closeDrawer();
 
-    if (mobileViewMode === MOBILE_VIEW_MODES.agenda) {
-      setMobileViewMode(lastScheduleViewMode);
-      return;
-    }
+    if (mobileViewMode === MOBILE_VIEW_MODES.agenda) return;
     setMobileViewMode(MOBILE_VIEW_MODES.agenda);
   }
 
@@ -3915,7 +4006,7 @@
   }
 
   function getVisibleCalendarDays() {
-    if (isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day) {
+    if (mobileViewMode === MOBILE_VIEW_MODES.day) {
       return [getSelectedMobileDay()];
     }
 
@@ -4417,6 +4508,7 @@
       label: city,
       dailyByDate: {}
     };
+    renderDesktopToolbarWeather();
     renderWeatherStatus();
     renderCalendar();
 
@@ -4440,6 +4532,7 @@
       };
     }
 
+    renderDesktopToolbarWeather();
     renderWeatherStatus();
     renderCalendar();
   }
