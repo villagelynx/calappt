@@ -1578,20 +1578,21 @@ body.page-customers .alpha-index-letter:focus-visible {
 
 @media (max-width: 780px) {
   body.page-customers .customer-list-shell {
-    grid-template-columns: minmax(0, 1fr) 18px;
-    gap: 4px;
+    grid-template-columns: minmax(0, 1fr) 30px;
+    gap: 6px;
+    padding-right: 10px;
   }
 
   body.page-customers .alpha-index-letter {
-    width: 18px;
-    height: 14px;
-    font-size: 0.66rem;
+    width: 24px;
+    height: 18px;
+    font-size: 0.8rem;
   }
 
   body.page-customers .customer-alpha-index {
     background: #fff;
     border-radius: 12px;
-    padding: 6px 0;
+    padding: 6px 4px;
   }
 }
 
@@ -4032,8 +4033,8 @@ a.weather-placeholder:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     min-height: 0;
     padding: 0;
     border-radius: 999px;
@@ -4047,11 +4048,11 @@ a.weather-placeholder:hover {
   }
 
   body.page-customers .customer-nav-back {
-    font-size: 2.05rem;
+    font-size: 2.3rem;
   }
 
   body.page-customers .customer-nav-add {
-    font-size: 1.95rem;
+    font-size: 2.15rem;
   }
 
   body.page-customers .customer-nav-back:focus-visible,
@@ -4062,7 +4063,7 @@ a.weather-placeholder:hover {
 
   body.page-customers .customers-mobile-nav h1 {
     margin: 0;
-    font-size: 1.34rem;
+    font-size: 1.52rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: rgba(18, 38, 66, 0.92);
@@ -4126,7 +4127,7 @@ a.weather-placeholder:hover {
     background-size: 16px 16px;
     border: 0;
     color: rgba(18, 38, 66, 0.92);
-    font-size: 1.06rem;
+    font-size: 1.12rem;
   }
 
   body.page-customers .search-field input:focus-visible {
@@ -4192,14 +4193,14 @@ a.weather-placeholder:hover {
 
   body.page-customers .customer-name {
     color: rgba(18, 38, 66, 0.92);
-    font-size: 1.06rem;
+    font-size: 1.14rem;
   }
 
   body.page-customers .customer-row-subline {
     display: block;
     margin-top: 1px;
     margin-left: 42px;
-    font-size: 0.86rem;
+    font-size: 0.94rem;
     color: rgba(86, 112, 143, 0.86);
   }
 
