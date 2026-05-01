@@ -144,6 +144,7 @@
                     <option value="agenda">Agenda</option>
                   </select>
                 </label>
+                <button id="addBtn" class="ghost-icon-button topbar-add-button" type="button" aria-label="Add">+</button>
                 <button id="menuBtn" class="ghost-icon-button topbar-menu-button" type="button" aria-label="Menu">&#9776;</button>
               </div>
 
@@ -155,9 +156,21 @@
           <main class="workspace home-workspace">
             <section class="panel calendar-panel">
               <div class="mobile-week-nav" aria-label="Week navigation">
-                <button id="mobilePrevWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Previous Week</button>
+                <button id="mobilePrevWeekBtn" class="mobile-week-chevron" type="button" aria-label="Previous">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M14.5 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
                 <p id="mobileWeekTitle" class="mobile-week-title" aria-live="polite"></p>
-                <button id="mobileNextWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Next Week</button>
+                <a class="mobile-week-weather" href="./weather-settings.html" aria-label="Weather settings">
+                  <span id="mobileWeekCityLabel" class="mobile-week-city"></span>
+                  <span id="mobileWeekWeatherBadge" class="mobile-week-weather-badge" hidden></span>
+                </a>
+                <button id="mobileNextWeekBtn" class="mobile-week-chevron" type="button" aria-label="Next">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
               </div>
 
               <div class="calendar-scroll">

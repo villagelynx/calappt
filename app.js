@@ -79,6 +79,9 @@
     mobilePrevWeekBtn: document.getElementById("mobilePrevWeekBtn"),
     mobileWeekTitle: document.getElementById("mobileWeekTitle"),
     mobileNextWeekBtn: document.getElementById("mobileNextWeekBtn"),
+    mobileWeekCityLabel: document.getElementById("mobileWeekCityLabel"),
+    mobileWeekWeatherBadge: document.getElementById("mobileWeekWeatherBadge"),
+    addBtn: document.getElementById("addBtn"),
     menuBtn: document.getElementById("menuBtn"),
     menuPrevWeekBtn: document.getElementById("menuPrevWeekBtn"),
     menuNextWeekBtn: document.getElementById("menuNextWeekBtn"),
@@ -297,6 +300,7 @@
     elements.mobileViewSelect?.addEventListener("change", handleMobileViewSelectChange);
     elements.closeManageDrawerBtn?.addEventListener("click", closeManageDrawer);
     elements.menuBtn?.addEventListener("click", openMenuDrawer);
+    elements.addBtn?.addEventListener("click", handleQuickAddClick);
     elements.closeMenuDrawerBtn?.addEventListener("click", closeMenuDrawer);
     elements.menuPrevWeekBtn?.addEventListener("click", () => {
       closeMenuDrawer();
@@ -484,8 +488,13 @@
     if (elements.desktopCityLabel) {
       elements.desktopCityLabel.textContent = cityLabel || "Add weather";
     }
+    if (elements.mobileWeekCityLabel) {
+      elements.mobileWeekCityLabel.textContent = cityLabel || "Add weather";
+    }
 
-    if (!elements.desktopWeatherBadge) return;
+    const badgeNodes = [elements.desktopWeatherBadge, elements.mobileWeekWeatherBadge]
+      .filter((node) => node instanceof HTMLElement);
+    if (!badgeNodes.length) return;
 
     let badgeDay = getSelectedMobileDay();
     if (mobileViewMode !== MOBILE_VIEW_MODES.day) {
@@ -498,20 +507,28 @@
     const weather = weatherState.dailyByDate[formatDateKey(badgeDay)];
     if (!weather) {
       if (!cityLabel) {
-        elements.desktopWeatherBadge.hidden = true;
-        elements.desktopWeatherBadge.innerHTML = "";
+        badgeNodes.forEach((node) => {
+          node.hidden = true;
+          node.innerHTML = "";
+        });
         return;
       }
 
-      elements.desktopWeatherBadge.hidden = false;
-      elements.desktopWeatherBadge.innerHTML = `${getWeatherIconMarkup("neutral")}<span>--</span>`;
+      const html = `${getWeatherIconMarkup("neutral")}<span>--</span>`;
+      badgeNodes.forEach((node) => {
+        node.hidden = false;
+        node.innerHTML = html;
+      });
       return;
     }
 
     const visual = getWeatherVisual(weather.weatherCode);
     const tempLabel = Number.isFinite(weather.maxTemp) ? `${Math.round(weather.maxTemp)}\u00B0` : "--";
-    elements.desktopWeatherBadge.hidden = false;
-    elements.desktopWeatherBadge.innerHTML = `${visual.icon}<span>${escapeHtml(tempLabel)}</span>`;
+    const html = `${visual.icon}<span>${escapeHtml(tempLabel)}</span>`;
+    badgeNodes.forEach((node) => {
+      node.hidden = false;
+      node.innerHTML = html;
+    });
   }
 
   function renderLeftPanel() {
@@ -835,6 +852,30 @@
 
     window.setTimeout(() => {
       elements.eventTitleInput?.focus?.();
+    }, 0);
+  }
+
+  function handleQuickAddClick() {
+    const dateKey = getDefaultCreateDateKey();
+    const startMinutes = getDefaultCreateStartMinutes(dateKey);
+    const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId);
+
+    openDrawer({
+      mode: "create",
+      entryType: "customer",
+      entryId: selectedCustomer?.id || "",
+      entryName: selectedCustomer?.name || "",
+      entryNote: selectedCustomer?.note || "",
+      dateKey,
+      startMinutes: clampMinutes(startMinutes, SCHEDULE_START_MINUTES, SCHEDULE_END_MINUTES - SLOT_MINUTES)
+    });
+
+    window.setTimeout(() => {
+      if (selectedCustomer?.id) {
+        elements.startTime?.focus?.();
+      } else {
+        elements.drawerSubjectPicker?.focus?.();
+      }
     }, 0);
   }
 
