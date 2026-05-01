@@ -462,6 +462,9 @@
           const subline = cell || "";
 
           const smsNumber = cell ? sanitizePhoneForSms(cell) : "";
+          const textInlineMarkup = smsNumber
+            ? `<a class="customer-text-inline" href="sms:${escapeHtml(smsNumber)}" aria-label="Text ${escapeHtml(displayName)}">Text</a>`
+            : "";
           const metaLines = [
             sportName ? `<div class="customer-sport-row"><span class="customer-sport-name">${escapeHtml(sportName)}</span></div>` : "",
             `<a class="customer-contact customer-contact-link" href="./customer-profile.html?id=${encodeURIComponent(customer.id)}">Profile</a>`,
@@ -505,6 +508,7 @@
                     </svg>
                   </span>
                   <strong class="customer-name">${escapeHtml(displayName)}</strong>
+                  ${textInlineMarkup}
                   ${samplePillMarkup}
                 </div>
                 ${quickActionsMarkup ? `<div class="customer-quick-actions">${quickActionsMarkup}</div>` : ""}

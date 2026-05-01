@@ -1732,6 +1732,10 @@ body.page-customers .customer-alpha-items {
   min-width: 0;
 }
 
+.customer-text-inline {
+  display: none;
+}
+
 .customer-title-row {
   display: inline-flex;
   align-items: center;
@@ -4173,6 +4177,11 @@ a.weather-placeholder:hover {
     align-items: center;
   }
 
+  body.page-customers .customer-card-title-row {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
   body.page-customers .customer-select-toggle {
     display: none;
   }
@@ -4197,14 +4206,39 @@ a.weather-placeholder:hover {
 
   body.page-customers .customer-name {
     color: rgba(18, 38, 66, 0.92);
-    font-size: 1.14rem;
+    font-size: 1.3rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body.page-customers .customer-text-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(0, 122, 255, 0.12);
+    color: #007aff;
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  body.page-customers .customer-text-inline:active {
+    background: rgba(0, 122, 255, 0.18);
   }
 
   body.page-customers .customer-row-subline {
     display: block;
     margin-top: 1px;
     margin-left: 42px;
-    font-size: 0.94rem;
+    font-size: 1.12rem;
     color: rgba(86, 112, 143, 0.86);
   }
 
