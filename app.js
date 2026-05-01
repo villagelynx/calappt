@@ -1060,7 +1060,7 @@
     if (!weekAppointments.length) {
       return `
         <div class="agenda-board">
-          <h2 class="agenda-board-title">Agenda</h2>
+          <h2 class="agenda-board-title">Weekly Agenda</h2>
           <div class="appointment-empty">No appointments scheduled for this week yet.</div>
         </div>
       `;
@@ -1077,7 +1077,7 @@
 
     return `
       <div class="agenda-board">
-        <h2 class="agenda-board-title">Agenda</h2>
+        <h2 class="agenda-board-title">Weekly Agenda</h2>
         ${dayKeys.map((dateKey) => {
           const day = parseDateKey(dateKey);
           const headerLabel = day ? `${formatWeekday(day)}, ${formatMonthDay(day)}` : dateKey;
