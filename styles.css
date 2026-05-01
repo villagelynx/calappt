@@ -238,6 +238,27 @@ body.page-customer-profile .topbar .ghost-icon-button:hover {
   background: rgba(143, 212, 255, 0.14);
 }
 
+body.page-payments,
+body.page-monthly-statement {
+  background: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+}
+
+body.page-payments::before,
+body.page-monthly-statement::before {
+  opacity: 0;
+}
+
+body.page-payments h1,
+body.page-payments h2,
+body.page-payments h3,
+body.page-monthly-statement h1,
+body.page-monthly-statement h2,
+body.page-monthly-statement h3 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.01em;
+}
+
 .page-shell {
   position: relative;
   width: min(1420px, calc(100% - 28px));
@@ -322,7 +343,9 @@ body.page-home .home-desktop-topline {
 body.page-payments .topbar {
   background: #fff;
   color: rgba(18, 38, 66, 0.92);
-  border-color: rgba(22, 52, 94, 0.12);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 body.page-payments .topbar .eyebrow,
@@ -340,6 +363,32 @@ body.page-payments .topbar .ghost-icon-button {
 
 body.page-payments .topbar .ghost-button:hover,
 body.page-payments .topbar .ghost-icon-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+body.page-monthly-statement .topbar {
+  background: #fff;
+  color: rgba(18, 38, 66, 0.92);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.page-monthly-statement .topbar .eyebrow,
+body.page-monthly-statement .topbar .lede,
+body.page-monthly-statement .topbar .week-kicker {
+  color: rgba(18, 38, 66, 0.62);
+}
+
+body.page-monthly-statement .topbar .ghost-button,
+body.page-monthly-statement .topbar .ghost-icon-button {
+  color: rgba(18, 38, 66, 0.86);
+  border-color: rgba(22, 52, 94, 0.14);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.page-monthly-statement .topbar .ghost-button:hover,
+body.page-monthly-statement .topbar .ghost-icon-button:hover {
   background: rgba(0, 0, 0, 0.04);
 }
 
@@ -779,7 +828,8 @@ body.page-payments .topbar .ghost-icon-button:hover {
 
   body.page-home .home-mobile-actions {
     display: inline-flex;
-    align-items: center;
+    align-items: flex-end;
+    align-self: end;
     gap: 10px;
     flex: 0 0 auto;
   }
@@ -797,12 +847,12 @@ body.page-payments .topbar .ghost-icon-button:hover {
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%23007aff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 16px 16px;
+    background-size: 20px 20px;
     pointer-events: none;
   }
 
@@ -816,7 +866,7 @@ body.page-payments .topbar .ghost-icon-button:hover {
     font-size: 1.16rem;
     font-weight: 800;
     letter-spacing: -0.01em;
-    padding: 6px 30px 6px 10px;
+    padding: 6px 36px 6px 10px;
     border-radius: 12px;
     background-image: none;
   }
@@ -1007,14 +1057,26 @@ body.page-payments .topbar .ghost-icon-button:hover {
 
   /* Mobile Day view: make the "Today" chip cover weekday + date */
   body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head {
-    grid-template-columns: max-content max-content;
-    justify-content: center;
+    grid-template-columns: 1fr max-content max-content 1fr;
+    grid-template-areas:
+      "weather weather weather weather"
+      ". name meta .";
+    justify-content: stretch;
     justify-items: center;
     gap: 6px 0;
   }
 
-  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head .day-name,
-  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head .day-meta {
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-weather {
+    justify-self: start;
+    align-items: flex-start;
+  }
+
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-weather .weather-row {
+    justify-content: flex-start;
+  }
+
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head.is-today .day-name,
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head.is-today .day-meta {
     background: #007aff;
     color: #fff;
     height: 34px;
@@ -1026,12 +1088,12 @@ body.page-payments .topbar .ghost-icon-button:hover {
     font-weight: 900;
   }
 
-  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head .day-name {
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head.is-today .day-name {
     border-radius: 999px 0 0 999px;
     padding-right: 10px;
   }
 
-  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head .day-meta {
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head.is-today .day-meta {
     border-radius: 0 999px 999px 0;
     min-width: 0;
     padding-left: 10px;
@@ -2929,6 +2991,26 @@ body.page-customers .customer-alpha-items {
   gap: 12px;
   align-items: baseline;
   margin-bottom: 10px;
+}
+
+.agenda-day {
+  padding: 14px 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(22, 52, 94, 0.08);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.agenda-day:nth-of-type(odd) {
+  background: rgba(143, 212, 255, 0.12);
+}
+
+.agenda-day:nth-of-type(even) {
+  background: rgba(169, 242, 189, 0.12);
+}
+
+.agenda-board-title {
+  text-align: center;
+  font-size: clamp(1.35rem, 2.4vw, 2.05rem);
 }
 
 .agenda-day-count {
@@ -5038,12 +5120,13 @@ a.weather-placeholder:hover {
   }
 
   .agenda-item {
-    grid-template-columns: 112px minmax(0, 1fr);
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .agenda-time {
     font-size: 1rem;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .agenda-title {
@@ -5064,7 +5147,7 @@ a.weather-placeholder:hover {
 
   .calendar-grid.is-mobile-day-view .schedule-header,
   .calendar-grid.is-mobile-day-view .schedule-body {
-    grid-template-columns: 80px minmax(0, 1fr);
+    grid-template-columns: 124px minmax(0, 1fr);
   }
 
   body.is-mobile-week-view .schedule-day.is-today {

@@ -3620,6 +3620,14 @@
       "is-mobile-week-view",
       isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.week
     );
+    document.body.classList.toggle(
+      "is-mobile-agenda-view",
+      isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.agenda
+    );
+    document.body.classList.toggle(
+      "is-mobile-day-view",
+      isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day
+    );
   }
 
   function attachMobileSwipeNavigation() {
