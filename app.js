@@ -1288,9 +1288,9 @@
     const weather = weatherState.dailyByDate[formatDateKey(day)];
     const isDayMode = mobileViewMode === MOBILE_VIEW_MODES.day;
     const isWeekMode = mobileViewMode === MOBILE_VIEW_MODES.week;
-    const showCity = isMobileLayout() && (isDayMode || (isWeekMode && formatDateKey(day) === formatDateKey(visibleWeekStart)));
+    const showCity = isMobileLayout() && isDayMode;
     const cityLabel = showCity ? formatCityRegionLabel(weatherState.city) : "";
-    const dayMetaLabel = (isWeekMode || isDayMode) ? String(day.getDate()) : formatMonthDay(day);
+    const dayMetaLabel = isDayMode ? formatMonthDay(day) : (isWeekMode ? String(day.getDate()) : formatMonthDay(day));
     return `
       <div class="schedule-day-head ${isToday(day) ? "is-today" : ""}">
         <div class="schedule-weather ${weather ? "has-weather" : ""}">
