@@ -1318,7 +1318,7 @@
         rangeLabel = `${formatMonthDay(visibleWeekStart)}, ${startYear} \u2013 ${formatMonthDay(weekEnd)}, ${endYear}`;
       }
     } else {
-      rangeLabel = selectedDay.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+      rangeLabel = `${formatWeekday(selectedDay)}, ${formatMonthDay(selectedDay)}`;
     }
     elements.mobileDayLabel.textContent = rangeLabel;
   }
@@ -1329,7 +1329,9 @@
     const isWeekMode = mobileViewMode === MOBILE_VIEW_MODES.week;
     const showCity = isMobileLayout() && isDayMode;
     const cityLabel = showCity ? formatCityRegionLabel(weatherState.city) : "";
-    const dayMetaLabel = isDayMode ? formatMonthDay(day) : (isWeekMode ? String(day.getDate()) : formatMonthDay(day));
+    const showMonthDay = isDayMode || isWeekMode;
+    const dayNameLabel = showMonthDay ? `${formatWeekday(day)},\u00a0` : formatWeekday(day);
+    const dayMetaLabel = formatMonthDay(day);
     return `
       <div class="schedule-day-head ${isToday(day) ? "is-today" : ""}">
         <div class="schedule-weather ${weather ? "has-weather" : ""}">
@@ -1338,7 +1340,7 @@
             ${renderWeatherMarkup(weather)}
           </div>
         </div>
-        <span class="day-name">${escapeHtml(formatWeekday(day))}</span>
+        <span class="day-name">${escapeHtml(dayNameLabel)}</span>
         <strong class="day-meta">${escapeHtml(dayMetaLabel)}</strong>
       </div>
     `;
