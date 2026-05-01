@@ -1158,8 +1158,8 @@ body.page-monthly-statement .topbar .ghost-icon-button:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 999px;
     background: #007aff;
     color: #fff;
@@ -1349,8 +1349,8 @@ body.page-customers .customer-nav-add {
 }
 
 .mobile-tabbar-item svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: block;
 }
 
@@ -4428,8 +4428,8 @@ a.weather-placeholder:hover {
   }
 
   .mobile-tabbar-item svg {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
   }
 
   .schedule-header,
@@ -4962,8 +4962,8 @@ a.weather-placeholder:hover {
   }
 
   body.page-customers .mobile-tabbar-item svg {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
   }
 
   body.page-customers .customer-contact-list,
