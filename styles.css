@@ -1578,21 +1578,25 @@ body.page-customers .alpha-index-letter:focus-visible {
 
 @media (max-width: 780px) {
   body.page-customers .customer-list-shell {
-    grid-template-columns: minmax(0, 1fr) 30px;
+    grid-template-columns: minmax(0, 1fr) 64px;
     gap: 6px;
-    padding-right: 10px;
+    padding-right: 12px;
   }
 
   body.page-customers .alpha-index-letter {
-    width: 24px;
-    height: 18px;
-    font-size: 0.8rem;
+    width: 44px;
+    height: 30px;
+    font-size: 1.6rem;
   }
 
   body.page-customers .customer-alpha-index {
     background: #fff;
     border-radius: 12px;
-    padding: 6px 4px;
+    padding: 8px 6px;
+    max-height: calc(100vh - 220px);
+    max-height: calc(100svh - 220px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 }
 
@@ -4023,7 +4027,7 @@ a.weather-placeholder:hover {
 
   body.page-customers .customers-mobile-nav {
     display: grid;
-    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
     align-items: center;
     gap: 6px;
   }
@@ -4033,8 +4037,8 @@ a.weather-placeholder:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
     min-height: 0;
     padding: 0;
     border-radius: 999px;
@@ -4048,11 +4052,11 @@ a.weather-placeholder:hover {
   }
 
   body.page-customers .customer-nav-back {
-    font-size: 2.3rem;
+    font-size: 2.75rem;
   }
 
   body.page-customers .customer-nav-add {
-    font-size: 2.15rem;
+    font-size: 2.45rem;
   }
 
   body.page-customers .customer-nav-back:focus-visible,
