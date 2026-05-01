@@ -618,8 +618,156 @@ body.page-home .home-desktop-topline {
 }
 
 @media (max-width: 780px) {
+  body.page-home .page-shell {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   body.page-home .home-sidebar {
     display: none;
+  }
+
+  body.page-home .home-topbar {
+    display: block;
+    grid-template-columns: 1fr;
+    padding: 12px 14px 10px;
+    background: #fff;
+    color: rgba(18, 38, 66, 0.92);
+    border: 0;
+    border-bottom: 1px solid rgba(22, 52, 94, 0.12);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  body.page-home .home-workspace {
+    margin-top: 0;
+    gap: 0;
+    grid-template-columns: 1fr;
+  }
+
+  body.page-home .calendar-panel {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    backdrop-filter: none;
+  }
+
+  body.page-home #menuBtn {
+    position: static;
+    top: auto;
+    right: auto;
+    z-index: auto;
+  }
+
+  body.page-home .home-mobile-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  body.page-home .home-mobile-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    text-decoration: none;
+    color: rgba(18, 38, 66, 0.92);
+    flex: 0 1 auto;
+  }
+
+  body.page-home .home-mobile-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #fff;
+    object-fit: cover;
+    flex: 0 0 34px;
+  }
+
+  body.page-home .home-mobile-brand-name {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.65rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body.page-home .home-mobile-brand-dotcom {
+    color: #007aff;
+  }
+
+  body.page-home .home-mobile-view-kicker {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: rgba(18, 38, 66, 0.72);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  body.page-home .home-mobile-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+
+  body.page-home .home-mobile-view-select {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  body.page-home .home-mobile-select {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: rgba(18, 38, 66, 0.86);
+    font: inherit;
+    font-size: 1.02rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    padding: 6px 26px 6px 10px;
+    border-radius: 12px;
+    background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%23122642' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 16px;
+  }
+
+  body.page-home .home-mobile-select:focus-visible {
+    outline: 2px solid rgba(0, 122, 255, 0.4);
+    outline-offset: 2px;
+  }
+
+  body.page-home .topbar-menu-button {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    border: 0;
+    background: transparent;
+    color: rgba(18, 38, 66, 0.72);
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  body.page-home .topbar-menu-button:active {
+    background: rgba(0, 0, 0, 0.04);
   }
 }
 
@@ -3756,6 +3904,16 @@ a.weather-placeholder:hover {
 @media (max-width: 780px) {
   body.has-mobile-tabbar .page-shell {
     padding-bottom: calc(78px + env(safe-area-inset-bottom));
+  }
+
+  body.page-home .mobile-tabbar-item {
+    font-size: 0.74rem;
+    gap: 5px;
+  }
+
+  body.page-home .mobile-tabbar-item svg {
+    width: 26px;
+    height: 26px;
   }
 
   .mobile-tabbar {

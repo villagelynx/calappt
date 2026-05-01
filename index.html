@@ -125,34 +125,34 @@
               </a>
             </div>
 
-            <div class="topbar-copy home-mobile-only">
-              <div class="topbar-headline">
-                <img class="topbar-logo" src="./apple-touch-icon.png" alt="CalAppt" width="54" height="54" decoding="async">
-                <h1>CalAppt</h1>
+            <div class="home-mobile-topline home-mobile-only" aria-label="Calendar toolbar">
+              <a class="home-mobile-brand" href="./index.html" aria-label="CalAppt.com">
+                <img class="home-mobile-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="34" height="34" decoding="async">
+                <span class="home-mobile-brand-name">
+                  <span class="home-mobile-brand-main">CalAppt</span><span class="home-mobile-brand-dotcom">.com</span>
+                </span>
+              </a>
+
+              <div id="mobileViewKicker" class="home-mobile-view-kicker" aria-live="polite">Week View</div>
+
+              <div class="home-mobile-actions">
+                <label class="home-mobile-view-select" aria-label="View">
+                  <select id="mobileViewSelect" class="home-mobile-select">
+                    <option value="day">Day</option>
+                    <option value="week">Week</option>
+                    <option value="month">Month</option>
+                    <option value="agenda">Agenda</option>
+                  </select>
+                </label>
+                <button id="menuBtn" class="ghost-icon-button topbar-menu-button" type="button" aria-label="Menu">&#9776;</button>
               </div>
-              <div class="topbar-mobile-datetime" aria-live="polite">
-                <strong id="mobileDayLabel" class="topbar-mobile-date">-</strong>
-                <span id="mobileCurrentTime" class="topbar-mobile-time" hidden></span>
-              </div>
-              <p class="lede topbar-tagline">Scheduling for professionals, client-first</p>
+
+              <strong id="mobileDayLabel" hidden>-</strong>
+              <span id="mobileCurrentTime" hidden></span>
             </div>
-            <div class="week-toolbar home-mobile-only">
-              <button id="todayDayBtn" class="primary-button" type="button">Today</button>
-              <button id="mobileWeekViewBtn" class="ghost-button mobile-day-control mobile-top-toggle" type="button" aria-selected="false">Week</button>
-              <button id="mobileMonthViewBtn" class="ghost-button mobile-day-control mobile-top-toggle" type="button" aria-selected="false">Month</button>
-            </div>
-            <button id="menuBtn" class="ghost-icon-button topbar-menu-button home-mobile-only" type="button" aria-label="Menu">&#9776;</button>
           </header>
 
           <main class="workspace home-workspace">
-            <section class="panel mobile-quick-nav" aria-label="Quick links">
-              <div class="mobile-quick-nav-row">
-                <button id="mobileAgendaBtn" class="ghost-button" type="button">Agenda</button>
-                <a class="ghost-button nav-turquoise-button" href="./customers.html">Customers</a>
-                <a class="ghost-button nav-green-button" href="./payments.html">Payments</a>
-              </div>
-            </section>
-
             <section class="panel calendar-panel">
               <div class="mobile-week-nav" aria-label="Week navigation">
                 <button id="mobilePrevWeekBtn" class="ghost-button mobile-week-nav-button" type="button">Previous Week</button>

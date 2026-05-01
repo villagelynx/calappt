@@ -149,6 +149,7 @@
     mobileDayHint: document.getElementById("mobileDayHint"),
     mobileNextDayBtn: document.getElementById("mobileNextDayBtn"),
     mobileViewKicker: document.getElementById("mobileViewKicker"),
+    mobileViewSelect: document.getElementById("mobileViewSelect"),
     mobileCityLabel: document.getElementById("mobileCityLabel"),
     mobileDayViewBtn: document.getElementById("mobileDayViewBtn"),
     mobileWeekViewBtn: document.getElementById("mobileWeekViewBtn"),
@@ -293,6 +294,7 @@
     elements.sidebarBackupsBtn?.addEventListener("click", openMenuDrawer);
     elements.agendaBtn?.addEventListener("click", handleAgendaButtonClick);
     elements.mobileAgendaBtn?.addEventListener("click", handleAgendaButtonClick);
+    elements.mobileViewSelect?.addEventListener("change", handleMobileViewSelectChange);
     elements.closeManageDrawerBtn?.addEventListener("click", closeManageDrawer);
     elements.menuBtn?.addEventListener("click", openMenuDrawer);
     elements.closeMenuDrawerBtn?.addEventListener("click", closeMenuDrawer);
@@ -1173,6 +1175,12 @@
 
     elements.agendaBtn?.classList.toggle("is-active", isAgendaMode);
     elements.mobileAgendaBtn?.classList.toggle("is-active", isAgendaMode);
+
+    if (elements.mobileViewSelect) {
+      elements.mobileViewSelect.value = isAgendaMode
+        ? MOBILE_VIEW_MODES.agenda
+        : (isMonthMode ? MOBILE_VIEW_MODES.month : (isWeekMode ? MOBILE_VIEW_MODES.week : MOBILE_VIEW_MODES.day));
+    }
 
     if (elements.mobileViewKicker) {
       elements.mobileViewKicker.textContent = isAgendaMode
@@ -3420,6 +3428,28 @@
 
     if (mobileViewMode === MOBILE_VIEW_MODES.agenda) return;
     setMobileViewMode(MOBILE_VIEW_MODES.agenda);
+  }
+
+  function handleMobileViewSelectChange() {
+    const value = String(elements.mobileViewSelect?.value || "").toLowerCase();
+
+    closeManageDrawer({ silent: true });
+    closeMenuDrawer({ silent: true });
+    closeDrawer();
+
+    if (value === MOBILE_VIEW_MODES.agenda) {
+      setMobileViewMode(MOBILE_VIEW_MODES.agenda);
+      return;
+    }
+    if (value === MOBILE_VIEW_MODES.month) {
+      setMobileViewMode(MOBILE_VIEW_MODES.month);
+      return;
+    }
+    if (value === MOBILE_VIEW_MODES.week) {
+      setMobileViewMode(MOBILE_VIEW_MODES.week);
+      return;
+    }
+    setMobileViewMode(MOBILE_VIEW_MODES.day);
   }
 
   function setMobileViewMode(mode) {
