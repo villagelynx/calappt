@@ -1237,7 +1237,7 @@
     if (elements.mobileViewSelect) {
       elements.mobileViewSelect.value = isAgendaMode
         ? MOBILE_VIEW_MODES.agenda
-        : (isMonthMode ? MOBILE_VIEW_MODES.month : (isWeekMode ? MOBILE_VIEW_MODES.week : MOBILE_VIEW_MODES.day));
+        : (isMonthMode ? MOBILE_VIEW_MODES.month : (isWeekMode ? MOBILE_VIEW_MODES.week : "today"));
     }
 
     if (elements.mobileCityLabel) {
@@ -3519,6 +3519,10 @@
     closeMenuDrawer({ silent: true });
     closeDrawer();
 
+    if (value === "today") {
+      jumpToToday();
+      return;
+    }
     if (value === MOBILE_VIEW_MODES.agenda) {
       setMobileViewMode(MOBILE_VIEW_MODES.agenda);
       return;

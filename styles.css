@@ -830,7 +830,7 @@ body.page-home .home-desktop-topline {
   body.page-home .schedule-corner {
     min-height: 56px;
     padding: 0 6px 10px 0;
-    font-size: 0.66rem;
+    font-size: 0.86rem;
     font-weight: 700;
     letter-spacing: 0;
     text-transform: none;
@@ -949,13 +949,14 @@ body.page-home .home-desktop-topline {
 
   body.page-home .time-label {
     padding-right: 8px;
-    font-size: 0.78rem;
+    font-size: 1.18rem;
     color: #8e8e93;
   }
 
   body.page-home .time-label.is-hour {
     color: #8e8e93;
-    font-weight: 700;
+    font-size: 1.28rem;
+    font-weight: 800;
   }
 
   body.page-home .time-slot.is-hour {
@@ -4157,7 +4158,7 @@ a.weather-placeholder:hover {
 
   .schedule-header,
   .schedule-body {
-    grid-template-columns: 80px repeat(var(--day-count, 7), minmax(102px, 1fr));
+    grid-template-columns: 104px repeat(var(--day-count, 7), minmax(102px, 1fr));
   }
   .page-shell {
     width: min(1420px, calc(100% - 16px));
