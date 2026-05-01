@@ -79,6 +79,8 @@
     mobilePrevWeekBtn: document.getElementById("mobilePrevWeekBtn"),
     mobileWeekTitle: document.getElementById("mobileWeekTitle"),
     mobileNextWeekBtn: document.getElementById("mobileNextWeekBtn"),
+    mobilePrevNavBtn: document.getElementById("mobilePrevNavBtn"),
+    mobileNextNavBtn: document.getElementById("mobileNextNavBtn"),
     mobileWeekCityLabel: document.getElementById("mobileWeekCityLabel"),
     mobileWeekWeatherBadge: document.getElementById("mobileWeekWeatherBadge"),
     addBtn: document.getElementById("addBtn"),
@@ -259,6 +261,8 @@
     elements.nextWeekBtn?.addEventListener("click", handleDesktopNextNav);
     elements.mobilePrevWeekBtn?.addEventListener("click", () => shiftWeek(-7));
     elements.mobileNextWeekBtn?.addEventListener("click", () => shiftWeek(7));
+    elements.mobilePrevNavBtn?.addEventListener("click", handleMobilePrevNav);
+    elements.mobileNextNavBtn?.addEventListener("click", handleMobileNextNav);
     elements.todayBtn?.addEventListener("click", () => {
       visibleWeekStart = getStartOfWeek(new Date());
       mobileDayOffset = getInitialMobileDayOffset(visibleWeekStart);
@@ -943,6 +947,19 @@
     const weekdayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
     return `
+      <div class="month-view-nav" aria-label="Month navigation">
+        <button class="home-nav-button month-view-nav-button" type="button" data-month-nav="prev" aria-label="Previous month">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M14.5 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="month-view-label" aria-live="polite">${escapeHtml(formatMonthYear(monthStart))}</div>
+        <button class="home-nav-button month-view-nav-button" type="button" data-month-nav="next" aria-label="Next month">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
       <section class="month-board" aria-label="${escapeHtml(formatMonthYear(monthStart))}">
         <div class="month-grid" role="grid" aria-readonly="true">
           ${weekdayLabels.map((label) => `<div class="month-dow" role="columnheader">${escapeHtml(label)}</div>`).join("")}
@@ -1223,25 +1240,20 @@
         : (isMonthMode ? MOBILE_VIEW_MODES.month : (isWeekMode ? MOBILE_VIEW_MODES.week : MOBILE_VIEW_MODES.day));
     }
 
-    if (elements.mobileViewKicker) {
-      elements.mobileViewKicker.textContent = isAgendaMode
-        ? "Agenda"
-        : (isMonthMode ? "Month View" : (isWeekMode ? "Week View" : "Day View"));
-    }
     if (elements.mobileCityLabel) {
       const cityLabel = formatCityRegionLabel(weatherState.city);
       elements.mobileCityLabel.textContent = cityLabel;
       elements.mobileCityLabel.hidden = !cityLabel;
     }
-    if (elements.mobilePrevDayBtn) {
-      elements.mobilePrevDayBtn.textContent = isWeekMode || isAgendaMode
-        ? "Previous Week"
-        : (isMonthMode ? "Previous Month" : "Previous Day");
+    const prevLabel = isMonthMode ? "Previous Month" : ((isWeekMode || isAgendaMode) ? "Previous Week" : "Previous Day");
+    const nextLabel = isMonthMode ? "Next Month" : ((isWeekMode || isAgendaMode) ? "Next Week" : "Next Day");
+    if (elements.mobilePrevNavBtn) {
+      elements.mobilePrevNavBtn.setAttribute("aria-label", prevLabel);
+      elements.mobilePrevNavBtn.title = prevLabel;
     }
-    if (elements.mobileNextDayBtn) {
-      elements.mobileNextDayBtn.textContent = isWeekMode || isAgendaMode
-        ? "Next Week"
-        : (isMonthMode ? "Next Month" : "Next Day");
+    if (elements.mobileNextNavBtn) {
+      elements.mobileNextNavBtn.setAttribute("aria-label", nextLabel);
+      elements.mobileNextNavBtn.title = nextLabel;
     }
     elements.mobileDayViewBtn?.classList.toggle("is-active", !isWeekMode && !isAgendaMode && !isMonthMode);
     elements.mobileWeekViewBtn?.classList.toggle("is-active", isWeekMode && !isAgendaMode);
@@ -1250,17 +1262,35 @@
     if (elements.mobileWeekViewBtn) elements.mobileWeekViewBtn.setAttribute("aria-selected", String(isWeekMode && !isAgendaMode));
     if (elements.mobileMonthViewBtn) elements.mobileMonthViewBtn.setAttribute("aria-selected", String(isMonthMode && !isAgendaMode));
 
-    elements.mobileDayLabel.textContent = isWeekMode || isAgendaMode
-      ? `${formatMonthDay(visibleWeekStart)} - ${formatMonthDay(weekEnd)}`
-      : (isMonthMode ? formatMonthYear(visibleMonthStart) : `${formatWeekday(selectedDay)}, ${formatMonthDay(selectedDay)}`);
+    let rangeLabel = "";
+    if (isMonthMode) {
+      rangeLabel = formatMonthYear(visibleMonthStart);
+    } else if (isWeekMode || isAgendaMode) {
+      const startYear = visibleWeekStart.getFullYear();
+      const endYear = weekEnd.getFullYear();
+      const sameYear = startYear === endYear;
+      const sameMonth = sameYear && visibleWeekStart.getMonth() === weekEnd.getMonth();
+      if (sameMonth) {
+        const monthLabel = visibleWeekStart.toLocaleDateString(undefined, { month: "short" });
+        rangeLabel = `${monthLabel} ${visibleWeekStart.getDate()} \u2013 ${weekEnd.getDate()}, ${startYear}`;
+      } else if (sameYear) {
+        rangeLabel = `${formatMonthDay(visibleWeekStart)} \u2013 ${formatMonthDay(weekEnd)}, ${startYear}`;
+      } else {
+        rangeLabel = `${formatMonthDay(visibleWeekStart)}, ${startYear} \u2013 ${formatMonthDay(weekEnd)}, ${endYear}`;
+      }
+    } else {
+      rangeLabel = selectedDay.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    }
+    elements.mobileDayLabel.textContent = rangeLabel;
   }
 
   function renderScheduleHeader(day) {
     const weather = weatherState.dailyByDate[formatDateKey(day)];
-    const showCity = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day;
-    const cityLabel = showCity ? formatCityRegionLabel(weatherState.city) : "";
+    const isDayMode = mobileViewMode === MOBILE_VIEW_MODES.day;
     const isWeekMode = mobileViewMode === MOBILE_VIEW_MODES.week;
-    const dayMetaLabel = isWeekMode ? String(day.getDate()) : formatMonthDay(day);
+    const showCity = isMobileLayout() && (isDayMode || (isWeekMode && formatDateKey(day) === formatDateKey(visibleWeekStart)));
+    const cityLabel = showCity ? formatCityRegionLabel(weatherState.city) : "";
+    const dayMetaLabel = (isWeekMode || isDayMode) ? String(day.getDate()) : formatMonthDay(day);
     return `
       <div class="schedule-day-head ${isToday(day) ? "is-today" : ""}">
         <div class="schedule-weather ${weather ? "has-weather" : ""}">
@@ -1964,6 +1994,17 @@
 
   function handleCalendarClick(event) {
     if (Date.now() - lastSwipeAt < 450) return;
+
+    const monthNav = event.target instanceof Element
+      ? event.target.closest("[data-month-nav]")
+      : null;
+
+    if (monthNav) {
+      const direction = monthNav.getAttribute("data-month-nav");
+      if (direction === "prev") shiftMonth(-1);
+      if (direction === "next") shiftMonth(1);
+      return;
+    }
 
     const monthCell = event.target instanceof Element
       ? event.target.closest("[data-month-action='select']")
