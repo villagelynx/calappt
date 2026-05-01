@@ -53,13 +53,16 @@
             <div class="customer-bulk-toolbar" role="group" aria-label="Bulk actions">
               <label class="customer-bulk-select">
                 <input id="customerSelectAll" type="checkbox">
-                <span>Select all shown</span>
+                <span>Select all</span>
               </label>
               <button id="deleteSelectedCustomersBtn" class="ghost-button danger-button" type="button" disabled>Delete</button>
             </div>
           </div>
 
-          <div id="customerList" class="customer-list"></div>
+          <div class="customer-list-shell">
+            <div id="customerList" class="customer-list"></div>
+            <nav id="customerAlphaIndex" class="customer-alpha-index" aria-label="Jump to letter"></nav>
+          </div>
         </section>
       </main>
     </div>
@@ -167,6 +170,7 @@
 
         const listEl = document.getElementById("customerList");
         const countEl = document.getElementById("customerCountChip");
+        const alphaIndexEl = document.getElementById("customerAlphaIndex");
         const searchEl = document.getElementById("customerSearch");
         const selectAllEl = document.getElementById("customerSelectAll");
         const deleteSelectedBtn = document.getElementById("deleteSelectedCustomersBtn");
@@ -186,6 +190,38 @@
 
         const selectedCustomerIds = new Set();
         let lastFilteredCustomers = [];
+        const ALL_ALPHA_KEYS = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+
+        const scrollToAlphaSection = (key) => {
+          if (!listEl) return;
+          const safeKey = String(key || "");
+          const selector = `[data-alpha-letter="${safeKey}"]`;
+          const section = listEl.querySelector(selector);
+          if (!section) return;
+          section.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+        };
+
+        const renderAlphaIndex = () => {
+          if (!alphaIndexEl || !listEl) return;
+
+          const present = new Set(
+            Array.from(listEl.querySelectorAll("[data-alpha-letter]"))
+              .map((el) => String(el.getAttribute("data-alpha-letter") || "").toUpperCase())
+              .filter(Boolean)
+          );
+
+          alphaIndexEl.innerHTML = ALL_ALPHA_KEYS.map((key) => {
+            const isPresent = present.has(key);
+            return `<button type="button" class="alpha-index-letter" data-alpha="${escapeHtml(key)}" ${isPresent ? "" : "disabled"} aria-label="Jump to ${escapeHtml(key)}">${escapeHtml(key)}</button>`;
+          }).join("");
+
+          Array.from(alphaIndexEl.querySelectorAll("[data-alpha]")).forEach((button) => {
+            button.addEventListener("click", () => {
+              const key = button.getAttribute("data-alpha") || "";
+              scrollToAlphaSection(key);
+            });
+          });
+        };
 
         const handleCustomerCardClick = (event) => {
           if (!isMobileLayout()) return;
@@ -588,6 +624,7 @@
           if (!filtered.length) {
             listEl.innerHTML = `<div class="appointment-empty">No customers found.</div>`;
             updateBulkActionsUI();
+            if (alphaIndexEl) alphaIndexEl.innerHTML = "";
             return;
           }
 
@@ -610,6 +647,7 @@
             card.addEventListener("click", handleCustomerCardClick);
           });
 
+          renderAlphaIndex();
           updateBulkActionsUI();
         };
 

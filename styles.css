@@ -63,11 +63,179 @@ body.page-home::before {
 @media (min-width: 781px) {
   body.page-customers {
     background: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   }
 
   body.page-customers::before {
     opacity: 0;
   }
+
+  body.page-customers h1,
+  body.page-customers h2,
+  body.page-customers h3 {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  body.page-customers .topbar {
+    background: #fff;
+    color: rgba(18, 38, 66, 0.92);
+  }
+
+  body.page-customers .topbar .eyebrow,
+  body.page-customers .topbar .lede,
+  body.page-customers .topbar .week-kicker {
+    color: rgba(86, 112, 143, 0.86);
+  }
+
+  body.page-customers .topbar .ghost-button,
+  body.page-customers .topbar .ghost-icon-button {
+    color: rgba(18, 38, 66, 0.92);
+    border-color: var(--line-strong);
+    background: transparent;
+  }
+
+  body.page-customers .topbar .ghost-button:hover,
+  body.page-customers .topbar .ghost-icon-button:hover {
+    background: rgba(143, 212, 255, 0.14);
+  }
+
+  body.page-customers .customer-panel {
+    padding: 18px;
+    background: var(--panel);
+    color: var(--text);
+  }
+
+  body.page-customers .customer-panel .field span,
+  body.page-customers .customer-panel .subtle-label,
+  body.page-customers .customer-panel .panel-chip,
+  body.page-customers .customer-panel .customer-toolbar-copy p {
+    color: rgba(86, 112, 143, 0.86);
+  }
+
+  body.page-customers .customer-panel .field input,
+  body.page-customers .customer-panel .field textarea,
+  body.page-customers .customer-panel .field select {
+    color: var(--text);
+  }
+
+  body.page-customers .customer-panel .field:not(.is-green) input,
+  body.page-customers .customer-panel .field:not(.is-green) textarea,
+  body.page-customers .customer-panel .field:not(.is-green) select {
+    background: rgba(255, 255, 255, 0.78);
+    border-color: var(--line);
+  }
+
+  body.page-customers .customer-panel .field input::placeholder {
+    color: rgba(86, 112, 143, 0.78);
+  }
+
+  body.page-customers .customer-panel .field select option {
+    background: #fff;
+    color: var(--text);
+  }
+
+  body.page-customers .customer-panel .ghost-button,
+  body.page-customers .customer-panel .secondary-button {
+    color: var(--text);
+  }
+
+  body.page-customers .customer-panel .danger-button {
+    color: #bb2c2c;
+    border-color: rgba(187, 44, 44, 0.22);
+    background: transparent;
+  }
+
+  body.page-customers .customer-panel .danger-button:hover {
+    background: rgba(187, 44, 44, 0.08);
+  }
+
+  body.page-customers .customer-card {
+    background: rgba(255, 255, 255, 0.74);
+    border-color: rgba(22, 52, 94, 0.12);
+  }
+
+  body.page-customers .customer-name {
+    color: rgba(18, 38, 66, 0.92);
+  }
+
+  body.page-customers .customer-card-top:hover .customer-name {
+    color: rgba(47, 121, 184, 0.92);
+  }
+
+  body.page-customers .customer-sport-name {
+    color: rgba(18, 38, 66, 0.86);
+  }
+
+  body.page-customers .customer-contact {
+    color: rgba(18, 38, 66, 0.78);
+  }
+
+  body.page-customers .customer-contact-link:hover {
+    color: rgba(47, 121, 184, 0.92);
+  }
+
+  body.page-customers .customer-note {
+    color: rgba(86, 112, 143, 0.92);
+  }
+
+  body.page-customers .customer-panel .customer-alpha-heading {
+    color: rgba(86, 112, 143, 0.92);
+  }
+
+  body.page-customers .customer-panel .customer-alpha-heading::after {
+    background: rgba(22, 52, 94, 0.12);
+  }
+
+  body.page-customers .customer-row-subline {
+    display: block;
+    color: rgba(86, 112, 143, 0.92);
+  }
+
+  body.page-customers .sample-pill {
+    color: rgba(47, 121, 184, 0.92);
+    background: rgba(143, 212, 255, 0.28);
+    border-color: rgba(47, 121, 184, 0.22);
+  }
+}
+
+body.page-customer-profile {
+  background: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+}
+
+body.page-customer-profile h1,
+body.page-customer-profile h2,
+body.page-customer-profile h3 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+body.page-customer-profile::before {
+  opacity: 0;
+}
+
+body.page-customer-profile .topbar {
+  background: #fff;
+  color: rgba(18, 38, 66, 0.92);
+}
+
+body.page-customer-profile .topbar .eyebrow,
+body.page-customer-profile .topbar .lede,
+body.page-customer-profile .topbar .week-kicker {
+  color: rgba(86, 112, 143, 0.86);
+}
+
+body.page-customer-profile .topbar .ghost-button,
+body.page-customer-profile .topbar .ghost-icon-button {
+  color: rgba(18, 38, 66, 0.92);
+  border-color: var(--line-strong);
+  background: transparent;
+}
+
+body.page-customer-profile .topbar .ghost-button:hover,
+body.page-customer-profile .topbar .ghost-icon-button:hover {
+  background: rgba(143, 212, 255, 0.14);
 }
 
 .page-shell {
@@ -206,7 +374,7 @@ body.page-home .home-desktop-topline {
   body.page-home .home-sidebar-brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     font-size: 1.1rem;
     font-weight: 900;
@@ -1070,6 +1238,7 @@ body.page-customers .add-customer-icon-button:hover {
   font-weight: 700;
   color: rgba(238, 248, 238, 0.78);
   user-select: none;
+  white-space: nowrap;
 }
 
 .customer-bulk-select input {
@@ -1349,6 +1518,82 @@ body.page-customers .add-customer-icon-button:hover {
 }
 
 .customer-list { display: grid; gap: 10px; }
+
+body.page-customers .customer-list-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22px;
+  gap: 6px;
+  align-items: start;
+}
+
+body.page-customers .customer-alpha-index {
+  display: grid;
+  gap: 2px;
+  padding: 6px 0;
+  align-self: start;
+  justify-self: end;
+  position: sticky;
+  top: 16px;
+}
+
+body.page-customers .alpha-index-letter {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(60, 60, 67, 0.55);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.page-customers .alpha-index-letter:disabled {
+  color: rgba(60, 60, 67, 0.22);
+  cursor: default;
+}
+
+body.page-customers .alpha-index-letter:not(:disabled):hover {
+  color: #007aff;
+}
+
+body.page-customers .alpha-index-letter:not(:disabled):active {
+  color: #007aff;
+  background: rgba(0, 122, 255, 0.12);
+}
+
+body.page-customers .alpha-index-letter:focus-visible {
+  outline: 2px solid rgba(0, 122, 255, 0.45);
+  outline-offset: 2px;
+}
+
+@media (max-width: 780px) {
+  body.page-customers .customer-list-shell {
+    grid-template-columns: minmax(0, 1fr) 18px;
+    gap: 4px;
+  }
+
+  body.page-customers .alpha-index-letter {
+    width: 18px;
+    height: 14px;
+    font-size: 0.66rem;
+  }
+
+  body.page-customers .customer-alpha-index {
+    background: #fff;
+    border-radius: 12px;
+    padding: 6px 0;
+  }
+}
 
 body.page-customers .workspace {
   grid-template-columns: minmax(0, 1fr);
@@ -2911,8 +3156,8 @@ a.weather-placeholder:hover {
 
   body.page-home .schedule-header {
     margin-bottom: 0;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(22, 52, 94, 0.08);
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
   body.page-home .schedule-day-head {
@@ -2986,8 +3231,17 @@ a.weather-placeholder:hover {
       rgba(255, 249, 225, 0.74);
   }
 
+  body.page-home .time-rail,
+  body.page-home .schedule-day {
+    border-top: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
   body.page-home .time-slot.is-hour {
     border-top: 1px solid rgba(22, 52, 94, 0.08);
+  }
+
+  body.page-home .time-slot:first-child {
+    border-top: 0;
   }
 
   body.page-home .weather-icon {
@@ -3778,22 +4032,26 @@ a.weather-placeholder:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     min-height: 0;
     padding: 0;
     border-radius: 999px;
     border: 0;
     background: transparent;
     color: #007aff;
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     font-weight: 900;
     line-height: 1;
     text-decoration: none;
   }
 
+  body.page-customers .customer-nav-back {
+    font-size: 2.05rem;
+  }
+
   body.page-customers .customer-nav-add {
-    font-size: 1.7rem;
+    font-size: 1.95rem;
   }
 
   body.page-customers .customer-nav-back:focus-visible,
@@ -3804,7 +4062,7 @@ a.weather-placeholder:hover {
 
   body.page-customers .customers-mobile-nav h1 {
     margin: 0;
-    font-size: 1.15rem;
+    font-size: 1.34rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: rgba(18, 38, 66, 0.92);
@@ -3858,7 +4116,7 @@ a.weather-placeholder:hover {
   }
 
   body.page-customers .search-field input {
-    min-height: 38px;
+    min-height: 42px;
     border-radius: 12px;
     padding: 0 12px 0 34px;
     background: rgba(0, 0, 0, 0.06);
@@ -3868,6 +4126,7 @@ a.weather-placeholder:hover {
     background-size: 16px 16px;
     border: 0;
     color: rgba(18, 38, 66, 0.92);
+    font-size: 1.06rem;
   }
 
   body.page-customers .search-field input:focus-visible {
@@ -3918,30 +4177,39 @@ a.weather-placeholder:hover {
   }
 
   body.page-customers .customer-avatar {
-    width: 28px;
-    height: 28px;
-    flex: 0 0 28px;
-    font-size: 0.72rem;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    font-size: 0.78rem;
     border: 0;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
   }
 
   body.page-customers .customer-avatar svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   body.page-customers .customer-name {
     color: rgba(18, 38, 66, 0.92);
-    font-size: 0.98rem;
+    font-size: 1.06rem;
   }
 
   body.page-customers .customer-row-subline {
     display: block;
     margin-top: 1px;
-    margin-left: 38px;
-    font-size: 0.78rem;
+    margin-left: 42px;
+    font-size: 0.86rem;
     color: rgba(86, 112, 143, 0.86);
+  }
+
+  body.page-customers .mobile-tabbar-item {
+    font-size: 0.7rem;
+  }
+
+  body.page-customers .mobile-tabbar-item svg {
+    width: 24px;
+    height: 24px;
   }
 
   body.page-customers .customer-contact-list,
