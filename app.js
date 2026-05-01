@@ -911,8 +911,11 @@
     elements.calendarGrid.style.setProperty("--slot-height", `${SLOT_HEIGHT}px`);
     elements.calendarGrid.style.setProperty("--day-count", String(days.length));
     elements.calendarGrid.classList.toggle("is-mobile-day-view", mobileViewMode === MOBILE_VIEW_MODES.day);
+
+    const showMobileWeekRangeRow = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.week;
     elements.calendarGrid.innerHTML = `
       <div class="schedule-board">
+        ${showMobileWeekRangeRow ? renderMobileWeekRangeRow() : ""}
         <div class="schedule-header">
           <div class="schedule-corner">Time</div>
           ${days.map(renderScheduleHeader).join("")}
@@ -931,6 +934,42 @@
       slot.addEventListener("dragleave", handleTimeSlotDragLeave);
       slot.addEventListener("drop", handleTimeSlotDrop);
     });
+  }
+
+  function renderMobileWeekRangeRow() {
+    const weekEnd = addDays(visibleWeekStart, 6);
+    const startYear = visibleWeekStart.getFullYear();
+    const endYear = weekEnd.getFullYear();
+    const sameYear = startYear === endYear;
+    const sameMonth = sameYear && visibleWeekStart.getMonth() === weekEnd.getMonth();
+    let label = "";
+    if (sameMonth) {
+      const monthLabel = visibleWeekStart.toLocaleDateString(undefined, { month: "short" });
+      label = `${monthLabel} ${visibleWeekStart.getDate()} \u2013 ${weekEnd.getDate()}, ${startYear}`;
+    } else if (sameYear) {
+      label = `${formatMonthDay(visibleWeekStart)} \u2013 ${formatMonthDay(weekEnd)}, ${startYear}`;
+    } else {
+      label = `${formatMonthDay(visibleWeekStart)}, ${startYear} \u2013 ${formatMonthDay(weekEnd)}, ${endYear}`;
+    }
+
+    return `
+      <div class="mobile-week-range-row">
+        <div class="mobile-week-range-spacer" aria-hidden="true"></div>
+        <div class="mobile-week-range-controls" aria-label="Week navigation">
+          <button class="mobile-week-range-button" type="button" data-week-nav="prev" aria-label="Previous week">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M14.5 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+          <div class="mobile-week-range-label" aria-live="polite">${escapeHtml(label)}</div>
+          <button class="mobile-week-range-button" type="button" data-week-nav="next" aria-label="Next week">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
   }
 
   function renderMonthView() {
@@ -1994,6 +2033,17 @@
 
   function handleCalendarClick(event) {
     if (Date.now() - lastSwipeAt < 450) return;
+
+    const weekNav = event.target instanceof Element
+      ? event.target.closest("[data-week-nav]")
+      : null;
+
+    if (weekNav) {
+      const direction = weekNav.getAttribute("data-week-nav");
+      if (direction === "prev") shiftWeek(-7);
+      if (direction === "next") shiftWeek(7);
+      return;
+    }
 
     const monthNav = event.target instanceof Element
       ? event.target.closest("[data-month-nav]")

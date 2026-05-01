@@ -319,6 +319,30 @@ body.page-home .home-desktop-topline {
   display: none;
 }
 
+body.page-payments .topbar {
+  background: #fff;
+  color: rgba(18, 38, 66, 0.92);
+  border-color: rgba(22, 52, 94, 0.12);
+}
+
+body.page-payments .topbar .eyebrow,
+body.page-payments .topbar .lede,
+body.page-payments .topbar .week-kicker {
+  color: rgba(18, 38, 66, 0.62);
+}
+
+body.page-payments .topbar .ghost-button,
+body.page-payments .topbar .ghost-icon-button {
+  color: rgba(18, 38, 66, 0.86);
+  border-color: rgba(22, 52, 94, 0.14);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.page-payments .topbar .ghost-button:hover,
+body.page-payments .topbar .ghost-icon-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
 @media (min-width: 781px) {
   body.page-home .page-shell {
     width: 100%;
@@ -764,6 +788,22 @@ body.page-home .home-desktop-topline {
     display: inline-flex;
     align-items: center;
     margin: 0;
+    position: relative;
+  }
+
+  body.page-home .home-mobile-view-select::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%23007aff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px 16px;
+    pointer-events: none;
   }
 
   body.page-home .home-mobile-select {
@@ -773,10 +813,10 @@ body.page-home .home-desktop-topline {
     background: transparent;
     color: #007aff;
     font: inherit;
-    font-size: 1.08rem;
+    font-size: 1.16rem;
     font-weight: 800;
     letter-spacing: -0.01em;
-    padding: 6px 10px;
+    padding: 6px 30px 6px 10px;
     border-radius: 12px;
     background-image: none;
   }
@@ -808,7 +848,7 @@ body.page-home .home-desktop-topline {
     border: 0;
     background: transparent;
     color: #007aff;
-    font-size: 2.25rem;
+    font-size: 2.5rem;
     line-height: 1;
     padding: 0;
   }
@@ -825,6 +865,90 @@ body.page-home .home-desktop-topline {
 
   body.page-home .schedule-header {
     margin-bottom: 0;
+  }
+
+  /* Mobile weather: remove "pill" backgrounds */
+  body.page-home .weather-city {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    min-height: 0;
+    border-radius: 0;
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 1.02rem;
+    font-weight: 900;
+    color: rgba(18, 38, 66, 0.92);
+  }
+
+  body.page-home .weather-temp,
+  body.page-home .weather-range,
+  body.page-home .weather-placeholder {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    min-height: 0;
+    border-radius: 0;
+  }
+
+  body.page-home .schedule-weather .weather-icon {
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    text-shadow: none;
+  }
+
+  body.page-home .mobile-week-range-row {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    align-items: center;
+    background: #fff;
+    border-bottom: 1px solid rgba(60, 60, 67, 0.18);
+    padding: 6px 0 8px;
+  }
+
+  body.page-home .mobile-week-range-controls {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    align-items: center;
+    justify-items: center;
+    padding: 0 4px;
+  }
+
+  body.page-home .mobile-week-range-label {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    color: rgba(18, 38, 66, 0.92);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  body.page-home .mobile-week-range-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 36px;
+    border-radius: 10px;
+    border: 0;
+    background: transparent;
+    color: #007aff;
+    padding: 0;
+  }
+
+  body.page-home .mobile-week-range-button svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  body.page-home .mobile-week-range-button:active {
+    background: rgba(0, 0, 0, 0.04);
   }
 
   body.page-home .schedule-corner {
@@ -881,6 +1005,38 @@ body.page-home .home-desktop-topline {
     line-height: 1;
   }
 
+  /* Mobile Day view: make the "Today" chip cover weekday + date */
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head {
+    grid-template-columns: max-content max-content;
+    justify-content: center;
+    justify-items: center;
+    gap: 6px 0;
+  }
+
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head .day-name,
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head .day-meta {
+    background: #007aff;
+    color: #fff;
+    height: 34px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-weight: 900;
+  }
+
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head .day-name {
+    border-radius: 999px 0 0 999px;
+    padding-right: 10px;
+  }
+
+  body.page-home .calendar-grid.is-mobile-day-view .schedule-day-head .day-meta {
+    border-radius: 0 999px 999px 0;
+    min-width: 0;
+    padding-left: 10px;
+  }
+
   body.page-home .schedule-day {
     border-radius: 0;
     background: transparent;
@@ -921,12 +1077,13 @@ body.page-home .home-desktop-topline {
   }
 
   body.page-home .month-view-label {
-    display: none;
+    display: block;
   }
 
   body.page-home .month-view-nav {
-    justify-content: space-between;
-    padding: 0 6px;
+    justify-content: center;
+    gap: 12px;
+    padding: 0;
   }
 
   body.page-home .month-view-nav-button {
@@ -969,6 +1126,15 @@ body.page-home .home-desktop-topline {
 
   body.page-home .time-slot.is-drop-target {
     background: rgba(0, 122, 255, 0.14);
+  }
+
+  /* Mobile agenda: align title under CalAppt */
+  body.page-home .agenda-board {
+    padding: 14px 14px 18px;
+  }
+
+  body.page-home .agenda-board-title {
+    padding: 0;
   }
 }
 
@@ -4138,8 +4304,8 @@ a.weather-placeholder:hover {
     justify-content: space-between;
     gap: 2px;
     padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
-    background: rgba(255, 255, 255, 0.94);
-    border-top: 1px solid rgba(60, 60, 67, 0.18);
+    background: rgba(229, 248, 229, 0.96);
+    border-top: 1px solid rgba(27, 103, 62, 0.14);
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
   }
@@ -4148,7 +4314,7 @@ a.weather-placeholder:hover {
     flex: 1 1 0;
     gap: 6px;
     padding: 8px 4px;
-    font-size: 0.72rem;
+    font-size: 0.78rem;
   }
 
   .mobile-tabbar-item svg {
@@ -4682,7 +4848,7 @@ a.weather-placeholder:hover {
   }
 
   body.page-customers .mobile-tabbar-item {
-    font-size: 0.74rem;
+    font-size: 0.78rem;
   }
 
   body.page-customers .mobile-tabbar-item svg {
@@ -4815,15 +4981,15 @@ a.weather-placeholder:hover {
   }
 
   body.is-mobile-week-view .appointment-time {
-    font-size: 0.78rem;
+    font-size: 0.86rem;
   }
 
   body.is-mobile-week-view .appointment-title {
-    font-size: 0.76rem;
+    font-size: 0.84rem;
   }
 
   body.is-mobile-week-view .appointment-note {
-    font-size: 0.74rem;
+    font-size: 0.8rem;
   }
 
   .schedule-corner {
@@ -4840,7 +5006,7 @@ a.weather-placeholder:hover {
   }
 
   .appointment-time {
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     min-height: 18px;
     padding: 0 6px;
   }
@@ -4862,12 +5028,12 @@ a.weather-placeholder:hover {
   }
 
   .calendar-grid.is-mobile-day-view .appointment-title {
-    font-size: 0.96rem;
+    font-size: 1.08rem;
     line-height: 1.15;
   }
 
   .calendar-grid.is-mobile-day-view .appointment-note {
-    font-size: 0.9rem;
+    font-size: 1rem;
     line-height: 1.25;
   }
 
@@ -4876,20 +5042,20 @@ a.weather-placeholder:hover {
   }
 
   .agenda-time {
-    font-size: 0.92rem;
+    font-size: 1rem;
     white-space: nowrap;
   }
 
   .agenda-title {
-    font-size: 1rem;
+    font-size: 1.08rem;
   }
 
   .agenda-note {
-    font-size: 0.88rem;
+    font-size: 0.96rem;
   }
 
   .agenda-day-head strong {
-    font-size: 1.02rem;
+    font-size: 1.1rem;
   }
 
   .agenda-day-count {
