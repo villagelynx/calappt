@@ -939,7 +939,7 @@
     const showMobileWeekRangeRow = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.week;
     const showMobileDayCornerLogo = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day;
     const scheduleCornerMarkup = showMobileDayCornerLogo
-      ? `<div class="schedule-corner"><img class="schedule-corner-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="26" height="26" decoding="async"><span>Time</span></div>`
+      ? `<div class="schedule-corner"><img class="schedule-corner-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="34" height="34" decoding="async"><span>Time</span></div>`
       : `<div class="schedule-corner">Time</div>`;
     elements.calendarGrid.innerHTML = `
       <div class="schedule-board">
@@ -4827,35 +4827,45 @@
     const icons = {
       sunny: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.2" fill="currentColor"></circle>
-          <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-            <line x1="12" y1="2.5" x2="12" y2="5.1"></line>
-            <line x1="12" y1="18.9" x2="12" y2="21.5"></line>
-            <line x1="2.5" y1="12" x2="5.1" y2="12"></line>
-            <line x1="18.9" y1="12" x2="21.5" y2="12"></line>
-            <line x1="5.3" y1="5.3" x2="7.2" y2="7.2"></line>
-            <line x1="16.8" y1="16.8" x2="18.7" y2="18.7"></line>
-            <line x1="16.8" y1="7.2" x2="18.7" y2="5.3"></line>
-            <line x1="5.3" y1="18.7" x2="7.2" y2="16.8"></line>
+          <circle cx="12" cy="12" r="5.3" fill="currentColor"></circle>
+          <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <line x1="12" y1="1.8" x2="12" y2="4.8"></line>
+            <line x1="12" y1="19.2" x2="12" y2="22.2"></line>
+            <line x1="1.8" y1="12" x2="4.8" y2="12"></line>
+            <line x1="19.2" y1="12" x2="22.2" y2="12"></line>
+            <line x1="4.6" y1="4.6" x2="6.8" y2="6.8"></line>
+            <line x1="17.2" y1="17.2" x2="19.4" y2="19.4"></line>
+            <line x1="17.2" y1="6.8" x2="19.4" y2="4.6"></line>
+            <line x1="4.6" y1="19.4" x2="6.8" y2="17.2"></line>
           </g>
         </svg>
       `,
       mostlyClear: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="9" cy="9" r="4" fill="currentColor"></circle>
-          <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.95">
-            <line x1="9" y1="2.5" x2="9" y2="4.6"></line>
-            <line x1="9" y1="13.4" x2="9" y2="15.5"></line>
-            <line x1="2.5" y1="9" x2="4.6" y2="9"></line>
-            <line x1="13.4" y1="9" x2="15.5" y2="9"></line>
+          <g opacity="0.98">
+            <circle cx="9.2" cy="9.2" r="4.6" fill="currentColor"></circle>
+            <g stroke="currentColor" stroke-width="2.0" stroke-linecap="round" opacity="0.95">
+              <line x1="9.2" y1="1.9" x2="9.2" y2="4.6"></line>
+              <line x1="9.2" y1="13.8" x2="9.2" y2="16.5"></line>
+              <line x1="1.9" y1="9.2" x2="4.6" y2="9.2"></line>
+              <line x1="13.8" y1="9.2" x2="16.5" y2="9.2"></line>
+            </g>
           </g>
-          <path d="M9.5 18.2h7.3a3.2 3.2 0 0 0 .1-6.4 4.3 4.3 0 0 0-8.2-1.1 2.8 2.8 0 0 0 .8 5.5Z" fill="currentColor" opacity="0.38"></path>
+          <path d="M8.7 18.4h8.5a3.6 3.6 0 0 0 .15-7.2 5 5 0 0 0-9.4-1.2 3.1 3.1 0 0 0 .75 6Z" fill="currentColor" opacity="0.34"></path>
         </svg>
       `,
       partlyCloudy: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="8" cy="8.5" r="3.4" fill="currentColor" opacity="0.9"></circle>
-          <path d="M8.5 18h8.5a3.5 3.5 0 0 0 .1-7 4.8 4.8 0 0 0-9.1-1.2A3.1 3.1 0 0 0 8.5 18Z" fill="currentColor"></path>
+          <g opacity="0.98">
+            <circle cx="7.8" cy="8.2" r="4.2" fill="currentColor"></circle>
+            <g stroke="currentColor" stroke-width="1.9" stroke-linecap="round" opacity="0.92">
+              <line x1="7.8" y1="2.1" x2="7.8" y2="3.9"></line>
+              <line x1="3.7" y1="8.2" x2="5.5" y2="8.2"></line>
+              <line x1="10.1" y1="5.9" x2="11.4" y2="4.6"></line>
+              <line x1="5.5" y1="5.9" x2="4.2" y2="4.6"></line>
+            </g>
+          </g>
+          <path d="M8.2 18.3h9a3.7 3.7 0 0 0 .15-7.3 5.1 5.1 0 0 0-9.7-1.2A3.3 3.3 0 0 0 8.2 18.3Z" fill="currentColor"></path>
         </svg>
       `,
       cloudy: `
