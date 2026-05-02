@@ -3842,6 +3842,14 @@ a.weather-placeholder:hover {
   object-fit: cover;
   margin-top: 4px;
   opacity: 0.96;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .calendar-grid.is-mobile-day-view .schedule-day-head {

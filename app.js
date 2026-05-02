@@ -938,8 +938,32 @@
 
     const showMobileWeekRangeRow = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.week;
     const showMobileDayCornerLogo = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day;
+
+    if (showMobileDayCornerLogo) {
+      const scheduleBoard = elements.calendarGrid.querySelector(".schedule-board");
+      const scheduleHeader = scheduleBoard?.querySelector?.(".schedule-header");
+      const scheduleBody = scheduleBoard?.querySelector?.(".schedule-body");
+      const cornerLogo = scheduleHeader?.querySelector?.(".schedule-corner-logo");
+      const existingDayHead = scheduleHeader?.querySelector?.(".schedule-day-head");
+      const existingScheduleDay = scheduleBody?.querySelector?.(".schedule-day");
+      const existingTimeRail = scheduleBody?.querySelector?.(".time-rail");
+
+      if (cornerLogo && existingDayHead && existingScheduleDay && existingTimeRail) {
+        const day = days[0];
+        existingDayHead.outerHTML = renderScheduleHeader(day).trim();
+        existingScheduleDay.outerHTML = renderScheduleDay(day).trim();
+
+        Array.from(elements.calendarGrid.querySelectorAll(".time-slot")).forEach((slot) => {
+          slot.addEventListener("dragover", handleTimeSlotDragOver);
+          slot.addEventListener("dragleave", handleTimeSlotDragLeave);
+          slot.addEventListener("drop", handleTimeSlotDrop);
+        });
+        return;
+      }
+    }
+
     const scheduleCornerMarkup = showMobileDayCornerLogo
-      ? `<div class="schedule-corner"><img class="schedule-corner-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="68" height="68" decoding="async"><span>Time</span></div>`
+      ? `<div class="schedule-corner"><img class="schedule-corner-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="68" height="68" decoding="sync" draggable="false"><span>Time</span></div>`
       : `<div class="schedule-corner">Time</div>`;
     elements.calendarGrid.innerHTML = `
       <div class="schedule-board">
