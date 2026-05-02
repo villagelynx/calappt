@@ -26,6 +26,7 @@
         </div>
         <div class="week-toolbar">
           <a class="ghost-button" href="./index.html">Back to Calendar</a>
+          <a class="ghost-button" href="./import-export-help.html">Import/Export instructions</a>
         </div>
       </header>
 
@@ -52,6 +53,29 @@
             </label>
             <input id="mergeBackupInput" type="file" accept="application/json" hidden>
           </div>
+        </section>
+
+        <section class="panel" aria-label="Autosave backups">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Admin</p>
+              <h2>Autosave Backups</h2>
+            </div>
+            <a class="ghost-button" href="./admin.html">Open Admin</a>
+          </div>
+
+          <p class="appointment-empty">
+            Autosave backups are automatic snapshots stored locally in your browser. They help you restore an older version if something gets changed by accident.
+          </p>
+
+          <ul class="appointment-empty">
+            <li><strong>Version history:</strong> Admin shows recent autosaves (up to 12) and lets you restore any snapshot.</li>
+            <li><strong>Create snapshot now:</strong> Make a fresh autosave before big edits.</li>
+            <li><strong>Free up space:</strong> If storage fills up, Admin can clear autosave history.</li>
+            <li><strong>Keep a file:</strong> Export Backup downloads a <code>.json</code> file you can move to another device or store in iCloud/Drive.</li>
+          </ul>
+
+          <p class="appointment-empty">Tip: Export Backup before clearing autosaves or clearing all app data.</p>
         </section>
       </main>
     </div>
