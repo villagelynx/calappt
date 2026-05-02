@@ -248,6 +248,19 @@
     }
   };
 
+  const WEATHER_BADGE_STATE_CLASSES = [
+    "is-sunny",
+    "is-mostly-clear",
+    "is-partly-cloudy",
+    "is-cloudy",
+    "is-fog",
+    "is-drizzle",
+    "is-rain",
+    "is-snow",
+    "is-storm",
+    "is-neutral"
+  ];
+
   init();
 
   function init() {
@@ -503,6 +516,11 @@
       .filter((node) => node instanceof HTMLElement);
     if (!badgeNodes.length) return;
 
+    const setBadgeState = (badge, className) => {
+      WEATHER_BADGE_STATE_CLASSES.forEach((state) => badge.classList.remove(state));
+      if (className) badge.classList.add(className);
+    };
+
     let badgeDay = getSelectedMobileDay();
     if (mobileViewMode !== MOBILE_VIEW_MODES.day) {
       const todayKey = formatDateKey(new Date());
@@ -517,6 +535,7 @@
         badgeNodes.forEach((node) => {
           node.hidden = true;
           node.innerHTML = "";
+          setBadgeState(node, "");
         });
         return;
       }
@@ -525,6 +544,7 @@
       badgeNodes.forEach((node) => {
         node.hidden = false;
         node.innerHTML = html;
+        setBadgeState(node, "is-neutral");
       });
       return;
     }
@@ -535,6 +555,7 @@
     badgeNodes.forEach((node) => {
       node.hidden = false;
       node.innerHTML = html;
+      setBadgeState(node, visual.className);
     });
   }
 
@@ -916,11 +937,15 @@
     elements.calendarGrid.classList.toggle("is-mobile-day-view", mobileViewMode === MOBILE_VIEW_MODES.day);
 
     const showMobileWeekRangeRow = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.week;
+    const showMobileDayCornerLogo = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day;
+    const scheduleCornerMarkup = showMobileDayCornerLogo
+      ? `<div class="schedule-corner"><img class="schedule-corner-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="26" height="26" decoding="async"><span>Time</span></div>`
+      : `<div class="schedule-corner">Time</div>`;
     elements.calendarGrid.innerHTML = `
       <div class="schedule-board">
         ${showMobileWeekRangeRow ? renderMobileWeekRangeRow() : ""}
         <div class="schedule-header">
-          <div class="schedule-corner">Time</div>
+          ${scheduleCornerMarkup}
           ${days.map(renderScheduleHeader).join("")}
         </div>
         <div class="schedule-body">

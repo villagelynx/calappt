@@ -692,6 +692,17 @@ body.page-receivables .receivables-reminder:hover {
     font-weight: 800;
   }
 
+  body.page-home .home-weather-badge.is-sunny { color: #ffd400; }
+  body.page-home .home-weather-badge.is-mostly-clear { color: #aa7b00; }
+  body.page-home .home-weather-badge.is-partly-cloudy { color: #476d97; }
+  body.page-home .home-weather-badge.is-cloudy,
+  body.page-home .home-weather-badge.is-fog { color: #677c92; }
+  body.page-home .home-weather-badge.is-drizzle,
+  body.page-home .home-weather-badge.is-rain { color: #1a72b0; }
+  body.page-home .home-weather-badge.is-snow { color: #4a7caf; }
+  body.page-home .home-weather-badge.is-storm { color: #6a4fc2; }
+  body.page-home .home-weather-badge.is-neutral { color: rgba(18, 38, 66, 0.68); }
+
   body.page-home .home-weather-badge svg {
     width: 22px;
     height: 22px;
@@ -955,7 +966,7 @@ body.page-receivables .receivables-reminder:hover {
     transform: translateY(-50%);
     width: 22px;
     height: 22px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%23007aff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%23007aff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 22px 22px;
@@ -1048,10 +1059,7 @@ body.page-receivables .receivables-reminder:hover {
   }
 
   body.page-home .schedule-weather .weather-icon {
-    border-radius: 0;
-    background: transparent;
-    border: 0;
-    text-shadow: none;
+    border-radius: 999px;
   }
 
   body.page-home .mobile-week-range-row {
