@@ -330,6 +330,49 @@ h1, h2, h3 {
   gap: 12px;
 }
 
+.topbar-logo-link {
+  display: inline-flex;
+  border-radius: 16px;
+  text-decoration: none;
+}
+
+.topbar-logo-link:focus-visible {
+  outline: 2px solid rgba(0, 122, 255, 0.45);
+  outline-offset: 4px;
+}
+
+.topbar-home-link {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  text-decoration: none;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(22, 52, 94, 0.12);
+}
+
+.topbar-home-link:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.topbar-home-link:focus-visible {
+  outline: 2px solid rgba(0, 122, 255, 0.45);
+  outline-offset: 2px;
+}
+
+.topbar-home-link img {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: block;
+  object-fit: cover;
+}
+
 .topbar-logo {
   display: none;
   width: 54px;
@@ -3777,8 +3820,20 @@ a.weather-placeholder:hover {
 }
 
 .calendar-grid.is-mobile-day-view .schedule-corner {
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
   min-height: 70px;
   padding: 0 4px 8px 0;
+}
+
+.calendar-grid.is-mobile-day-view .schedule-corner-logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-top: 6px;
+  opacity: 0.96;
 }
 
 .calendar-grid.is-mobile-day-view .schedule-day-head {
@@ -4476,6 +4531,10 @@ a.weather-placeholder:hover {
 }
 
 @media (max-width: 780px) {
+  .topbar-home-link {
+    display: inline-flex;
+  }
+
   body.has-mobile-tabbar .page-shell {
     padding-bottom: calc(78px + env(safe-area-inset-bottom));
   }
