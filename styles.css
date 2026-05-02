@@ -3836,11 +3836,11 @@ a.weather-placeholder:hover {
 }
 
 .calendar-grid.is-mobile-day-view .schedule-corner-logo {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   object-fit: cover;
-  margin-top: 6px;
+  margin-top: 4px;
   opacity: 0.96;
 }
 
