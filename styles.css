@@ -692,9 +692,9 @@ body.page-receivables .receivables-reminder:hover {
     font-weight: 800;
   }
 
-  body.page-home .home-weather-badge.is-sunny { color: #ffd400; }
-  body.page-home .home-weather-badge.is-mostly-clear { color: #aa7b00; }
-  body.page-home .home-weather-badge.is-partly-cloudy { color: #476d97; }
+  body.page-home .home-weather-badge.is-sunny { color: #ff9f0a; }
+  body.page-home .home-weather-badge.is-mostly-clear { color: #d97706; }
+  body.page-home .home-weather-badge.is-partly-cloudy { color: #ff9f0a; }
   body.page-home .home-weather-badge.is-cloudy,
   body.page-home .home-weather-badge.is-fog { color: #677c92; }
   body.page-home .home-weather-badge.is-drizzle,
@@ -3613,22 +3613,22 @@ body.page-customers .customer-alpha-items {
 }
 
 .weather-icon.is-sunny {
-  color: #ffd400;
-  background: rgba(255, 235, 120, 0.24);
-  border-color: rgba(255, 212, 0, 0.28);
-  text-shadow: 0 0 8px rgba(255, 212, 0, 0.28);
+  color: #ff9f0a;
+  background: rgba(255, 202, 102, 0.32);
+  border-color: rgba(255, 159, 10, 0.3);
+  text-shadow: 0 0 10px rgba(255, 159, 10, 0.34);
 }
 
 .weather-icon.is-mostly-clear {
-  color: #aa7b00;
-  background: rgba(255, 229, 143, 0.26);
-  border-color: rgba(170, 123, 0, 0.22);
+  color: #d97706;
+  background: rgba(255, 214, 142, 0.3);
+  border-color: rgba(217, 119, 6, 0.24);
 }
 
 .weather-icon.is-partly-cloudy {
-  color: #476d97;
-  background: rgba(198, 227, 250, 0.3);
-  border-color: rgba(71, 109, 151, 0.2);
+  color: #ff9f0a;
+  background: rgba(255, 214, 142, 0.26);
+  border-color: rgba(255, 159, 10, 0.22);
 }
 
 .weather-icon.is-cloudy,
@@ -3836,9 +3836,9 @@ a.weather-placeholder:hover {
 }
 
 .calendar-grid.is-mobile-day-view .schedule-corner-logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
   object-fit: cover;
   margin-top: 4px;
   opacity: 0.96;
@@ -4042,10 +4042,6 @@ a.weather-placeholder:hover {
     width: 18px;
     height: 18px;
     flex: 0 0 18px;
-    border-radius: 0;
-    background: transparent;
-    border: 0;
-    text-shadow: none;
   }
 
   body.page-home .weather-icon svg {

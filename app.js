@@ -939,7 +939,7 @@
     const showMobileWeekRangeRow = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.week;
     const showMobileDayCornerLogo = isMobileLayout() && mobileViewMode === MOBILE_VIEW_MODES.day;
     const scheduleCornerMarkup = showMobileDayCornerLogo
-      ? `<div class="schedule-corner"><img class="schedule-corner-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="34" height="34" decoding="async"><span>Time</span></div>`
+      ? `<div class="schedule-corner"><img class="schedule-corner-logo" src="./apple-touch-icon.png" alt="" aria-hidden="true" width="68" height="68" decoding="async"><span>Time</span></div>`
       : `<div class="schedule-corner">Time</div>`;
     elements.calendarGrid.innerHTML = `
       <div class="schedule-board">
