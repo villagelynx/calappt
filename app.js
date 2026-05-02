@@ -198,6 +198,7 @@
     appointmentPaid: document.getElementById("appointmentPaid"),
     appointmentContactActions: document.getElementById("appointmentContactActions"),
     appointmentTextBtn: document.getElementById("appointmentTextBtn"),
+    appointmentPaymentReminderBtn: document.getElementById("appointmentPaymentReminderBtn"),
     appointmentEmailBtn: document.getElementById("appointmentEmailBtn")
   };
 
@@ -355,6 +356,8 @@
     elements.startTime?.addEventListener("change", updateAppointmentContactActions);
     elements.endTime?.addEventListener("change", updateAppointmentContactActions);
     elements.court?.addEventListener("input", updateAppointmentContactActions);
+    elements.appointmentAmount?.addEventListener("input", updateAppointmentContactActions);
+    elements.appointmentPaid?.addEventListener("change", updateAppointmentContactActions);
     elements.closeDrawerBtn?.addEventListener("click", closeDrawer);
     elements.cancelAppointmentBtn?.addEventListener("click", closeDrawer);
     elements.deleteAppointmentBtn?.addEventListener("click", handleDeleteAppointment);
@@ -2366,6 +2369,22 @@
     return parts.join(" ");
   }
 
+  function buildPaymentReminderMessage({ customerName, dateKey, startMinutes, endMinutes, court, amountCents }) {
+    const day = parseDateKey(dateKey);
+    const dateLabel = day ? `${formatWeekday(day)}, ${formatMonthDay(day)}` : dateKey;
+    const timeLabel = Number.isFinite(startMinutes) && Number.isFinite(endMinutes)
+      ? `${formatMinutes(startMinutes)} - ${formatMinutes(endMinutes)}`
+      : "";
+    const locationLabel = String(court || "").trim();
+    const amountLabel = formatMoneyStatement(amountCents);
+    const whenLabel = [
+      dateLabel,
+      timeLabel ? `at ${timeLabel}` : "",
+      locationLabel ? `(${locationLabel})` : ""
+    ].filter(Boolean).join(" ");
+    return `Hi ${customerName}! Just a quick reminder for the lesson on ${whenLabel}. The amount is ${amountLabel}. Thank you!`;
+  }
+
   function buildSmsHref(phoneNumber, body) {
     const number = sanitizePhoneForSms(phoneNumber);
     if (!number) return "sms:";
@@ -2385,7 +2404,7 @@
   }
 
   function updateAppointmentContactActions() {
-    if (!elements.appointmentContactActions || !elements.appointmentTextBtn || !elements.appointmentEmailBtn) return;
+    if (!elements.appointmentContactActions || !elements.appointmentTextBtn || !elements.appointmentEmailBtn || !elements.appointmentPaymentReminderBtn) return;
 
     const entryType = valueOf(elements.appointmentEntryType) || "customer";
     if (entryType !== "customer") {
@@ -2411,11 +2430,23 @@
       endMinutes,
       court
     });
+    const amountCents = parseAmountToCents(valueOf(elements.appointmentAmount));
+    const isPaid = Boolean(elements.appointmentPaid?.checked);
+    const hasAmount = Number.isFinite(amountCents) && amountCents > 0;
+    const paymentReminderMessage = hasAmount ? buildPaymentReminderMessage({
+      customerName: customer.name || "there",
+      dateKey,
+      startMinutes,
+      endMinutes,
+      court,
+      amountCents
+    }) : "";
 
     const smsNumber = sanitizePhoneForSms(customer.cell);
     const emailAddress = String(customer.email || "").trim();
     const hasText = Boolean(smsNumber);
     const hasEmail = Boolean(emailAddress);
+    const hasPaymentReminder = hasText && hasAmount && !isPaid;
 
     if (hasText) {
       elements.appointmentTextBtn.hidden = false;
@@ -2423,6 +2454,14 @@
     } else {
       elements.appointmentTextBtn.hidden = true;
       elements.appointmentTextBtn.href = "#";
+    }
+
+    if (hasPaymentReminder) {
+      elements.appointmentPaymentReminderBtn.hidden = false;
+      elements.appointmentPaymentReminderBtn.href = buildSmsHref(smsNumber, paymentReminderMessage);
+    } else {
+      elements.appointmentPaymentReminderBtn.hidden = true;
+      elements.appointmentPaymentReminderBtn.href = "#";
     }
 
     if (hasEmail) {
@@ -2437,7 +2476,7 @@
       elements.appointmentEmailBtn.href = "#";
     }
 
-    elements.appointmentContactActions.hidden = !(hasText || hasEmail);
+    elements.appointmentContactActions.hidden = !(hasText || hasEmail || hasPaymentReminder);
   }
 
   function openDrawer(config) {
