@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payments &middot; CalAppt</title>
+    <title>Receivables &middot; CalAppt</title>
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./apple-touch-icon.png">
@@ -14,70 +14,76 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css">
   </head>
-  <body class="page-payments has-mobile-tabbar">
+  <body class="page-receivables has-mobile-tabbar">
     <div class="page-shell">
       <header class="topbar">
         <div class="topbar-copy">
           <div class="topbar-headline">
             <img class="topbar-logo" src="./apple-touch-icon.png" alt="CalAppt" width="54" height="54" decoding="async">
-            <h1>Payments</h1>
+            <h1>Receivables</h1>
           </div>
-          <p class="lede">Track money received, receivables, and total billings for the month.</p>
+          <p class="lede">See every unpaid lesson and send a quick reminder.</p>
         </div>
         <div class="week-toolbar">
           <a class="ghost-button" href="./index.html">Back to Calendar</a>
-          <a class="ghost-button" href="./receivables.html">Receivables</a>
-          <a id="paymentsStatementLink" class="ghost-button" href="./monthly-statement.html">Monthly statement</a>
+          <a class="ghost-button" href="./payments.html">Payments</a>
+          <a class="ghost-button" href="./monthly-statement.html">Monthly statement</a>
           <a class="ghost-button" href="./yearly-statement.html">Yearly statement</a>
         </div>
       </header>
 
       <main class="workspace">
-        <section class="panel" aria-label="Monthly summary">
+        <section class="panel" aria-label="Receivables summary">
           <div class="panel-head">
             <div>
               <p class="eyebrow">Billing</p>
-              <h2>Month Summary</h2>
+              <h2>Summary</h2>
             </div>
           </div>
 
-          <div class="calendar-month-row" aria-label="Select month">
-            <button id="paymentsPrevMonthBtn" class="month-nav-button" type="button" aria-label="Previous month">&lt;</button>
-            <p id="paymentsMonthLabel" class="calendar-month-label" aria-live="polite"></p>
-            <button id="paymentsNextMonthBtn" class="month-nav-button" type="button" aria-label="Next month">&gt;</button>
+          <div class="payments-summary" role="list" aria-label="Receivables totals">
+            <div class="payments-kpi" role="listitem">
+              <span>Total Receivables</span>
+              <strong id="receivablesTotal">$0.00</strong>
+            </div>
+            <div class="payments-kpi" role="listitem">
+              <span>Unpaid Lessons</span>
+              <strong id="receivablesCount">0</strong>
+            </div>
+            <div class="payments-kpi" role="listitem">
+              <span>Customers Owing</span>
+              <strong id="receivablesCustomers">0</strong>
+            </div>
           </div>
 
-          <div class="payments-summary" role="list" aria-label="Monthly totals">
-            <div class="payments-kpi" role="listitem">
-              <span>Money Received</span>
-              <strong id="paymentsReceived">$0.00</strong>
-            </div>
-            <div class="payments-kpi" role="listitem">
-              <span>Receivables</span>
-              <strong id="paymentsReceivables">$0.00</strong>
-            </div>
-            <div class="payments-kpi" role="listitem">
-              <span>Monthly Total Earnings</span>
-              <strong id="paymentsTotal">$0.00</strong>
-            </div>
-            <a id="paymentsYtdLink" class="payments-kpi payments-kpi-link" role="listitem" href="./yearly-statement.html">
-              <span>YTD Earnings</span>
-              <strong id="paymentsYtd">$0.00</strong>
-            </a>
+          <div class="drawer-grid" aria-label="Filter receivables" style="margin-top: 14px;">
+            <label class="field">
+              <span>Search</span>
+              <input id="receivablesSearch" type="search" placeholder="Search customer, location, date">
+            </label>
+            <label class="field">
+              <span>Sort</span>
+              <select id="receivablesSort">
+                <option value="oldest">Oldest first</option>
+                <option value="newest">Newest first</option>
+                <option value="amount_desc">Highest amount</option>
+                <option value="amount_asc">Lowest amount</option>
+              </select>
+            </label>
           </div>
         </section>
 
-        <section class="panel" aria-label="Appointments and payments">
+        <section class="panel" aria-label="Receivables list">
           <div class="panel-head">
             <div>
               <p class="eyebrow">Customer Appointments</p>
-              <h2>Payments This Month</h2>
+              <h2>All Receivables</h2>
             </div>
-            <div id="paymentsCountChip" class="panel-chip">0</div>
+            <div id="receivablesCountChip" class="panel-chip">0</div>
           </div>
 
-          <div id="paymentsList" class="payments-list"></div>
-          <div id="paymentsEmpty" class="appointment-empty" hidden>No customer appointments found for this month.</div>
+          <div id="receivablesList" class="payments-list"></div>
+          <div id="receivablesEmpty" class="appointment-empty" hidden>No receivables found.</div>
         </section>
       </main>
     </div>
@@ -97,7 +103,7 @@
         </svg>
         <span>Customers</span>
       </a>
-      <a class="mobile-tabbar-item" href="./payments.html" aria-current="page" aria-label="Payments">
+      <a class="mobile-tabbar-item" href="./payments.html" aria-label="Payments">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
           <path d="M3 10h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -119,23 +125,18 @@
       (() => {
         const STORAGE_KEYS = {
           customers: "coach_appointment_calendar_customers",
-          tasks: "coach_appointment_calendar_tasks",
           appointments: "coach_appointment_calendar_appointments"
         };
 
         const elements = {
-          prevBtn: document.getElementById("paymentsPrevMonthBtn"),
-          nextBtn: document.getElementById("paymentsNextMonthBtn"),
-          monthLabel: document.getElementById("paymentsMonthLabel"),
-          received: document.getElementById("paymentsReceived"),
-          receivables: document.getElementById("paymentsReceivables"),
-          total: document.getElementById("paymentsTotal"),
-          ytd: document.getElementById("paymentsYtd"),
-          ytdLink: document.getElementById("paymentsYtdLink"),
-          statementLink: document.getElementById("paymentsStatementLink"),
-          list: document.getElementById("paymentsList"),
-          empty: document.getElementById("paymentsEmpty"),
-          countChip: document.getElementById("paymentsCountChip")
+          total: document.getElementById("receivablesTotal"),
+          count: document.getElementById("receivablesCount"),
+          customers: document.getElementById("receivablesCustomers"),
+          list: document.getElementById("receivablesList"),
+          empty: document.getElementById("receivablesEmpty"),
+          countChip: document.getElementById("receivablesCountChip"),
+          search: document.getElementById("receivablesSearch"),
+          sort: document.getElementById("receivablesSort")
         };
 
         const safeJsonParse = (value, fallback) => {
@@ -151,15 +152,6 @@
         const readCustomers = () => {
           try {
             const parsed = safeJsonParse(window.localStorage.getItem(STORAGE_KEYS.customers), []);
-            return Array.isArray(parsed) ? parsed : [];
-          } catch {
-            return [];
-          }
-        };
-
-        const readTasks = () => {
-          try {
-            const parsed = safeJsonParse(window.localStorage.getItem(STORAGE_KEYS.tasks), []);
             return Array.isArray(parsed) ? parsed : [];
           } catch {
             return [];
@@ -232,13 +224,6 @@
           return `${parsed.surname}, ${parsed.given}`;
         }
 
-        function formatDateKey(date) {
-          const year = date.getFullYear();
-          const month = `${date.getMonth() + 1}`.padStart(2, "0");
-          const day = `${date.getDate()}`.padStart(2, "0");
-          return `${year}-${month}-${day}`;
-        }
-
         function parseDateKey(value) {
           if (!value) return null;
           const [year, month, day] = value.split("-").map(Number);
@@ -252,10 +237,6 @@
 
         function formatMonthDay(date) {
           return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-        }
-
-        function formatMonthYear(date) {
-          return date.toLocaleDateString(undefined, { month: "long", year: "numeric" });
         }
 
         function formatMinutes(minutes) {
@@ -295,133 +276,41 @@
           return (amountCents / 100).toFixed(2);
         }
 
-        function getStartOfMonth(date) {
-          const next = new Date(date);
-          next.setDate(1);
-          next.setHours(0, 0, 0, 0);
-          return next;
+        function sanitizePhoneForSms(value) {
+          return String(value || "").trim().replace(/[^\d+.-]/g, "");
         }
 
-        function shiftMonth(currentMonthStart, delta) {
-          const next = getStartOfMonth(currentMonthStart);
-          next.setMonth(next.getMonth() + delta);
-          return getStartOfMonth(next);
+        function isIOSDevice() {
+          return /iPad|iPhone|iPod/.test(navigator.userAgent || "");
         }
 
-        let visibleMonthStart = getStartOfMonth(new Date());
-
-        function getMonthRangeKeys(monthStart) {
-          const start = getStartOfMonth(monthStart);
-          const end = new Date(start.getFullYear(), start.getMonth() + 1, 0);
-          return { startKey: formatDateKey(start), endKey: formatDateKey(end) };
+        function buildSmsHref(phoneNumber, body) {
+          const number = sanitizePhoneForSms(phoneNumber);
+          if (!number) return "sms:";
+          const message = String(body || "").trim();
+          if (!message) return `sms:${number}`;
+          const separator = isIOSDevice() ? "&" : "?";
+          return `sms:${number}${separator}body=${encodeURIComponent(message)}`;
         }
 
-        function render() {
-          const customers = readCustomers();
-          const tasks = readTasks();
-          const appointments = readAppointments();
-          const customerById = new Map(customers.map((customer) => [customer?.id, customer]));
-          const taskById = new Map(tasks.map((task) => [task?.id, task]));
+        function buildPaymentReminderMessage({ customerName, dateKey, startMinutes, endMinutes, court, amountCents }) {
+          const day = parseDateKey(dateKey);
+          const dateLabel = day ? `${formatWeekday(day)}, ${formatMonthDay(day)}` : String(dateKey || "");
+          const timeLabel = Number.isFinite(startMinutes) && Number.isFinite(endMinutes)
+            ? `${formatMinutes(startMinutes)} - ${formatMinutes(endMinutes)}`
+            : "";
+          const locationLabel = String(court || "").trim();
+          const amountLabel = formatMoney(amountCents);
 
-          const { startKey, endKey } = getMonthRangeKeys(visibleMonthStart);
-          if (elements.monthLabel) elements.monthLabel.textContent = formatMonthYear(visibleMonthStart);
+          const parts = [
+            `Hi ${customerName}!`,
+            "Just a quick reminder for the lesson on",
+            `${dateLabel}${timeLabel ? ` (${timeLabel})` : ""}${locationLabel ? ` at ${locationLabel}` : ""}.`,
+            `The amount is ${amountLabel}.`,
+            "Thank you!"
+          ];
 
-          const monthAppointments = appointments
-            .filter((appointment) => appointment?.entryType === "customer")
-            .filter((appointment) => appointment?.dateKey >= startKey && appointment?.dateKey <= endKey)
-            .slice()
-            .sort((a, b) => {
-              const dateCompare = String(a.dateKey || "").localeCompare(String(b.dateKey || ""));
-              if (dateCompare) return dateCompare;
-              return Number(a.startMinutes) - Number(b.startMinutes);
-            });
-
-          const totals = monthAppointments.reduce((acc, appointment) => {
-            const cents = normalizeAmountCents(appointment?.amountCents);
-            if (!cents) return acc;
-            acc.billed += cents;
-            if (appointment?.isPaid) {
-              acc.received += cents;
-            } else {
-              acc.receivables += cents;
-            }
-            return acc;
-          }, { billed: 0, received: 0, receivables: 0 });
-
-          const year = visibleMonthStart.getFullYear();
-          const ytdStartKey = `${year}-01-01`;
-          const ytdBilled = appointments
-            .filter((appointment) => appointment?.entryType === "customer")
-            .filter((appointment) => appointment?.dateKey >= ytdStartKey && appointment?.dateKey <= endKey)
-            .reduce((acc, appointment) => acc + normalizeAmountCents(appointment?.amountCents), 0);
-
-          if (elements.received) elements.received.textContent = formatMoney(totals.received);
-          if (elements.receivables) elements.receivables.textContent = formatMoney(totals.receivables);
-          if (elements.total) elements.total.textContent = formatMoney(totals.billed);
-          if (elements.ytd) elements.ytd.textContent = formatMoney(ytdBilled);
-          if (elements.ytdLink) elements.ytdLink.href = `./yearly-statement.html?year=${year}`;
-          if (elements.statementLink) {
-            const monthParam = `${visibleMonthStart.getFullYear()}-${String(visibleMonthStart.getMonth() + 1).padStart(2, "0")}`;
-            elements.statementLink.href = `./monthly-statement.html?month=${monthParam}`;
-          }
-
-          if (elements.countChip) elements.countChip.textContent = `${monthAppointments.length}`;
-
-          if (elements.empty) {
-            elements.empty.hidden = monthAppointments.length > 0;
-          }
-
-          if (!elements.list) return;
-
-          elements.list.innerHTML = monthAppointments.map((appointment) => {
-            const customer = customerById.get(appointment.entryId);
-            const rawName = customer?.name || appointment.entryName || "Unknown Customer";
-            const name = formatNameSurnameFirst(rawName) || rawName;
-            const day = parseDateKey(appointment.dateKey);
-            const dayLabel = day ? `${formatWeekday(day)}, ${formatMonthDay(day)}` : String(appointment.dateKey || "");
-            const timeLabel = `${formatMinutes(appointment.startMinutes)} - ${formatMinutes(appointment.endMinutes)}`;
-            const amountCents = normalizeAmountCents(appointment.amountCents);
-            const paid = Boolean(appointment.isPaid);
-            const itemLabel = `${dayLabel} ${timeLabel} ${name}`;
-
-            return `
-              <article class="payments-item" data-appointment-id="${escapeHtml(appointment.id)}" aria-label="${escapeHtml(itemLabel)}">
-                <div class="payments-item-main">
-                  <strong class="payments-item-title">${escapeHtml(name)}</strong>
-                  <div class="payments-item-meta">${escapeHtml(dayLabel)} &middot; ${escapeHtml(timeLabel)}</div>
-                </div>
-                <div class="payments-item-controls">
-                  <label class="payments-amount">
-                    <span>Amount</span>
-                    <input
-                      class="payments-amount-input"
-                      data-payment-field="amount"
-                      data-appointment-id="${escapeHtml(appointment.id)}"
-                      type="number"
-                      inputmode="decimal"
-                      min="0"
-                      step="0.01"
-                      placeholder="0.00"
-                      value="${escapeHtml(formatCentsForInput(amountCents))}"
-                    >
-                  </label>
-                  <label class="payments-paid">
-                    <span>Paid</span>
-                    <span class="payments-paid-toggle">
-                      <input
-                        class="payments-paid-checkbox"
-                        data-payment-field="paid"
-                        data-appointment-id="${escapeHtml(appointment.id)}"
-                        type="checkbox"
-                        ${paid ? "checked" : ""}
-                      >
-                      <span class="payments-paid-pill">Paid</span>
-                    </span>
-                  </label>
-                </div>
-              </article>
-            `;
-          }).join("");
+          return parts.join(" ");
         }
 
         function updateAppointmentField(appointmentId, field, value) {
@@ -445,18 +334,158 @@
           if (writeAppointments(appointments)) render();
         }
 
-        elements.prevBtn?.addEventListener("click", () => {
-          visibleMonthStart = shiftMonth(visibleMonthStart, -1);
-          render();
-        });
-        elements.nextBtn?.addEventListener("click", () => {
-          visibleMonthStart = shiftMonth(visibleMonthStart, 1);
-          render();
-        });
+        function matchesSearch(appointment, searchTerm, customerName) {
+          if (!searchTerm) return true;
+          const haystack = [
+            customerName,
+            appointment?.dateKey,
+            appointment?.court,
+            appointment?.entryName
+          ].filter(Boolean).join(" ").toLowerCase();
+          return haystack.includes(searchTerm.toLowerCase());
+        }
+
+        function compareReceivables(sortMode, a, b) {
+          const dateA = String(a?.dateKey || "");
+          const dateB = String(b?.dateKey || "");
+          const minutesA = Number(a?.startMinutes) || 0;
+          const minutesB = Number(b?.startMinutes) || 0;
+          const centsA = normalizeAmountCents(a?.amountCents);
+          const centsB = normalizeAmountCents(b?.amountCents);
+
+          if (sortMode === "newest") {
+            const dateCompare = dateB.localeCompare(dateA);
+            if (dateCompare) return dateCompare;
+            return minutesB - minutesA;
+          }
+
+          if (sortMode === "amount_desc") {
+            if (centsB !== centsA) return centsB - centsA;
+            const dateCompare = dateA.localeCompare(dateB);
+            if (dateCompare) return dateCompare;
+            return minutesA - minutesB;
+          }
+
+          if (sortMode === "amount_asc") {
+            if (centsA !== centsB) return centsA - centsB;
+            const dateCompare = dateA.localeCompare(dateB);
+            if (dateCompare) return dateCompare;
+            return minutesA - minutesB;
+          }
+
+          const dateCompare = dateA.localeCompare(dateB);
+          if (dateCompare) return dateCompare;
+          return minutesA - minutesB;
+        }
+
+        function render() {
+          const customers = readCustomers();
+          const appointments = readAppointments();
+          const customerById = new Map(customers.map((customer) => [customer?.id, customer]));
+
+          const sortMode = elements.sort?.value || "oldest";
+          const searchTerm = (elements.search?.value || "").trim();
+
+          const receivables = appointments
+            .filter((appointment) => appointment?.entryType === "customer")
+            .filter((appointment) => !appointment?.isPaid)
+            .filter((appointment) => normalizeAmountCents(appointment?.amountCents) > 0)
+            .slice()
+            .sort((a, b) => compareReceivables(sortMode, a, b))
+            .filter((appointment) => {
+              const customer = customerById.get(appointment?.entryId);
+              const rawName = customer?.name || appointment?.entryName || "";
+              const name = formatNameSurnameFirst(rawName) || rawName;
+              return matchesSearch(appointment, searchTerm, name);
+            });
+
+          const totals = receivables.reduce((acc, appointment) => {
+            const cents = normalizeAmountCents(appointment?.amountCents);
+            if (cents) acc.total += cents;
+            acc.count += 1;
+            if (appointment?.entryId) acc.customerIds.add(appointment.entryId);
+            return acc;
+          }, { total: 0, count: 0, customerIds: new Set() });
+
+          if (elements.total) elements.total.textContent = formatMoney(totals.total);
+          if (elements.count) elements.count.textContent = `${totals.count}`;
+          if (elements.customers) elements.customers.textContent = `${totals.customerIds.size}`;
+          if (elements.countChip) elements.countChip.textContent = `${totals.count}`;
+          if (elements.empty) elements.empty.hidden = receivables.length > 0;
+
+          if (!elements.list) return;
+          elements.list.innerHTML = receivables.map((appointment) => {
+            const customer = customerById.get(appointment.entryId);
+            const rawName = customer?.name || appointment.entryName || "Unknown Customer";
+            const name = formatNameSurnameFirst(rawName) || rawName;
+            const day = parseDateKey(appointment.dateKey);
+            const dayLabel = day ? `${formatWeekday(day)}, ${formatMonthDay(day)}` : String(appointment.dateKey || "");
+            const timeLabel = `${formatMinutes(appointment.startMinutes)} - ${formatMinutes(appointment.endMinutes)}`;
+            const locationLabel = String(appointment.court || "").trim();
+            const amountCents = normalizeAmountCents(appointment.amountCents);
+            const smsNumber = sanitizePhoneForSms(customer?.cell);
+            const message = buildPaymentReminderMessage({
+              customerName: customer?.name || name || "there",
+              dateKey: appointment.dateKey,
+              startMinutes: Number(appointment.startMinutes),
+              endMinutes: Number(appointment.endMinutes),
+              court: appointment.court,
+              amountCents
+            });
+            const reminderMarkup = smsNumber
+              ? `
+                  <a class="receivables-reminder" href="${escapeHtml(buildSmsHref(smsNumber, message))}">
+                    Text reminder
+                  </a>
+                `
+              : "";
+
+            const itemLabel = `${dayLabel} ${timeLabel} ${name}`;
+            const metaParts = [dayLabel, timeLabel, locationLabel].filter(Boolean);
+
+            return `
+              <article class="payments-item" data-appointment-id="${escapeHtml(appointment.id)}" aria-label="${escapeHtml(itemLabel)}">
+                <div class="payments-item-main">
+                  <strong class="payments-item-title">${escapeHtml(name)}</strong>
+                  <div class="payments-item-meta">${escapeHtml(metaParts.join(" · "))}</div>
+                </div>
+                <div class="payments-item-controls">
+                  <label class="payments-amount">
+                    <span>Amount</span>
+                    <input
+                      class="payments-amount-input"
+                      data-receivable-field="amount"
+                      data-appointment-id="${escapeHtml(appointment.id)}"
+                      type="number"
+                      inputmode="decimal"
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      value="${escapeHtml(formatCentsForInput(amountCents))}"
+                    >
+                  </label>
+                  <label class="payments-paid">
+                    <span>Paid</span>
+                    <span class="payments-paid-toggle">
+                      <input
+                        class="payments-paid-checkbox"
+                        data-receivable-field="paid"
+                        data-appointment-id="${escapeHtml(appointment.id)}"
+                        type="checkbox"
+                      >
+                      <span class="payments-paid-pill">Paid</span>
+                    </span>
+                  </label>
+                  ${reminderMarkup}
+                </div>
+              </article>
+            `;
+          }).join("");
+        }
 
         elements.list?.addEventListener("change", (event) => {
           const target = event.target;
-          const field = target?.getAttribute?.("data-payment-field") || "";
+          const field = target?.getAttribute?.("data-receivable-field") || "";
           const appointmentId = target?.getAttribute?.("data-appointment-id") || "";
           if (!field || !appointmentId) return;
 
@@ -467,6 +496,10 @@
 
           updateAppointmentField(appointmentId, field, target.value || "");
         });
+
+        const handleFilterChange = () => render();
+        elements.search?.addEventListener("input", handleFilterChange);
+        elements.sort?.addEventListener("change", handleFilterChange);
 
         render();
       })();

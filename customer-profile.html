@@ -86,6 +86,7 @@
               <h2>Lessons</h2>
             </div>
           </div>
+          <div id="lessonHistorySummary" class="drawer-summary" hidden></div>
           <div id="lessonHistory" class="agenda-board"></div>
         </section>
       </main>
@@ -101,6 +102,7 @@
         const titleEl = document.getElementById("profileTitle");
         const subtitleEl = document.getElementById("profileSubtitle");
         const statusEl = document.getElementById("profileStatus");
+        const historySummaryEl = document.getElementById("lessonHistorySummary");
         const historyEl = document.getElementById("lessonHistory");
 
         const formEl = document.getElementById("profileForm");
@@ -181,6 +183,27 @@
           const suffix = hours24 >= 12 ? "PM" : "AM";
           const hours12 = hours24 % 12 || 12;
           return `${hours12}:${mins} ${suffix}`;
+        };
+
+        const formatHoursValue = (minutes) => {
+          const safeMinutes = Number(minutes);
+          if (!Number.isFinite(safeMinutes) || safeMinutes <= 0) return 0;
+          return Math.round((safeMinutes / 60) * 10) / 10;
+        };
+
+        const formatHoursLabel = (minutes) => {
+          const hoursValue = formatHoursValue(minutes);
+          const hoursText = Number.isInteger(hoursValue) ? `${hoursValue}` : hoursValue.toFixed(1);
+          const unit = hoursValue === 1 ? "hr" : "hrs";
+          return `${hoursText} ${unit}`;
+        };
+
+        const formatDuration = (startMinutes, endMinutes) => {
+          const start = Number(startMinutes);
+          const end = Number(endMinutes);
+          if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return "";
+          const durationMinutes = end - start;
+          return formatHoursLabel(durationMinutes);
         };
 
         const setStatus = (message) => {
@@ -274,8 +297,15 @@
 
         const renderHistory = () => {
           if (!historyEl) return;
+          if (historySummaryEl) historySummaryEl.hidden = true;
           const appointments = loadAppointments()
             .filter((entry) => entry && entry.entryType === "customer" && entry.entryId === customerId)
+            .filter((entry) => {
+              if (!entry?.dateKey) return false;
+              const start = Number(entry?.startMinutes);
+              const end = Number(entry?.endMinutes);
+              return Number.isFinite(start) && Number.isFinite(end) && end > start;
+            })
             .slice()
             .sort((a, b) => {
               const dateCompare = String(a.dateKey || "").localeCompare(String(b.dateKey || ""));
@@ -284,8 +314,44 @@
             });
 
           if (!appointments.length) {
+            if (historySummaryEl) historySummaryEl.innerHTML = "";
             historyEl.innerHTML = `<div class="appointment-empty">No lessons scheduled for this customer yet.</div>`;
             return;
+          }
+
+          const totals = appointments.reduce((acc, appt) => {
+            const start = Number(appt?.startMinutes);
+            const end = Number(appt?.endMinutes);
+            if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
+              acc.totalMinutes += (end - start);
+              acc.lessonCount += 1;
+            }
+            return acc;
+          }, { lessonCount: 0, totalMinutes: 0 });
+
+          const firstLessonDay = parseDateKey(appointments[0]?.dateKey);
+          const lastLessonDay = parseDateKey(appointments[appointments.length - 1]?.dateKey);
+
+          if (historySummaryEl) {
+            historySummaryEl.hidden = false;
+            historySummaryEl.innerHTML = `
+              <div class="summary-block">
+                <span class="summary-label">Lessons</span>
+                <strong>${escapeHtml(String(totals.lessonCount))}</strong>
+              </div>
+              <div class="summary-block">
+                <span class="summary-label">Total Hours</span>
+                <strong>${escapeHtml(formatHoursLabel(totals.totalMinutes))}</strong>
+              </div>
+              <div class="summary-block">
+                <span class="summary-label">First Lesson</span>
+                <strong>${escapeHtml(firstLessonDay ? `${formatWeekday(firstLessonDay)}, ${formatMonthDay(firstLessonDay)}` : "—")}</strong>
+              </div>
+              <div class="summary-block">
+                <span class="summary-label">Most Recent</span>
+                <strong>${escapeHtml(lastLessonDay ? `${formatWeekday(lastLessonDay)}, ${formatMonthDay(lastLessonDay)}` : "—")}</strong>
+              </div>
+            `;
           }
 
           const grouped = appointments.reduce((acc, appt) => {
@@ -301,18 +367,26 @@
             const day = parseDateKey(dateKey);
             const headerLabel = day ? `${formatWeekday(day)}, ${formatMonthDay(day)}` : dateKey;
             const items = grouped[dateKey] || [];
+            const dayMinutes = items.reduce((acc, appt) => {
+              const start = Number(appt?.startMinutes);
+              const end = Number(appt?.endMinutes);
+              if (Number.isFinite(start) && Number.isFinite(end) && end > start) return acc + (end - start);
+              return acc;
+            }, 0);
+            const dayCountLabel = `${items.length} lesson${items.length === 1 ? "" : "s"} \u00B7 ${formatHoursLabel(dayMinutes)}`;
             return `
               <section class="agenda-day">
                 <header class="agenda-day-head">
                   <strong>${escapeHtml(headerLabel)}</strong>
-                  <span class="agenda-day-count">${items.length} item${items.length === 1 ? "" : "s"}</span>
+                  <span class="agenda-day-count">${escapeHtml(dayCountLabel)}</span>
                 </header>
                 <div class="agenda-list">
                   ${items.map((appt) => {
                     const timeLabel = `${formatMinutes(Number(appt.startMinutes))} - ${formatMinutes(Number(appt.endMinutes))}`;
                     const court = String(appt.court || "").trim();
                     const note = String(appt.note || "").trim();
-                    const detail = [court ? `Court: ${court}` : "", note].filter(Boolean).join(" \u00B7 ");
+                    const durationLabel = formatDuration(appt.startMinutes, appt.endMinutes);
+                    const detail = [durationLabel, court ? `Court: ${court}` : "", note].filter(Boolean).join(" \u00B7 ");
                     return `
                       <article class="agenda-item">
                         <div class="agenda-time">${escapeHtml(timeLabel)}</div>

@@ -239,13 +239,15 @@ body.page-customer-profile .topbar .ghost-icon-button:hover {
 }
 
 body.page-payments,
-body.page-monthly-statement {
+body.page-monthly-statement,
+body.page-receivables {
   background: #fff;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
 }
 
 body.page-payments::before,
-body.page-monthly-statement::before {
+body.page-monthly-statement::before,
+body.page-receivables::before {
   opacity: 0;
 }
 
@@ -254,7 +256,10 @@ body.page-payments h2,
 body.page-payments h3,
 body.page-monthly-statement h1,
 body.page-monthly-statement h2,
-body.page-monthly-statement h3 {
+body.page-monthly-statement h3,
+body.page-receivables h1,
+body.page-receivables h2,
+body.page-receivables h3 {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   letter-spacing: -0.01em;
 }
@@ -389,6 +394,55 @@ body.page-monthly-statement .topbar .ghost-icon-button {
 
 body.page-monthly-statement .topbar .ghost-button:hover,
 body.page-monthly-statement .topbar .ghost-icon-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+body.page-receivables .topbar {
+  background: #fff;
+  color: rgba(18, 38, 66, 0.92);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.page-receivables .topbar .eyebrow,
+body.page-receivables .topbar .lede,
+body.page-receivables .topbar .week-kicker {
+  color: rgba(18, 38, 66, 0.62);
+}
+
+body.page-receivables .topbar .ghost-button,
+body.page-receivables .topbar .ghost-icon-button {
+  color: rgba(18, 38, 66, 0.86);
+  border-color: rgba(22, 52, 94, 0.14);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.page-receivables .topbar .ghost-button:hover,
+body.page-receivables .topbar .ghost-icon-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+body.page-receivables .payments-item-controls {
+  grid-template-columns: 140px 92px 180px;
+}
+
+body.page-receivables .receivables-reminder {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(22, 52, 94, 0.14);
+  background: rgba(0, 0, 0, 0.02);
+  color: rgba(18, 38, 66, 0.86);
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+body.page-receivables .receivables-reminder:hover {
   background: rgba(0, 0, 0, 0.04);
 }
 
@@ -4582,6 +4636,15 @@ a.weather-placeholder:hover {
   .payments-item-controls {
     grid-template-columns: 1fr 92px;
     justify-content: start;
+  }
+
+  body.page-receivables .payments-item-controls {
+    grid-template-columns: 1fr 92px;
+  }
+
+  body.page-receivables .receivables-reminder {
+    grid-column: 1 / -1;
+    justify-content: center;
   }
 
   .yearly-month-item {
